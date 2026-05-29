@@ -1,10 +1,86 @@
-<!doctype html>
-<html>
-    <head>
-        <title>Vora</title>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="stylesheet" href="style.css" />
-    </head>
-    <body></body>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vora — 语法速览</title>
+  <link rel="icon" href="ico.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- 语法速览 -->
+  <section id="syntax" class="section">
+    <h2>语法速览</h2>
+    <p class="section-desc">Vora 的语法受到 Lua 和 Wren 的启发，追求简洁与可读性。</p>
+
+    <div class="code-grid">
+      <div class="code-card">
+        <h3>变量</h3>
+        <pre><code><span class="kw">let</span> name = <span class="str">"Vora"</span>
+<span class="kw">let</span> version = <span class="num">0.1</span>
+<span class="kw">let</span> active = <span class="lit">TRUE</span></code></pre>
+      </div>
+
+      <div class="code-card">
+        <h3>字符串插值</h3>
+        <pre><code><span class="kw">let</span> name = <span class="str">"World"</span>
+<span class="fn">print</span>(<span class="str">"Hello <span class="interp">${name}</span>!"</span>)
+<span class="cmt">// → Hello World!</span></code></pre>
+      </div>
+
+      <div class="code-card">
+        <h3>函数</h3>
+        <pre><code><span class="kw">func</span> <span class="fn">add</span>(a, b) {
+    <span class="kw">return</span> a + b
+}
+
+<span class="kw">let</span> result = <span class="fn">add</span>(<span class="num">3</span>, <span class="num">7</span>)
+<span class="fn">print</span>(result)  <span class="cmt">// → 10</span></code></pre>
+      </div>
+
+      <div class="code-card">
+        <h3>条件判断</h3>
+        <pre><code><span class="kw">if</span> (score >= <span class="num">90</span>) {
+    <span class="fn">print</span>(<span class="str">"优秀"</span>)
+} <span class="kw">else if</span> (score >= <span class="num">60</span>) {
+    <span class="fn">print</span>(<span class="str">"及格"</span>)
+} <span class="kw">else</span> {
+    <span class="fn">print</span>(<span class="str">"不及格"</span>)
+}</code></pre>
+      </div>
+
+      <div class="code-card">
+        <h3>循环</h3>
+        <pre><code><span class="cmt">// while 循环</span>
+<span class="kw">let</span> i = <span class="num">0</span>
+<span class="kw">while</span> (i < <span class="num">5</span>) {
+    <span class="fn">print</span>(i)
+    i = i + <span class="num">1</span>
+}
+
+<span class="cmt">// for-in 循环</span>
+<span class="kw">for</span> item <span class="kw">in</span> [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>] {
+    <span class="fn">print</span>(item)
+}</code></pre>
+      </div>
+
+      <div class="code-card">
+        <h3>对象</h3>
+        <pre><code><span class="kw">Obj</span> <span class="type">Student</span>(name, age) {
+    <span class="kw">this</span>.name = name
+    <span class="kw">this</span>.age = age
+
+    <span class="kw">func</span> <span class="fn">greet</span>() {
+        <span class="fn">print</span>(<span class="str">"Hi, I'm <span class="interp">${this.name}</span>"</span>)
+    }
+}
+
+<span class="kw">let</span> s = <span class="type">Student</span>(<span class="str">"Alice"</span>, <span class="num">20</span>)
+s.<span class="fn">greet</span>()  <span class="cmt">// → Hi, I'm Alice</span></code></pre>
+      </div>
+    </div>
+  </section>
+
+</body>
 </html>
