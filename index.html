@@ -3,17 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vora — 语法速览</title>
+  <title>Vora — 动态类型脚本语言</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128' fill='none'><defs><linearGradient id='g' x1='0' y1='0' x2='128' y2='128' gradientUnits='userSpaceOnUse'><stop offset='0%25' stop-color='%236366f1'/><stop offset='100%25' stop-color='%23a78bfa'/></linearGradient></defs><rect width='128' height='128' rx='28' fill='url(%23g)'/><text x='64' y='82' font-family='Segoe UI,system-ui,sans-serif' font-size='64' font-weight='700' fill='%23fff' text-anchor='middle'>V</text></svg>" type="image/svg+xml">
   <style>
     /* ====== 重置 & 基础 ====== */
-    *,
-    *::before,
-    *::after {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
       --bg: #ffffff;
@@ -29,15 +23,13 @@
       --type: #0d9488;
       --cmt: #a1a1aa;
       --interp: #db2777;
+      --op: #dc2626;
       --radius: 10px;
       --mono: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', 'Consolas', monospace;
       --sans: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
     }
 
-    html {
-      scroll-behavior: smooth;
-      font-size: 16px;
-    }
+    html { scroll-behavior: smooth; font-size: 16px; }
 
     body {
       font-family: var(--sans);
@@ -47,61 +39,139 @@
       -webkit-font-smoothing: antialiased;
     }
 
+    /* ====== 导航栏 ====== */
+    .nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+    }
+    .nav-inner {
+      max-width: 960px; margin: 0 auto;
+      display: flex; align-items: center; gap: 28px;
+      height: 52px;
+      font-size: 0.9rem; font-weight: 500;
+    }
+    .nav-logo {
+      font-size: 1.2rem; font-weight: 800;
+      background: linear-gradient(135deg, #6366f1, #a78bfa);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-right: auto;
+    }
+    .nav a { color: var(--text2); text-decoration: none; transition: color 0.2s; }
+    .nav a:hover { color: var(--kw); }
+
     /* ====== 通用 Section ====== */
-    .section {
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 80px 24px;
-    }
-
+    .section { max-width: 960px; margin: 0 auto; padding: 80px 24px; }
     .section h2 {
-      font-size: 1.8rem;
-      font-weight: 700;
-      margin-bottom: 8px;
+      font-size: 1.8rem; font-weight: 700; margin-bottom: 8px;
     }
+    .section-desc { color: var(--text2); margin-bottom: 40px; font-size: 1.05rem; }
 
-    .section-desc {
-      color: var(--text2);
-      margin-bottom: 40px;
+    /* ====== Hero ====== */
+    .hero {
+      text-align: center;
+      padding: 100px 24px 80px;
+      background: linear-gradient(180deg, #faf5ff 0%, #ffffff 100%);
+    }
+    .hero h1 {
+      font-size: 3.2rem; font-weight: 800; letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #6366f1 0%, #a78bfa 60%, #c084fc 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero .tagline {
+      font-size: 1.3rem; color: var(--text2); margin: 16px 0 24px;
+    }
+    .hero .meta {
+      font-size: 0.9rem; color: var(--text2);
+      margin-bottom: 32px; line-height: 1.8;
+    }
+    .hero .meta span { display: inline-block; }
+    .hero .meta a { color: var(--kw); text-decoration: none; font-weight: 600; }
+    .btn {
+      display: inline-block; padding: 10px 28px; font-size: 0.95rem; font-weight: 600;
+      border-radius: 8px; text-decoration: none; transition: all 0.25s;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      color: #fff; box-shadow: 0 4px 14px rgba(99,102,241,0.35);
+    }
+    .btn-primary:hover { box-shadow: 0 6px 20px rgba(99,102,241,0.5); transform: translateY(-1px); }
+    .btn-ghost {
+      color: var(--kw); border: 1.5px solid var(--kw);
+      margin-left: 12px;
+    }
+    .btn-ghost:hover { background: #f5f3ff; }
+
+    .hero pre {
+      max-width: 560px; margin: 40px auto 0;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 20px 24px;
+      font-family: var(--mono); font-size: 0.85rem; line-height: 1.7;
+      text-align: left; overflow-x: auto;
     }
 
     /* ====== 代码卡片网格 ====== */
-    .code-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 20px;
-    }
-
+    .code-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
     .code-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 20px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 20px;
       transition: border-color 0.25s, box-shadow 0.25s;
     }
     .code-card:hover {
       border-color: #c4b5fd;
-      box-shadow: 0 0 24px rgba(124, 58, 237, 0.08);
+      box-shadow: 0 0 24px rgba(124,58,237,0.08);
     }
-
     .code-card h3 {
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--text2);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      margin-bottom: 12px;
+      font-size: 0.85rem; font-weight: 600; color: var(--text2);
+      text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 12px;
     }
-
     .code-card pre {
-      font-family: var(--mono);
-      font-size: 0.88rem;
-      line-height: 1.65;
-      overflow-x: auto;
-      color: var(--text);
+      font-family: var(--mono); font-size: 0.88rem; line-height: 1.65;
+      overflow-x: auto; color: var(--text);
     }
 
-    /* 语法高亮 */
+    /* ====== Shell 命令卡片 ====== */
+    .shell-block {
+      background: #1e1e2e; color: #cdd6f4; border-radius: var(--radius);
+      padding: 20px 24px; font-family: var(--mono); font-size: 0.88rem;
+      line-height: 1.7; overflow-x: auto; margin-bottom: 24px;
+    }
+    .shell-block .prompt { color: #a6e3a1; }
+    .shell-block .out { color: #bac2de; }
+
+    /* ====== 表格 ====== */
+    table {
+      width: 100%; border-collapse: collapse; font-size: 0.92rem;
+      margin: 16px 0 32px;
+    }
+    th, td {
+      text-align: left; padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    th {
+      font-weight: 600; color: var(--text2); font-size: 0.8rem;
+      text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    tr:hover td { background: #fafafa; }
+    .done { color: #059669; font-weight: 600; }
+    .wip { color: #d97706; font-weight: 600; }
+    .planned { color: var(--text2); }
+
+    /* ====== 项目结构 ====== */
+    .dir-tree {
+      font-family: var(--mono); font-size: 0.88rem; line-height: 2;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 20px 24px;
+      margin-bottom: 24px; overflow-x: auto;
+    }
+    .dir-tree .dir { color: var(--kw); font-weight: 600; }
+    .dir-tree .cmt { color: var(--cmt); margin-left: 8px; }
+
+    /* ====== 语法高亮 ====== */
     .kw  { color: var(--kw); }
     .str { color: var(--str); }
     .num { color: var(--num); }
@@ -110,89 +180,346 @@
     .type{ color: var(--type); }
     .cmt { color: var(--cmt); font-style: italic; }
     .interp { color: var(--interp); }
+    .op { color: var(--op); }
+
+    /* ====== 页脚 ====== */
+    .footer {
+      border-top: 1px solid var(--border);
+      padding: 40px 24px; text-align: center;
+      color: var(--text2); font-size: 0.85rem;
+    }
+    .footer a { color: var(--kw); text-decoration: none; }
+    .footer a:hover { text-decoration: underline; }
 
     /* ====== 响应式 ====== */
     @media (max-width: 768px) {
-      .code-grid {
-        grid-template-columns: 1fr;
-      }
+      .code-grid { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 2.2rem; }
+      .hero .tagline { font-size: 1.05rem; }
+      .nav-inner { gap: 16px; font-size: 0.82rem; }
+      .section { padding: 48px 16px; }
+      .section h2 { font-size: 1.4rem; }
     }
   </style>
 </head>
 <body>
 
-  <!-- 语法速览 -->
-  <section id="syntax" class="section">
-    <h2>语法速览</h2>
-    <p class="section-desc">Vora 的语法受到 Lua 和 Wren 的启发，追求简洁与可读性。</p>
+<!-- ====== 导航栏 ====== -->
+<nav class="nav">
+  <div class="nav-inner">
+    <span class="nav-logo">Vora</span>
+    <a href="#quickstart">快速开始</a>
+    <a href="#syntax">语法</a>
+    <a href="#builtins">内建函数</a>
+    <a href="#structure">结构</a>
+    <a href="#roadmap">路线图</a>
+  </div>
+</nav>
 
-    <div class="code-grid">
-      <div class="code-card">
-        <h3>变量</h3>
-        <pre><code><span class="kw">let</span> name = <span class="str">"Vora"</span>
-<span class="kw">let</span> version = <span class="num">0.1</span>
-<span class="kw">let</span> active = <span class="lit">TRUE</span></code></pre>
-      </div>
+<!-- ====== Hero ====== -->
+<header class="hero">
+  <h1>Vora</h1>
+  <p class="tagline">动态类型脚本语言 · 类 JavaScript 语法 · Lua 级简单性 · Wren 式面向对象</p>
+  <p class="meta">
+    当前为 <strong>AST 树遍历解释器</strong>（第一版）<br>
+    ~5,500 行 C++17 · 零外部依赖<br>
+    <a href="https://github.com/Asamo096/Vora" target="_blank" rel="noopener">github.com/Asamo096/Vora</a>
+  </p>
+  <a class="btn btn-primary" href="https://github.com/Asamo096/Vora" target="_blank" rel="noopener">GitHub →</a>
+  <a class="btn btn-ghost" href="#quickstart">快速开始 ↓</a>
+  <pre><code><span class="kw">func</span> <span class="fn">greet</span>(name) {
+    <span class="kw">return</span> <span class="str">"Hello, "</span> + name + <span class="str">"!"</span>
+}
 
-      <div class="code-card">
-        <h3>字符串插值</h3>
-        <pre><code><span class="kw">let</span> name = <span class="str">"World"</span>
+<span class="kw">let</span> names = [<span class="str">"World"</span>, <span class="str">"Vora"</span>, <span class="str">"你"</span>]
+<span class="kw">for</span> name <span class="kw">in</span> names {
+    <span class="fn">print</span>(<span class="fn">greet</span>(name))
+}</code></pre>
+</header>
+
+<!-- ====== 快速开始 ====== -->
+<section id="quickstart" class="section">
+  <h2>快速开始</h2>
+  <p class="section-desc">一条命令构建，开箱即用。</p>
+
+  <div class="shell-block">
+<span class="cmt"># 构建（Windows / CMake）</span>
+<span class="prompt">PS&gt; </span>.\build.ps1
+
+<span class="cmt"># 运行脚本</span>
+<span class="prompt">PS&gt; </span>./build/Debug/Vora.exe examples/main.va
+
+<span class="cmt"># REPL 模式（交互式求值）</span>
+<span class="prompt">PS&gt; </span>./build/Debug/Vora.exe --repl
+
+<span class="cmt"># 打印 AST（S-expression 格式）</span>
+<span class="prompt">PS&gt; </span>./build/Debug/Vora.exe examples/main.va --ast-printer
+
+<span class="cmt"># 打印 Token 流</span>
+<span class="prompt">PS&gt; </span>./build/Debug/Vora.exe examples/main.va --tokens
+  </div>
+</section>
+
+<!-- ====== 语法速览 ====== -->
+<section id="syntax" class="section">
+  <h2>语法速览</h2>
+  <p class="section-desc">Vora 的语法受到 Lua 和 Wren 的启发，追求简洁与可读性。</p>
+
+  <div class="code-grid">
+    <!-- 类型与变量 -->
+    <div class="code-card">
+      <h3>类型与变量</h3>
+      <pre><code><span class="kw">let</span> n = <span class="num">42</span>           <span class="cmt">// Number (double)</span>
+<span class="kw">let</span> f = <span class="num">3.14</span>
+<span class="kw">let</span> b = <span class="lit">true</span>         <span class="cmt">// Boolean</span>
+<span class="kw">let</span> s = <span class="str">"hello"</span>      <span class="cmt">// String</span>
+<span class="kw">let</span> a = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]    <span class="cmt">// Array</span>
+<span class="kw">let</span> nothing = <span class="lit">null</span>
+
+<span class="cmt">// 数字前缀</span>
+<span class="num">0xFF</span>    <span class="cmt">// 255（十六进制）</span>
+<span class="num">0o77</span>    <span class="cmt">// 63（八进制）</span>
+<span class="num">0b101</span>   <span class="cmt">// 5（二进制）</span></code></pre>
+    </div>
+
+    <!-- 字符串插值 -->
+    <div class="code-card">
+      <h3>字符串插值</h3>
+      <pre><code><span class="kw">let</span> name = <span class="str">"World"</span>
 <span class="fn">print</span>(<span class="str">"Hello <span class="interp">${name}</span>!"</span>)
-<span class="cmt">// → Hello World!</span></code></pre>
-      </div>
+<span class="cmt">// → Hello World!</span>
 
-      <div class="code-card">
-        <h3>函数</h3>
-        <pre><code><span class="kw">func</span> <span class="fn">add</span>(a, b) {
+<span class="cmt">// 属性访问</span>
+<span class="kw">Obj</span> <span class="type">Person</span>(n) { <span class="kw">this</span>.name = n }
+<span class="kw">let</span> p = <span class="type">Person</span>(<span class="str">"Alice"</span>)
+<span class="fn">print</span>(<span class="str">"Hi <span class="interp">${p.name}</span>"</span>)
+<span class="cmt">// → Hi Alice</span></code></pre>
+    </div>
+
+    <!-- 运算符 -->
+    <div class="code-card">
+      <h3>运算符</h3>
+      <pre><code><span class="cmt">// 算术：+ - * / % **</span>
+<span class="cmt">// 比较：&lt; &lt;= &gt; &gt;= == !=</span>
+<span class="cmt">// 逻辑：&& || !（短路求值）</span>
+<span class="cmt">// 自增/自减：++ --</span>
+<span class="cmt">// 复合赋值：+= -= *= /= %=</span>
+<span class="cmt">// 三元：? :</span>
+
+<span class="kw">let</span> x = <span class="num">10</span>
+x += <span class="num">5</span>           <span class="cmt">// x = 15</span>
+<span class="kw">let</span> result = x &gt; <span class="num">10</span> ? <span class="str">"big"</span> : <span class="str">"small"</span>
+
+<span class="cmt">// 短路求值</span>
+<span class="lit">false</span> && <span class="fn">crash</span>()  <span class="cmt">// crash() 不会被调用</span>
+<span class="lit">true</span> || <span class="fn">crash</span>()   <span class="cmt">// crash() 不会被调用</span></code></pre>
+    </div>
+
+    <!-- 函数与闭包 -->
+    <div class="code-card">
+      <h3>函数与闭包</h3>
+      <pre><code><span class="kw">func</span> <span class="fn">add</span>(a, b) {
     <span class="kw">return</span> a + b
 }
 
-<span class="kw">let</span> result = <span class="fn">add</span>(<span class="num">3</span>, <span class="num">7</span>)
-<span class="fn">print</span>(result)  <span class="cmt">// → 10</span></code></pre>
-      </div>
+<span class="cmt">// 闭包 —— 捕获定义时环境</span>
+<span class="kw">func</span> <span class="fn">makeCounter</span>() {
+    <span class="kw">let</span> count = <span class="num">0</span>
+    <span class="kw">return</span> <span class="kw">func</span>() {
+        count = count + <span class="num">1</span>
+        <span class="kw">return</span> count
+    }
+}
+<span class="kw">let</span> c = <span class="fn">makeCounter</span>()
+<span class="fn">print</span>(<span class="fn">c</span>())  <span class="cmt">// 1</span>
+<span class="fn">print</span>(<span class="fn">c</span>())  <span class="cmt">// 2</span></code></pre>
+    </div>
 
-      <div class="code-card">
-        <h3>条件判断</h3>
-        <pre><code><span class="kw">if</span> (score >= <span class="num">90</span>) {
-    <span class="fn">print</span>(<span class="str">"优秀"</span>)
-} <span class="kw">else if</span> (score >= <span class="num">60</span>) {
-    <span class="fn">print</span>(<span class="str">"及格"</span>)
+    <!-- 控制流 -->
+    <div class="code-card">
+      <h3>控制流</h3>
+      <pre><code><span class="cmt">// if / else</span>
+<span class="kw">if</span> (x &gt; <span class="num">0</span>) {
+    <span class="fn">print</span>(<span class="str">"positive"</span>)
 } <span class="kw">else</span> {
-    <span class="fn">print</span>(<span class="str">"不及格"</span>)
-}</code></pre>
-      </div>
-
-      <div class="code-card">
-        <h3>循环</h3>
-        <pre><code><span class="cmt">// while 循环</span>
-<span class="kw">let</span> i = <span class="num">0</span>
-<span class="kw">while</span> (i < <span class="num">5</span>) {
-    <span class="fn">print</span>(i)
-    i = i + <span class="num">1</span>
+    <span class="fn">print</span>(<span class="str">"non-positive"</span>)
 }
 
-<span class="cmt">// for-in 循环</span>
-<span class="kw">for</span> item <span class="kw">in</span> [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>] {
-    <span class="fn">print</span>(item)
-}</code></pre>
-      </div>
+<span class="cmt">// while</span>
+<span class="kw">while</span> (n &gt; <span class="num">0</span>) { n = n - <span class="num">1</span> }
 
-      <div class="code-card">
-        <h3>对象</h3>
-        <pre><code><span class="kw">Obj</span> <span class="type">Student</span>(name, age) {
+<span class="cmt">// for-in（数组 / 字符串 / range）</span>
+<span class="kw">for</span> item <span class="kw">in</span> [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>] { <span class="fn">print</span>(item) }
+<span class="kw">for</span> ch <span class="kw">in</span> <span class="str">"Vora"</span>       { <span class="fn">print</span>(ch) }
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">5</span>)      { <span class="fn">print</span>(i) }</code></pre>
+    </div>
+
+    <!-- 对象与继承 -->
+    <div class="code-card">
+      <h3>对象与继承</h3>
+      <pre><code><span class="kw">Obj</span> <span class="type">Animal</span>(name) {
     <span class="kw">this</span>.name = name
-    <span class="kw">this</span>.age = age
+    <span class="kw">func</span> <span class="fn">speak</span>() { <span class="fn">print</span>(<span class="str">"..."</span>) }
+}
 
-    <span class="kw">func</span> <span class="fn">greet</span>() {
-        <span class="fn">print</span>(<span class="str">"Hi, I'm <span class="interp">${this.name}</span>"</span>)
+<span class="kw">Obj</span> <span class="type">Dog</span> : <span class="type">Animal</span> (name, breed) {
+    <span class="kw">this</span>.breed = breed
+    <span class="kw">func</span> <span class="fn">speak</span>() {
+        <span class="fn">print</span>(<span class="str">"Woof! I'm "</span> + <span class="kw">this</span>.name)
     }
 }
 
-<span class="kw">let</span> s = <span class="type">Student</span>(<span class="str">"Alice"</span>, <span class="num">20</span>)
-s.<span class="fn">greet</span>()  <span class="cmt">// → Hi, I'm Alice</span></code></pre>
-      </div>
+<span class="kw">let</span> d = <span class="type">Dog</span>(<span class="str">"Rex"</span>, <span class="str">"Husky"</span>)
+d.<span class="fn">speak</span>()      <span class="cmt">// Woof! I'm Rex</span>
+<span class="fn">print</span>(d.name)  <span class="cmt">// Rex</span></code></pre>
     </div>
-  </section>
+
+    <!-- 异常处理 -->
+    <div class="code-card">
+      <h3>异常处理</h3>
+      <pre><code><span class="kw">try</span> {
+    <span class="kw">throw</span> <span class="str">"something went wrong"</span>
+} <span class="kw">catch</span> (e) {
+    <span class="fn">print</span>(<span class="str">"Caught: "</span> + e)
+} <span class="kw">finally</span> {
+    <span class="fn">print</span>(<span class="str">"Cleanup"</span>)
+}
+
+<span class="cmt">// 抛出自定义错误对象</span>
+<span class="kw">Obj</span> <span class="type">ValidationError</span>(msg) {
+    <span class="kw">this</span>.message = msg
+}
+<span class="kw">throw</span> <span class="type">ValidationError</span>(<span class="str">"Invalid input"</span>)</code></pre>
+    </div>
+
+    <!-- Unicode 标识符 -->
+    <div class="code-card">
+      <h3>Unicode 标识符</h3>
+      <pre><code><span class="cmt">// 中文标识符</span>
+<span class="kw">let</span> 名字 = <span class="str">"小明"</span>
+<span class="kw">let</span> 年龄 = <span class="num">20</span>
+
+<span class="kw">func</span> <span class="fn">打印信息</span>(姓名, 岁数) {
+    <span class="fn">print</span>(<span class="str">"<span class="interp">${姓名}</span> 今年 <span class="interp">${岁数}</span> 岁"</span>)
+}
+<span class="fn">打印信息</span>(名字, 年龄)
+<span class="cmt">// → 小明 今年 20 岁</span>
+
+<span class="cmt">// 日文 / 带重音标识符</span>
+<span class="kw">let</span> ユーザー名 = <span class="str">"tanaka"</span>
+<span class="kw">let</span> café = <span class="str">"espresso"</span></code></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ====== 内建函数 ====== -->
+<section id="builtins" class="section">
+  <h2>内建函数</h2>
+  <p class="section-desc">当前提供 10 个内建函数。</p>
+
+  <table>
+    <thead>
+      <tr><th>函数</th><th>说明</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>print(...)</code></td><td>变参输出，空格分隔，末尾换行</td></tr>
+      <tr><td><code>clock()</code></td><td>返回 Unix 时间戳（秒，毫秒精度）</td></tr>
+      <tr><td><code>input(prompt?)</code></td><td>从 stdin 读取一行；可选 prompt 参数</td></tr>
+      <tr><td><code>int(value)</code></td><td>转为整数（截断小数）；接受 number/string/bool</td></tr>
+      <tr><td><code>float(value)</code></td><td>转为浮点数；接受 number/string/bool</td></tr>
+      <tr><td><code>range(stop)</code></td><td>生成 0..stop-1 的数字数组</td></tr>
+      <tr><td><code>range(start, stop, step?)</code></td><td>生成指定范围的数字数组</td></tr>
+      <tr><td><code>assert(cond, msg?)</code></td><td>断言条件为真，否则抛出 RuntimeError</td></tr>
+      <tr><td><code>bin(num)</code></td><td>数字 → 二进制字符串（如 <code>"0b101"</code>）</td></tr>
+      <tr><td><code>oct(num)</code></td><td>数字 → 八进制字符串（如 <code>"0o12"</code>）</td></tr>
+      <tr><td><code>hex(num)</code></td><td>数字 → 十六进制字符串（如 <code>"0xFF"</code>）</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ====== 项目结构 ====== -->
+<section id="structure" class="section">
+  <h2>项目结构</h2>
+  <p class="section-desc">~5,500 行 C++17，零外部依赖，清晰的模块划分。</p>
+
+  <div class="dir-tree">
+<span class="dir">Vora/</span>
+├── <span class="dir">src/</span>
+│   ├── <span class="dir">lexer/</span>       <span class="cmt">词法分析器（397 行）</span>
+│   ├── <span class="dir">ast/</span>         <span class="cmt">AST 节点 + Visitor 接口 + AST Printer</span>
+│   ├── <span class="dir">parser/</span>      <span class="cmt">Pratt 解析器（1,097 行）</span>
+│   ├── <span class="dir">interpreter/</span>  <span class="cmt">树遍历解释器（~1,480 行）</span>
+│   └── <span class="dir">runtime/</span>      <span class="cmt">值系统 / 作用域 / 可调用对象 / 错误</span>
+├── <span class="dir">examples/</span>          <span class="cmt">24 个示例文件（按特性编号）</span>
+├── <span class="dir">tests/</span>             <span class="cmt">13 个测试文件 + 运行脚本</span>
+├── <span class="dir">docs/</span>              <span class="cmt">开发文档（10 篇，中文）</span>
+├── <span class="dir">std/</span>               <span class="cmt">标准库（规划中）</span>
+├── build.ps1             <span class="cmt">构建脚本</span>
+└── CMakeLists.txt
+  </div>
+</section>
+
+<!-- ====== 路线图 ====== -->
+<section id="roadmap" class="section">
+  <h2>路线图</h2>
+  <p class="section-desc">Vora 分三个阶段演进：AST 解释器 → 字节码 VM → JIT。</p>
+
+  <table>
+    <thead>
+      <tr><th>版本</th><th>特性</th><th>状态</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>v0.01</td><td>字面量 + 表达式</td><td><span class="done">✅ 已完成</span></td></tr>
+      <tr><td>v0.02</td><td>变量 + 作用域</td><td><span class="done">✅ 已完成</span></td></tr>
+      <tr><td>v0.03</td><td>函数</td><td><span class="done">✅ 已完成</span></td></tr>
+      <tr><td>v0.04</td><td>控制流（if / while / for / break / continue）</td><td><span class="done">✅ 已完成</span></td></tr>
+      <tr><td>v0.05</td><td>对象 + 数组 + 继承</td><td><span class="done">✅ 已完成</span></td></tr>
+      <tr><td>v0.06</td><td>闭包</td><td><span class="done">✅ 已完成</span></td></tr>
+      <tr><td>v0.07</td><td>异常（try / catch / finally / throw）</td><td><span class="done">✅ 已完成</span></td></tr>
+      <tr><td>v0.08</td><td>模块系统（import / export）</td><td><span class="wip">⏳ 规划中</span></td></tr>
+      <tr style="border-top: 2px solid var(--border);"><td>v0.1</td><td>字节码 VM</td><td><span class="planned">第二版</span></td></tr>
+      <tr><td>v0.2</td><td>优化 / JIT</td><td><span class="planned">第三版</span></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ====== 文档 ====== -->
+<section id="docs" class="section">
+  <h2>文档</h2>
+  <p class="section-desc">10 篇开发文档（中文），涵盖设计到实现。</p>
+
+  <table>
+    <thead>
+      <tr><th>文档</th><th>内容</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>01-简介.md</code></td><td>项目简介与设计目标</td></tr>
+      <tr><td><code>02-项目结构.md</code></td><td>项目结构与模块划分</td></tr>
+      <tr><td><code>03-词法分析器开发文档.md</code></td><td>Lexer 设计（单遍扫描、错误恢复、Unicode）</td></tr>
+      <tr><td><code>04-AST开发文档.md</code></td><td>AST 节点设计与 Visitor 模式</td></tr>
+      <tr><td><code>05-语法分析器开发文档.md</code></td><td>Pratt Parser 设计</td></tr>
+      <tr><td><code>06-解释器开发文档.md</code></td><td>Interpreter 设计（树遍历执行）</td></tr>
+      <tr><td><code>07-运行时系统开发文档.md</code></td><td>Value / Environment / Callable 系统</td></tr>
+      <tr><td><code>08-已实现功能总结.md</code></td><td>所有已实现功能的完整总结</td></tr>
+      <tr><td><code>09-后续优化建议.md</code></td><td>优化路线图与建议</td></tr>
+      <tr><td><code>10-程序员视角-深度分析与UX路线图.md</code></td><td>~600 行深度分析 + UX 路线图</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ====== 页脚 ====== -->
+<footer class="footer">
+  <p>
+    Vora · <a href="https://github.com/Asamo096/Vora" target="_blank" rel="noopener">github.com/Asamo096/Vora</a>
+  </p>
+  <p style="margin-top: 8px;">
+    参考：
+    <a href="https://craftinginterpreters.com/" target="_blank" rel="noopener">Crafting Interpreters</a> ·
+    <a href="https://www.lua.org/source/5.4/" target="_blank" rel="noopener">Lua 5.4</a> ·
+    <a href="https://wren.io/" target="_blank" rel="noopener">Wren</a> ·
+    <a href="https://github.com/python/cpython" target="_blank" rel="noopener">CPython</a>
+  </p>
+</footer>
 
 </body>
 </html>
