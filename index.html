@@ -6,7 +6,7 @@
         <title>Vora — 动态类型脚本语言</title>
         <link
             rel="icon"
-            href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128' fill='none'><defs><linearGradient id='g' x1='0' y1='0' x2='128' y2='128' gradientUnits='userSpaceOnUse'><stop offset='0%25' stop-color='%236366f1'/><stop offset='100%25' stop-color='%23a78bfa'/></linearGradient></defs><rect width='128' height='128' rx='28' fill='url(%23g)'/><text x='64' y='82' font-family='Segoe UI,system-ui,sans-serif' font-size='64' font-weight='700' fill='%23fff' text-anchor='middle'>V</text></svg>"
+            href="vora_logo.svg"
             type="image/svg+xml"
         />
         <style>
@@ -129,6 +129,10 @@
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
                 background-clip: text;
+            }
+            .hero-logo {
+                display: block;
+                margin: 0 auto 8px;
             }
             .hero .tagline {
                 font-size: 1.3rem;
@@ -385,14 +389,21 @@
 
         <!-- ====== Hero ====== -->
         <header class="hero">
+            <img
+                src="vora_logo.svg"
+                alt="Vora logo"
+                class="hero-logo"
+                width="160"
+                height="160"
+            />
             <h1>Vora</h1>
             <p class="tagline">
                 动态类型脚本语言 · 类 JavaScript 语法 · Lua 级简单性 · Wren
                 式面向对象
             </p>
             <p class="meta">
-                当前为 <strong>AST 树遍历解释器</strong>（第一版）<br />
-                ~5,500 行 C++17 · 零外部依赖<br />
+                双后端：<strong>AST 树遍历解释器</strong> + <strong>字节码 VM</strong>（Phase 1-4 已完成）<br />
+                ~8,820 行 C++17 · 零外部依赖<br />
                 <a
                     href="https://github.com/Vora-lang/Vora"
                     target="_blank"
@@ -436,12 +447,20 @@
                 --repl<br />
 
                 <span class="cmt"># 打印 AST（S-expression 格式）</span><br />
-                <span class="prompt">PS&gt; </span>./build/Debug/Vora.exe`
+                <span class="prompt">PS&gt; </span>./build/Debug/Vora.exe
                 examples/main.va --ast-printer<br />
 
                 <span class="cmt"># 打印 Token 流</span><br />
                 <span class="prompt">PS&gt; </span>./build/Debug/Vora.exe
                 examples/main.va --tokens<br />
+                <br />
+                <span class="cmt"># 字节码 VM 模式（高性能第二后端）</span><br />
+                <span class="prompt">PS&gt; </span>./build/Debug/Vora.exe
+                examples/main.va --vm<br />
+                <br />
+                <span class="cmt"># VM 模式 + 字节码反汇编</span><br />
+                <span class="prompt">PS&gt; </span>./build/Debug/Vora.exe
+                examples/main.va --vm --tokens<br />
             </div>
         </section>
 
@@ -664,23 +683,25 @@ d.<span class="fn">speak</span>()      <span class="cmt">// Woof! I'm Rex</span>
         <section id="structure" class="section">
             <h2>项目结构</h2>
             <p class="section-desc">
-                ~5,500 行 C++17，零外部依赖，清晰的模块划分。
+                ~8,820 行 C++17，零外部依赖，清晰的模块划分。
             </p>
 
             <div class="dir-tree">
                 <span class="dir">Vora/</span><br />
                 ├── <span class="dir">src/</span><br />
                 │&nbsp;&nbsp;&nbsp;├── <span class="dir">lexer/</span>
-                <span class="cmt">词法分析器（397 行）</span><br />
+                <span class="cmt">词法分析器（~687 行）</span><br />
                 │&nbsp;&nbsp;&nbsp;├── <span class="dir">ast/</span>
-                <span class="cmt">AST 节点 + Visitor 接口 + AST Printer</span
+                <span class="cmt">AST 节点 + Visitor 接口 + AST Printer（~1,629 行）</span
                 ><br />
                 │&nbsp;&nbsp;&nbsp;├── <span class="dir">parser/</span>
-                <span class="cmt">Pratt 解析器（1,097 行）</span><br />
+                <span class="cmt">Pratt 解析器（~1,200 行）</span><br />
                 │&nbsp;&nbsp;&nbsp;├── <span class="dir">interpreter/</span>
-                <span class="cmt">树遍历解释器（~1,480 行）</span><br />
+                <span class="cmt">树遍历解释器（~1,621 行）</span><br />
+                │&nbsp;&nbsp;&nbsp;├── <span class="dir">vm/</span>
+                <span class="cmt">字节码 VM：Compiler + 栈式虚拟机（~2,369 行）</span><br />
                 │&nbsp;&nbsp;&nbsp;└── <span class="dir">runtime/</span>
-                <span class="cmt">值系统 / 作用域 / 可调用对象 / 错误</span
+                <span class="cmt">值系统 / 作用域 / 可调用对象 / 错误（~692 行）</span
                 ><br />
                 ├── <span class="dir">examples/</span>
                 <span class="cmt">24 个示例文件（按特性编号）</span><br />
@@ -699,7 +720,7 @@ d.<span class="fn">speak</span>()      <span class="cmt">// Woof! I'm Rex</span>
         <section id="roadmap" class="section">
             <h2>路线图</h2>
             <p class="section-desc">
-                Vora 分三个阶段演进：AST 解释器 → 字节码 VM → JIT。
+                三阶段演进：AST 解释器（✅）→ 字节码 VM（Phase 1-4 ✅）→ JIT（规划中）。
             </p>
 
             <table>
@@ -712,54 +733,64 @@ d.<span class="fn">speak</span>()      <span class="cmt">// Woof! I'm Rex</span>
                 </thead>
                 <tbody>
                     <tr>
-                        <td>v0.01</td>
-                        <td>字面量 + 表达式</td>
-                        <td><span class="done">✅ 已完成</span></td>
-                    </tr>
-                    <tr>
-                        <td>v0.02</td>
-                        <td>变量 + 作用域</td>
-                        <td><span class="done">✅ 已完成</span></td>
-                    </tr>
-                    <tr>
-                        <td>v0.03</td>
-                        <td>函数</td>
-                        <td><span class="done">✅ 已完成</span></td>
-                    </tr>
-                    <tr>
-                        <td>v0.04</td>
-                        <td>控制流（if / while / for / break / continue）</td>
-                        <td><span class="done">✅ 已完成</span></td>
-                    </tr>
-                    <tr>
-                        <td>v0.05</td>
-                        <td>对象 + 数组 + 继承</td>
-                        <td><span class="done">✅ 已完成</span></td>
-                    </tr>
-                    <tr>
-                        <td>v0.06</td>
-                        <td>闭包</td>
-                        <td><span class="done">✅ 已完成</span></td>
-                    </tr>
-                    <tr>
-                        <td>v0.07</td>
-                        <td>异常（try / catch / finally / throw）</td>
-                        <td><span class="done">✅ 已完成</span></td>
-                    </tr>
-                    <tr>
-                        <td>v0.08</td>
-                        <td>模块系统（import / export）</td>
-                        <td><span class="wip">⏳ 规划中</span></td>
-                    </tr>
-                    <tr style="border-top: 2px solid var(--border)">
                         <td>v0.1</td>
-                        <td>字节码 VM</td>
-                        <td><span class="planned">第二版</span></td>
+                        <td>词法分析器（Lexer）：Source → Token 流</td>
+                        <td><span class="done">✅ 已完成</span></td>
                     </tr>
                     <tr>
                         <td>v0.2</td>
-                        <td>优化 / JIT</td>
-                        <td><span class="planned">第三版</span></td>
+                        <td>语法分析器（Parser）：Token → AST + Pratt 解析</td>
+                        <td><span class="done">✅ 已完成</span></td>
+                    </tr>
+                    <tr>
+                        <td>v0.3</td>
+                        <td>AST 改进、分号语句分隔符</td>
+                        <td><span class="done">✅ 已完成</span></td>
+                    </tr>
+                    <tr>
+                        <td>v0.4</td>
+                        <td>树遍历解释器、字符串插值、数组、对象、方法绑定</td>
+                        <td><span class="done">✅ 已完成</span></td>
+                    </tr>
+                    <tr>
+                        <td>v0.5</td>
+                        <td>int()/float()、range()、++/--、break/continue、复合赋值、类型标注</td>
+                        <td><span class="done">✅ 已完成</span></td>
+                    </tr>
+                    <tr>
+                        <td>v0.6</td>
+                        <td>字节码 VM Phase 1（表达式、全局变量、控制流）+ Visitor 模式重构</td>
+                        <td><span class="done">✅ 已完成</span></td>
+                    </tr>
+                    <tr>
+                        <td>v0.7</td>
+                        <td>VM Phase 2+3：局部变量、break/continue、for-in、函数、对象（Obj）、继承、try/catch/throw</td>
+                        <td><span class="done">✅ 已完成</span></td>
+                    </tr>
+                    <tr style="border-top: 2px solid var(--border)">
+                        <td>v0.8</td>
+                        <td>VM 异常处理完善（OP_PUSH_CATCH / OP_POP_CATCH / OP_THROW / OP_FINALLY_END）</td>
+                        <td><span class="done">✅ 已完成</span></td>
+                    </tr>
+                    <tr>
+                        <td>v0.9</td>
+                        <td>VM 闭包（upvalue 机制：内层函数捕获外层变量）+ 字符串插值（VM 编译时解析）</td>
+                        <td><span class="done">✅ 已完成</span></td>
+                    </tr>
+                    <tr>
+                        <td>v0.10</td>
+                        <td>模块系统（import / export）</td>
+                        <td><span class="wip">⏳ 规划中</span></td>
+                    </tr>
+                    <tr>
+                        <td>v1.0</td>
+                        <td>标准库、跨平台支持、LSP、包管理器 vpm</td>
+                        <td><span class="planned">规划中</span></td>
+                    </tr>
+                    <tr>
+                        <td>未来</td>
+                        <td>优化 / JIT 编译（第三版）</td>
+                        <td><span class="planned">长期</span></td>
                     </tr>
                 </tbody>
             </table>
