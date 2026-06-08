@@ -402,7 +402,7 @@
                 式面向对象
             </p>
             <p class="meta">
-                双后端：<strong>AST 树遍历解释器</strong> + <strong>字节码 VM</strong>（Phase 1-4 已完成）<br />
+                双后端：<strong>字节码 VM</strong>（默认）+ <strong>AST 树遍历解释器</strong>（`--interpreter`）<br />
                 ~8,820 行 C++17 · 零外部依赖<br />
                 <a
                     href="https://github.com/Vora-lang/Vora"
@@ -454,13 +454,17 @@
                 <span class="prompt">PS&gt; </span>./build/Debug/Vora.exe
                 examples/main.va --tokens<br />
                 <br />
-                <span class="cmt"># 字节码 VM 模式（高性能第二后端）</span><br />
+                <span class="cmt"># 字节码 VM 模式（默认后端）</span><br />
                 <span class="prompt">PS&gt; </span>./build/Debug/Vora.exe
-                examples/main.va --vm<br />
+                examples/main.va<br />
                 <br />
-                <span class="cmt"># VM 模式 + 字节码反汇编</span><br />
+                <span class="cmt"># 树遍历解释器</span><br />
                 <span class="prompt">PS&gt; </span>./build/Debug/Vora.exe
-                examples/main.va --vm --tokens<br />
+                examples/main.va --interpreter<br />
+                <br />
+                <span class="cmt"># 字节码反汇编</span><br />
+                <span class="prompt">PS&gt; </span>./build/Debug/Vora.exe
+                examples/main.va --tokens<br />
             </div>
         </section>
 
