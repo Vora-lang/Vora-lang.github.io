@@ -545,14 +545,26 @@
             <tr>
                 <td><code>int(value)</code></td>
                 <td>1</td>
-                <td>Number</td>
-                <td>转为整数（截断小数部分）。接受 number / string / bool</td>
+                <td>Int</td>
+                <td>转为 int64（截断小数部分）。接受 number / string / bool</td>
             </tr>
             <tr>
                 <td><code>float(value)</code></td>
                 <td>1</td>
-                <td>Number</td>
-                <td>转为浮点数。接受 number / string / bool</td>
+                <td>Float</td>
+                <td>转为 float64。接受 number / string / bool</td>
+            </tr>
+            <tr>
+                <td><code>len(value)</code></td>
+                <td>1</td>
+                <td>Int</td>
+                <td>返回数组元素数或字符串字符数</td>
+            </tr>
+            <tr>
+                <td><code>type(value)</code></td>
+                <td>1</td>
+                <td>String</td>
+                <td>返回类型名：<code>"int"</code> / <code>"float"</code> / <code>"string"</code> / <code>"array"</code> / <code>"boolean"</code> / <code>"null"</code> / <code>"function"</code> / <code>"object"</code></td>
             </tr>
             <tr>
                 <td><code>range(stop)</code></td>
