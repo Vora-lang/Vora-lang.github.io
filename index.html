@@ -384,6 +384,7 @@
                 <a href="#builtins">内建函数</a>
                 <a href="#structure">结构</a>
                 <a href="#roadmap">路线图</a>
+                <a href="docs/index.html">文档</a>
             </div>
         </nav>
 
@@ -403,7 +404,7 @@
             </p>
             <p class="meta">
                 双后端：<strong>字节码 VM</strong>（默认）+ <strong>AST 树遍历解释器</strong>（`--interpreter`）<br />
-                ~8,820 行 C++17 · 零外部依赖<br />
+                ~9,400 行 C++17 · 零外部依赖 · <a href="docs/index.html">📚 文档</a><br />
                 <a
                     href="https://github.com/Vora-lang/Vora"
                     target="_blank"
@@ -435,36 +436,35 @@
             <p class="section-desc">一条命令构建，开箱即用。</p>
 
             <div class="shell-block">
-                <span class="cmt"># 构建（Windows / CMake）</span><br />
+                <span class="cmt"># 构建（跨平台一键构建）</span><br />
+                <span class="cmt"># Windows (PowerShell) — 默认 x64 Debug</span><br />
                 <span class="prompt">PS&gt; </span>.\build.ps1<br />
-
-                <span class="cmt"># 运行脚本</span><br />
-                <span class="prompt">PS&gt; </span>./build/Debug/Vora.exe
-                examples/main.va<br />
-
-                <span class="cmt"># REPL 模式（交互式求值）</span><br />
-                <span class="prompt">PS&gt; </span>./build/Debug/Vora.exe
-                --repl<br />
-
+                <span class="cmt"># Linux / macOS (bash) — 默认 x64 debug</span><br />
+                <span class="prompt">$ </span>./build.sh<br />
+                <br />
+                <span class="cmt"># 多架构 + 打包</span><br />
+                <span class="prompt">PS&gt; </span>.\build.ps1 -Architecture arm64 -Config Release -Package  <span class="cmt"># → .msi</span><br />
+                <span class="prompt">$ </span>./build.sh -a arm64 -c release -p    <span class="cmt"># → .deb/.rpm/.pkg.tar.xz</span><br />
+                <br />
+                <span class="cmt"># 运行脚本（VM 模式，默认后端）</span><br />
+                <span class="prompt">$ </span>vora examples/main.va<br />
+                <br />
+                <span class="cmt"># REPL 交互模式</span><br />
+                <span class="prompt">$ </span>vora --repl<br />
+                <br />
+                <span class="cmt"># 树遍历解释器（参考实现）</span><br />
+                <span class="prompt">$ </span>vora examples/main.va --interpreter<br />
+                <br />
                 <span class="cmt"># 打印 AST（S-expression 格式）</span><br />
-                <span class="prompt">PS&gt; </span>./build/Debug/Vora.exe
-                examples/main.va --ast-printer<br />
-
-                <span class="cmt"># 打印 Token 流</span><br />
-                <span class="prompt">PS&gt; </span>./build/Debug/Vora.exe
-                examples/main.va --tokens<br />
+                <span class="prompt">$ </span>vora examples/main.va --ast-printer<br />
                 <br />
-                <span class="cmt"># 字节码 VM 模式（默认后端）</span><br />
-                <span class="prompt">PS&gt; </span>./build/Debug/Vora.exe
-                examples/main.va<br />
+                <span class="cmt"># 打印 Token 流 / 字节码反汇编</span><br />
+                <span class="prompt">$ </span>vora examples/main.va --tokens<br />
                 <br />
-                <span class="cmt"># 树遍历解释器</span><br />
-                <span class="prompt">PS&gt; </span>./build/Debug/Vora.exe
-                examples/main.va --interpreter<br />
-                <br />
-                <span class="cmt"># 字节码反汇编</span><br />
-                <span class="prompt">PS&gt; </span>./build/Debug/Vora.exe
-                examples/main.va --tokens<br />
+                <span class="cmt"># 安装（Release 包）</span><br />
+                <span class="cmt"># Windows: .msi 双击安装（自定义目录 + 自动 PATH）</span><br />
+                <span class="cmt"># Linux: sudo dpkg -i vora-*.deb  |  sudo rpm -i vora-*.rpm</span><br />
+                <span class="cmt"># macOS: tar xzf vora-*.tar.gz -C /usr/local/bin</span><br />
             </div>
         </section>
 
@@ -687,7 +687,7 @@ d.<span class="fn">speak</span>()      <span class="cmt">// Woof! I'm Rex</span>
         <section id="structure" class="section">
             <h2>项目结构</h2>
             <p class="section-desc">
-                ~8,820 行 C++17，零外部依赖，清晰的模块划分。
+                ~9,400 行 C++17，零外部依赖，清晰的模块划分。支持 Windows / Linux / macOS 多架构构建与原生打包。
             </p>
 
             <div class="dir-tree">
@@ -703,19 +703,26 @@ d.<span class="fn">speak</span>()      <span class="cmt">// Woof! I'm Rex</span>
                 │&nbsp;&nbsp;&nbsp;├── <span class="dir">interpreter/</span>
                 <span class="cmt">树遍历解释器（~1,621 行）</span><br />
                 │&nbsp;&nbsp;&nbsp;├── <span class="dir">vm/</span>
-                <span class="cmt">字节码 VM：Compiler + 栈式虚拟机（~2,369 行）</span><br />
+                <span class="cmt">字节码 VM：Compiler + 栈式虚拟机（~3,175 行）</span><br />
                 │&nbsp;&nbsp;&nbsp;└── <span class="dir">runtime/</span>
-                <span class="cmt">值系统 / 作用域 / 可调用对象 / 错误（~692 行）</span
+                <span class="cmt">值系统 / 作用域 / 可调用对象 / 错误（~719 行）</span
                 ><br />
+                ├── <span class="dir">cmake/toolchains/</span>
+                <span class="cmt">交叉编译工具链（6 个）</span><br />
+                ├── <span class="dir">res/</span>
+                <span class="cmt">图标、WiX 安装包、启动器</span><br />
+                ├── <span class="dir">.github/workflows/</span>
+                <span class="cmt">CI 多架构矩阵（18 个组合）</span><br />
                 ├── <span class="dir">examples/</span>
                 <span class="cmt">24 个示例文件（按特性编号）</span><br />
                 ├── <span class="dir">tests/</span>
-                <span class="cmt">13 个测试文件 + 运行脚本</span><br />
+                <span class="cmt">13 个测试文件 + run_tests.ps1 / run_tests.sh</span><br />
                 ├── <span class="dir">docs/</span>
                 <span class="cmt">开发文档（10 篇，中文）</span><br />
                 ├── <span class="dir">std/</span>
                 <span class="cmt">标准库（规划中）</span><br />
-                ├── build.ps1 <span class="cmt">构建脚本</span><br />
+                ├── build.ps1 / build.sh <span class="cmt">跨平台构建脚本</span><br />
+                ├── CMakePresets.json <span class="cmt">20 个预设</span><br />
                 └── CMakeLists.txt
             </div>
         </section>
@@ -771,24 +778,34 @@ d.<span class="fn">speak</span>()      <span class="cmt">// Woof! I'm Rex</span>
                         <td>VM Phase 2+3：局部变量、break/continue、for-in、函数、对象（Obj）、继承、try/catch/throw</td>
                         <td><span class="done">✅ 已完成</span></td>
                     </tr>
-                    <tr style="border-top: 2px solid var(--border)">
+                    <tr>
                         <td>v0.8</td>
-                        <td>VM 异常处理完善（OP_PUSH_CATCH / OP_POP_CATCH / OP_THROW / OP_FINALLY_END）</td>
+                        <td>VM Phase 3-4：闭包（upvalue）、字符串插值、运行时错误 catch 完善；VM 设为默认后端</td>
                         <td><span class="done">✅ 已完成</span></td>
                     </tr>
                     <tr>
                         <td>v0.9</td>
-                        <td>VM 闭包（upvalue 机制：内层函数捕获外层变量）+ 字符串插值（VM 编译时解析）</td>
+                        <td>VM 性能优化：全局变量驻留、快速数值操作码、常量折叠、移动语义</td>
                         <td><span class="done">✅ 已完成</span></td>
                     </tr>
                     <tr>
                         <td>v0.10</td>
+                        <td>VM 异常处理完善（finally 路由、异常重抛、catch handler 清理）</td>
+                        <td><span class="done">✅ 已完成</span></td>
+                    </tr>
+                    <tr style="border-top: 2px solid var(--border)">
+                        <td>v0.11</td>
+                        <td>多架构构建系统 + 应用图标 + 原生打包（.msi/.deb/.rpm/.pkg.tar.xz）+ CI</td>
+                        <td><span class="done">✅ 已完成</span></td>
+                    </tr>
+                    <tr>
+                        <td>v0.12</td>
                         <td>模块系统（import / export）</td>
                         <td><span class="wip">⏳ 规划中</span></td>
                     </tr>
                     <tr>
                         <td>v1.0</td>
-                        <td>标准库、跨平台支持、LSP、包管理器 vpm</td>
+                        <td>标准库、LSP、包管理器 vpm</td>
                         <td><span class="planned">规划中</span></td>
                     </tr>
                     <tr>
@@ -803,7 +820,7 @@ d.<span class="fn">speak</span>()      <span class="cmt">// Woof! I'm Rex</span>
         <!-- ====== 文档 ====== -->
         <section id="docs" class="section">
             <h2>文档</h2>
-            <p class="section-desc">10 篇开发文档（中文），涵盖设计到实现。</p>
+            <p class="section-desc">10 篇开发文档（中文）+ 4 个用户文档页面（HTML）。</p>
 
             <table>
                 <thead>
@@ -814,8 +831,8 @@ d.<span class="fn">speak</span>()      <span class="cmt">// Woof! I'm Rex</span>
                 </thead>
                 <tbody>
                     <tr>
-                        <td><code>01-简介.md</code></td>
-                        <td>项目简介与设计目标</td>
+                        <td><code>01-技术栈概览.md</code></td>
+                        <td>技术栈、架构、构建命令</td>
                     </tr>
                     <tr>
                         <td><code>02-项目结构.md</code></td>
@@ -843,20 +860,21 @@ d.<span class="fn">speak</span>()      <span class="cmt">// Woof! I'm Rex</span>
                     </tr>
                     <tr>
                         <td><code>08-已实现功能总结.md</code></td>
-                        <td>所有已实现功能的完整总结</td>
+                        <td>所有已实现功能的完整总结 + 版本历程</td>
                     </tr>
                     <tr>
-                        <td><code>09-后续优化建议.md</code></td>
-                        <td>优化路线图与建议</td>
+                        <td><code>09-构建系统指南.md</code></td>
+                        <td>多架构构建、交叉编译、打包指南</td>
                     </tr>
                     <tr>
-                        <td>
-                            <code>10-程序员视角-深度分析与UX路线图.md</code>
-                        </td>
-                        <td>~600 行深度分析 + UX 路线图</td>
+                        <td><code>10-程序员视角-深度分析与UX路线图.md</code></td>
+                        <td>~747 行深度分析 + UX 路线图（2026-06-10 修订）</td>
                     </tr>
                 </tbody>
             </table>
+            <p style="color:var(--text2);font-size:0.92rem;margin-top:8px">
+                📚 <a href="docs/index.html" style="color:var(--kw);font-weight:600">用户文档</a> — 快速开始 · 语言参考 · 示例程序（HTML）
+            </p>
         </section>
 
         <!-- ====== 页脚 ====== -->

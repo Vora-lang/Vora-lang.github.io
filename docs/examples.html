@@ -1,0 +1,432 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>示例程序 — Vora 文档</title>
+<link rel="icon" href="../vora_logo.svg" type="image/svg+xml" />
+<style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+        --bg: #ffffff; --card: #f5f5f7; --border: #e0e0e0;
+        --text: #1d1d1f; --text2: #6e6e73; --kw: #7c3aed; --str: #059669;
+        --num: #d97706; --fn: #2563eb; --lit: #ea580c; --cmt: #a1a1aa;
+        --radius: 10px;
+        --mono: "Cascadia Code", "Fira Code", "JetBrains Mono", "Consolas", monospace;
+        --sans: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+    }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body { font-family: var(--sans); background: var(--bg); color: var(--text); line-height: 1.7; -webkit-font-smoothing: antialiased; }
+    .nav { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0 24px; }
+    .nav-inner { max-width: 960px; margin: 0 auto; display: flex; align-items: center; gap: 24px; height: 52px; font-size: 0.9rem; font-weight: 500; }
+    .nav-logo { font-size: 1.2rem; font-weight: 800; background: linear-gradient(135deg, #6366f1, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-right: auto; }
+    .nav a { color: var(--text2); text-decoration: none; transition: color 0.2s; }
+    .nav a:hover { color: var(--kw); }
+    .nav .active { color: var(--kw); }
+    .section { max-width: 960px; margin: 0 auto; padding: 60px 24px; }
+    .section h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 8px; }
+    .section h2 { font-size: 1.5rem; font-weight: 700; margin: 48px 0 12px; padding-top: 24px; border-top: 1px solid var(--border); }
+    .section h2:first-of-type { border-top: none; padding-top: 0; }
+    .section-desc { color: var(--text2); margin-bottom: 32px; font-size: 1.05rem; }
+    .example-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 32px; overflow: hidden; }
+    .example-header { padding: 14px 22px; border-bottom: 1px solid var(--border); font-weight: 700; font-size: 1.05rem; display: flex; align-items: center; gap: 10px; }
+    .example-header .tag { font-size: 0.75rem; background: #ede9fe; color: var(--kw); padding: 3px 10px; border-radius: 20px; font-weight: 500; }
+    .example-body { padding: 20px 22px; }
+    .example-body pre { font-family: var(--mono); font-size: 0.88rem; line-height: 1.65; overflow-x: auto; color: var(--text); margin: 0; }
+    .example-body p { margin: 8px 0 12px; color: var(--text2); font-size: 0.95rem; }
+    .shell { background: #1e1e2e; color: #cdd6f4; border-radius: var(--radius); padding: 14px 18px; font-family: var(--mono); font-size: 0.85rem; line-height: 1.6; overflow-x: auto; margin-top: 14px; }
+    .shell .prompt { color: #a6e3a1; }
+    .shell .out { color: #bac2de; }
+    .shell .cmt { color: #6c7086; font-style: italic; }
+    code { font-family: var(--mono); font-size: 0.88em; }
+    p code, li code { background: #f3f0ff; color: var(--kw); padding: 2px 6px; border-radius: 4px; font-size: 0.85em; }
+    .kw { color: var(--kw); } .str { color: var(--str); } .num { color: var(--num); }
+    .fn { color: var(--fn); } .lit { color: var(--lit); } .cmt { color: var(--cmt); font-style: italic; }
+    .interp { color: #db2777; } .type { color: #0d9488; }
+    .footer { border-top: 1px solid var(--border); padding: 40px 24px; text-align: center; color: var(--text2); font-size: 0.85rem; }
+    .footer a { color: var(--kw); text-decoration: none; }
+    .footer a:hover { text-decoration: underline; }
+    ul, ol { margin: 8px 0 16px 24px; }
+    li { margin-bottom: 4px; }
+    @media (max-width: 768px) { .section h1 { font-size: 1.6rem; } .section h2 { font-size: 1.3rem; } }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+    <div class="nav-inner">
+        <a href="../index.html" style="font-size:1.2rem;font-weight:800;background:linear-gradient(135deg,#6366f1,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-decoration:none;">Vora</a>
+        <a href="../index.html#quickstart">快速开始</a>
+        <a href="../index.html#syntax">语法</a>
+        <a href="index.html">文档</a>
+        <a href="examples.html" class="active">示例</a>
+    </div>
+</nav>
+
+<main class="section">
+    <h1>💡 示例程序</h1>
+    <p class="section-desc">从 Hello World 到闭包与继承 —— 通过示例学习 Vora 的各种特性。</p>
+
+    <!-- Hello World -->
+    <div class="example-card" id="hello">
+        <div class="example-header">👋 Hello, World <span class="tag">基础</span></div>
+        <div class="example-body">
+            <p>最简单的 Vora 程序。使用 <code>print()</code> 输出文本。</p>
+            <pre><code><span class="fn">print</span>(<span class="str">"Hello, World!"</span>)
+<span class="fn">print</span>(<span class="str">"你好，世界！"</span>)</code></pre>
+            <div class="shell">
+                <span class="prompt">$ </span>vora hello.va<br />
+                <span class="out">Hello, World!</span><br />
+                <span class="out">你好，世界！</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 变量与类型 -->
+    <div class="example-card" id="variables">
+        <div class="example-header">📦 变量与类型 <span class="tag">基础</span></div>
+        <div class="example-body">
+            <p><code>let</code> 声明变量，支持 7 种运行时类型。数字支持 <code>0x</code>/<code>0o</code>/<code>0b</code> 前缀。</p>
+            <pre><code><span class="kw">let</span> n = <span class="num">42</span>              <span class="cmt">// Number (double)</span>
+<span class="kw">let</span> f = <span class="num">3.14</span>            <span class="cmt">// Number</span>
+<span class="kw">let</span> b = <span class="lit">true</span>            <span class="cmt">// Boolean</span>
+<span class="kw">let</span> s = <span class="str">"hello"</span>         <span class="cmt">// String</span>
+<span class="kw">let</span> arr = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]    <span class="cmt">// Array</span>
+<span class="kw">let</span> nothing = <span class="lit">null</span>
+
+<span class="cmt">// 数字前缀</span>
+<span class="kw">let</span> hex = <span class="num">0xFF</span>      <span class="cmt">// 255（十六进制）</span>
+<span class="kw">let</span> oct = <span class="num">0o77</span>      <span class="cmt">// 63（八进制）</span>
+<span class="kw">let</span> bin = <span class="num">0b101</span>     <span class="cmt">// 5（二进制）</span></code></pre>
+        </div>
+    </div>
+
+    <!-- 字符串插值 -->
+    <div class="example-card" id="interpolation">
+        <div class="example-header">✨ 字符串插值 <span class="tag">基础</span></div>
+        <div class="example-body">
+            <p><code>${...}</code> 语法在字符串中嵌入表达式，支持变量和属性访问。</p>
+            <pre><code><span class="kw">let</span> name = <span class="str">"Vora"</span>
+<span class="kw">let</span> version = <span class="num">11</span>
+<span class="fn">print</span>(<span class="str">"Welcome to <span class="interp">${name}</span> v0.<span class="interp">${version}</span>!"</span>)
+
+<span class="cmt">// 属性访问</span>
+<span class="kw">Obj</span> <span class="type">Point</span>(x, y) { <span class="kw">this</span>.x = x; <span class="kw">this</span>.y = y }
+<span class="kw">let</span> p = <span class="type">Point</span>(<span class="num">10</span>, <span class="num">20</span>)
+<span class="fn">print</span>(<span class="str">"Position: (<span class="interp">${p.x}</span>, <span class="interp">${p.y}</span>)"</span>)</code></pre>
+            <div class="shell">
+                <span class="out">Welcome to Vora v0.11!</span><br />
+                <span class="out">Position: (10, 20)</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 条件分支 -->
+    <div class="example-card" id="conditionals">
+        <div class="example-header">🔀 条件分支 <span class="tag">控制流</span></div>
+        <div class="example-body">
+            <p><code>if/else</code> 判断条件。可与三元运算符 <code>? :</code> 组合使用。</p>
+            <pre><code><span class="kw">let</span> score = <span class="num">85</span>
+
+<span class="kw">if</span> (score >= <span class="num">90</span>) {
+    <span class="fn">print</span>(<span class="str">"A"</span>)
+} <span class="kw">else</span> <span class="kw">if</span> (score >= <span class="num">80</span>) {
+    <span class="fn">print</span>(<span class="str">"B"</span>)
+} <span class="kw">else</span> {
+    <span class="fn">print</span>(<span class="str">"C"</span>)
+}
+
+<span class="cmt">// 三元运算符：右结合，短路求值</span>
+<span class="kw">let</span> grade = score > <span class="num">90</span> ? <span class="str">"A"</span> : score > <span class="num">80</span> ? <span class="str">"B"</span> : <span class="str">"C"</span>
+<span class="fn">print</span>(grade)  <span class="cmt">// "B"</span></code></pre>
+        </div>
+    </div>
+
+    <!-- 循环 -->
+    <div class="example-card" id="loops">
+        <div class="example-header">🔄 循环 <span class="tag">控制流</span></div>
+        <div class="example-body">
+            <p>Vora 提供 <code>while</code> 循环和 <code>for-in</code> 迭代，支持 <code>break</code>/<code>continue</code>。</p>
+            <pre><code><span class="cmt">// while 循环</span>
+<span class="kw">let</span> i = <span class="num">0</span>
+<span class="kw">while</span> (i < <span class="num">5</span>) {
+    <span class="fn">print</span>(i)
+    i += <span class="num">1</span>
+}
+
+<span class="cmt">// for-in：数组</span>
+<span class="kw">for</span> item <span class="kw">in</span> [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>] {
+    <span class="fn">print</span>(item)
+}
+
+<span class="cmt">// for-in：字符串</span>
+<span class="kw">for</span> ch <span class="kw">in</span> <span class="str">"Vora"</span> {
+    <span class="fn">print</span>(ch)   <span class="cmt">// V, o, r, a</span>
+}
+
+<span class="cmt">// for-in：range()</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">5</span>) {
+    <span class="fn">print</span>(i)   <span class="cmt">// 0, 1, 2, 3, 4</span>
+}
+
+<span class="cmt">// range(start, stop, step)</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">10</span>, <span class="num">0</span>, -<span class="num">2</span>) {
+    <span class="fn">print</span>(i)   <span class="cmt">// 10, 8, 6, 4, 2</span>
+}</code></pre>
+        </div>
+    </div>
+
+    <!-- 函数与闭包 -->
+    <div class="example-card" id="closures">
+        <div class="example-header">🔒 函数与闭包 <span class="tag">中级</span></div>
+        <div class="example-body">
+            <p>Vora 函数是一等公民。内层函数通过闭包捕获外层变量。</p>
+            <pre><code><span class="cmt">// 基础函数</span>
+<span class="kw">func</span> <span class="fn">add</span>(a, b) {
+    <span class="kw">return</span> a + b
+}
+<span class="fn">print</span>(<span class="fn">add</span>(<span class="num">3</span>, <span class="num">4</span>))  <span class="cmt">// 7</span>
+
+<span class="cmt">// 闭包：计数器</span>
+<span class="kw">func</span> <span class="fn">makeCounter</span>() {
+    <span class="kw">let</span> count = <span class="num">0</span>
+    <span class="kw">return</span> <span class="kw">func</span>() {
+        count = count + <span class="num">1</span>
+        <span class="kw">return</span> count
+    }
+}
+<span class="kw">let</span> c = <span class="fn">makeCounter</span>()
+<span class="fn">print</span>(<span class="fn">c</span>())  <span class="cmt">// 1</span>
+<span class="fn">print</span>(<span class="fn">c</span>())  <span class="cmt">// 2</span>
+
+<span class="cmt">// 闭包：函数工厂</span>
+<span class="kw">func</span> <span class="fn">makeMultiplier</span>(factor) {
+    <span class="kw">return</span> <span class="kw">func</span>(x) { <span class="kw">return</span> x * factor }
+}
+<span class="kw">let</span> double = <span class="fn">makeMultiplier</span>(<span class="num">2</span>)
+<span class="kw">let</span> triple = <span class="fn">makeMultiplier</span>(<span class="num">3</span>)
+<span class="fn">print</span>(<span class="fn">double</span>(<span class="num">5</span>))  <span class="cmt">// 10</span>
+<span class="fn">print</span>(<span class="fn">triple</span>(<span class="num">5</span>))  <span class="cmt">// 15</span></code></pre>
+        </div>
+    </div>
+
+    <!-- 递归 -->
+    <div class="example-card" id="recursion">
+        <div class="example-header">🌀 递归 <span class="tag">中级</span></div>
+        <div class="example-body">
+            <pre><code><span class="kw">func</span> <span class="fn">factorial</span>(n) {
+    <span class="kw">if</span> (n <= <span class="num">1</span>) <span class="kw">return</span> <span class="num">1</span>
+    <span class="kw">return</span> n * <span class="fn">factorial</span>(n - <span class="num">1</span>)
+}
+<span class="fn">print</span>(<span class="fn">factorial</span>(<span class="num">5</span>))  <span class="cmt">// 120</span>
+
+<span class="cmt">// 斐波那契</span>
+<span class="kw">func</span> <span class="fn">fib</span>(n) {
+    <span class="kw">if</span> (n <= <span class="num">1</span>) <span class="kw">return</span> n
+    <span class="kw">return</span> <span class="fn">fib</span>(n - <span class="num">1</span>) + <span class="fn">fib</span>(n - <span class="num">2</span>)
+}
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">10</span>) {
+    <span class="fn">print</span>(<span class="fn">fib</span>(i))  <span class="cmt">// 0, 1, 1, 2, 3, 5, 8, 13, 21, 34</span>
+}</code></pre>
+        </div>
+    </div>
+
+    <!-- 对象与继承 -->
+    <div class="example-card" id="objects">
+        <div class="example-header">🏛️ 对象与继承 <span class="tag">进阶</span></div>
+        <div class="example-body">
+            <p><code>Obj</code> 定义类，<code>:</code> 实现单继承。构造函数链从根到叶执行。</p>
+            <pre><code><span class="kw">Obj</span> <span class="type">Animal</span>(name) {
+    <span class="kw">this</span>.name = name
+    <span class="kw">func</span> <span class="fn">speak</span>() { <span class="fn">print</span>(<span class="str">"..."</span>) }
+    <span class="kw">func</span> <span class="fn">getName</span>() { <span class="kw">return</span> <span class="kw">this</span>.name }
+}
+
+<span class="kw">Obj</span> <span class="type">Dog</span> : <span class="type">Animal</span> (name, breed) {
+    <span class="kw">this</span>.breed = breed
+    <span class="kw">func</span> <span class="fn">speak</span>() {
+        <span class="fn">print</span>(<span class="str">"Woof! I'm "</span> + <span class="kw">this</span>.name + <span class="str">" the "</span> + <span class="kw">this</span>.breed)
+    }
+}
+
+<span class="kw">Obj</span> <span class="type">Puppy</span> : <span class="type">Dog</span> (name, breed, toy) {
+    <span class="kw">this</span>.toy = toy
+}
+
+<span class="kw">let</span> d = <span class="type">Dog</span>(<span class="str">"Rex"</span>, <span class="str">"Husky"</span>)
+d.<span class="fn">speak</span>()       <span class="cmt">// Woof! I'm Rex the Husky</span>
+<span class="fn">print</span>(d.name)   <span class="cmt">// Rex（父类构造函数设置）</span>
+<span class="fn">print</span>(d.<span class="fn">getName</span>())  <span class="cmt">// Rex（继承的方法）</span>
+
+<span class="kw">let</span> p = <span class="type">Puppy</span>(<span class="str">"Buddy"</span>, <span class="str">"Golden"</span>, <span class="str">"Ball"</span>)
+<span class="fn">print</span>(p.toy)    <span class="cmt">// Ball</span>
+p.<span class="fn">speak</span>()        <span class="cmt">// Woof! I'm Buddy the Golden（多层继承）</span></code></pre>
+        </div>
+    </div>
+
+    <!-- 异常处理 -->
+    <div class="example-card" id="errors">
+        <div class="example-header">⚠️ 异常处理 <span class="tag">进阶</span></div>
+        <div class="example-body">
+            <p><code>try/catch/finally</code> 三种组合。自定义错误对象通过 <code>throw</code> 抛出。</p>
+            <pre><code><span class="cmt">// 基本 try/catch</span>
+<span class="kw">try</span> {
+    <span class="kw">throw</span> <span class="str">"something went wrong"</span>
+} <span class="kw">catch</span> (e) {
+    <span class="fn">print</span>(<span class="str">"Caught: "</span> + e)
+} <span class="kw">finally</span> {
+    <span class="fn">print</span>(<span class="str">"This always runs"</span>)
+}
+
+<span class="cmt">// 自定义错误对象</span>
+<span class="kw">Obj</span> <span class="type">ValidationError</span>(msg) {
+    <span class="kw">this</span>.message = msg
+}
+
+<span class="kw">func</span> <span class="fn">validateAge</span>(age) {
+    <span class="kw">if</span> (age < <span class="num">0</span>) {
+        <span class="kw">throw</span> <span class="type">ValidationError</span>(<span class="str">"Age cannot be negative"</span>)
+    }
+    <span class="kw">if</span> (age > <span class="num">150</span>) {
+        <span class="kw">throw</span> <span class="type">ValidationError</span>(<span class="str">"Age out of range"</span>)
+    }
+    <span class="kw">return</span> <span class="lit">true</span>
+}
+
+<span class="kw">try</span> {
+    <span class="fn">validateAge</span>(-<span class="num">5</span>)
+} <span class="kw">catch</span> (e) {
+    <span class="fn">print</span>(<span class="str">"Invalid: "</span> + e.message)  <span class="cmt">// Invalid: Age cannot be negative</span>
+}</code></pre>
+        </div>
+    </div>
+
+    <!-- 数组操作 -->
+    <div class="example-card" id="arrays">
+        <div class="example-header">📋 数组操作 <span class="tag">中级</span></div>
+        <div class="example-body">
+            <p>数组通过 <code>[]</code> 创建和索引。<code>+</code>/<code>+=</code> 合并或追加。</p>
+            <pre><code><span class="kw">let</span> arr = [<span class="num">1</span>, <span class="str">"hello"</span>, <span class="lit">true</span>, <span class="lit">null</span>]
+<span class="fn">print</span>(arr[<span class="num">0</span>])  <span class="cmt">// 1</span>
+<span class="fn">print</span>(arr[<span class="num">1</span>])  <span class="cmt">// hello</span>
+
+arr[<span class="num">0</span>] = <span class="num">42</span>        <span class="cmt">// 索引赋值</span>
+
+<span class="cmt">// 数组合并</span>
+<span class="kw">let</span> a = [<span class="num">1</span>, <span class="num">2</span>]
+<span class="kw">let</span> b = [<span class="num">3</span>, <span class="num">4</span>]
+<span class="kw">let</span> c = a + b      <span class="cmt">// [1, 2, 3, 4]</span>
+
+<span class="cmt">// 追加元素</span>
+a += <span class="num">99</span>           <span class="cmt">// [1, 2, 99]</span>
+
+<span class="cmt">// 嵌套数组</span>
+<span class="kw">let</span> matrix = [[<span class="num">1</span>, <span class="num">2</span>], [<span class="num">3</span>, <span class="num">4</span>]]
+<span class="fn">print</span>(matrix[<span class="num">0</span>][<span class="num">1</span>])  <span class="cmt">// 2</span></code></pre>
+        </div>
+    </div>
+
+    <!-- Unicode 标识符 -->
+    <div class="example-card" id="unicode">
+        <div class="example-header">🌐 Unicode 标识符 <span class="tag">特色</span></div>
+        <div class="example-body">
+            <p>Vora 原生支持中文、日文等多语言标识符。</p>
+            <pre><code><span class="kw">let</span> 名字 = <span class="str">"小明"</span>
+<span class="kw">let</span> 年龄 = <span class="num">20</span>
+
+<span class="kw">func</span> <span class="fn">打印信息</span>(姓名, 岁数) {
+    <span class="fn">print</span>(<span class="str">"<span class="interp">${姓名}</span> 今年 <span class="interp">${岁数}</span> 岁"</span>)
+}
+<span class="fn">打印信息</span>(名字, 年龄)
+
+<span class="cmt">// 日文标识符</span>
+<span class="kw">let</span> ユーザー名 = <span class="str">"tanaka"</span>
+<span class="kw">let</span> café = <span class="str">"espresso"</span>
+
+<span class="cmt">// 混合使用</span>
+<span class="kw">Obj</span> <span class="type">学生</span>(姓名, 分数) {
+    <span class="kw">this</span>.姓名 = 姓名
+    <span class="kw">this</span>.分数 = 分数
+}
+<span class="kw">let</span> s = <span class="type">学生</span>(<span class="str">"小红"</span>, <span class="num">95</span>)
+<span class="fn">print</span>(s.姓名 + <span class="str">" 的分数: "</span> + s.分数)</code></pre>
+        </div>
+    </div>
+
+    <!-- 运算符一览 -->
+    <div class="example-card" id="operators">
+        <div class="example-header">🎯 运算符一览 <span class="tag">参考</span></div>
+        <div class="example-body">
+            <pre><code><span class="cmt">// 算术：+ - * / % **</span>
+<span class="num">10</span> + <span class="num">3</span>    <span class="cmt">// 13</span>
+<span class="num">10</span> - <span class="num">3</span>    <span class="cmt">// 7</span>
+<span class="num">10</span> * <span class="num">3</span>    <span class="cmt">// 30</span>
+<span class="num">10</span> / <span class="num">3</span>    <span class="cmt">// 3.333...</span>
+<span class="num">10</span> % <span class="num">3</span>    <span class="cmt">// 1</span>
+<span class="num">2</span> ** <span class="num">8</span>    <span class="cmt">// 256（幂运算，右结合）</span>
+
+<span class="cmt">// 比较：&lt; &lt;= &gt; &gt;= == !=</span>
+<span class="num">5</span> &lt; <span class="num">10</span>     <span class="cmt">// true</span>
+<span class="num">5</span> == <span class="num">5</span>    <span class="cmt">// true</span>
+<span class="str">"a"</span> != <span class="str">"b"</span>  <span class="cmt">// true</span>
+
+<span class="cmt">// 逻辑：&& || !（短路求值）</span>
+<span class="kw">let</span> a = <span class="lit">false</span> && <span class="fn">neverCalled</span>()  <span class="cmt">// neverCalled 不执行</span>
+<span class="kw">let</span> b = <span class="lit">true</span> || <span class="fn">neverCalled</span>()   <span class="cmt">// neverCalled 不执行</span>
+
+<span class="cmt">// 自增/自减：++ --（前缀/后缀）</span>
+<span class="kw">let</span> x = <span class="num">5</span>
+<span class="fn">print</span>(x++)   <span class="cmt">// 5（先返回后自增）</span>
+<span class="fn">print</span>(x)     <span class="cmt">// 6</span>
+<span class="fn">print</span>(++x)   <span class="cmt">// 7（先自增后返回）</span>
+
+<span class="cmt">// 复合赋值：+= -= *= /= %=</span>
+x += <span class="num">3</span>    <span class="cmt">// x = x + 3</span>
+x *= <span class="num">2</span>    <span class="cmt">// x = x * 2</span></code></pre>
+        </div>
+    </div>
+
+    <!-- 内建函数 -->
+    <div class="example-card" id="builtins-example">
+        <div class="example-header">🧰 内建函数 <span class="tag">参考</span></div>
+        <div class="example-body">
+            <pre><code><span class="cmt">// print(...) — 变参输出</span>
+<span class="fn">print</span>(<span class="str">"Hello"</span>, <span class="num">42</span>, <span class="lit">true</span>)  <span class="cmt">// Hello 42 true</span>
+
+<span class="cmt">// clock() — 时间戳（秒，毫秒精度）</span>
+<span class="kw">let</span> start = <span class="fn">clock</span>()
+<span class="cmt">// ... 执行一些代码 ...</span>
+<span class="fn">print</span>(<span class="str">"Elapsed: "</span> + (<span class="fn">clock</span>() - start) + <span class="str">"s"</span>)
+
+<span class="cmt">// input(prompt?) — 读取标准输入</span>
+<span class="kw">let</span> name = <span class="fn">input</span>(<span class="str">"Your name: "</span>)
+<span class="fn">print</span>(<span class="str">"Hello "</span> + name)
+
+<span class="cmt">// int(value) / float(value) — 类型转换</span>
+<span class="fn">print</span>(<span class="fn">int</span>(<span class="num">3.14</span>))       <span class="cmt">// 3</span>
+<span class="fn">print</span>(<span class="fn">int</span>(<span class="str">"42"</span>))       <span class="cmt">// 42</span>
+<span class="fn">print</span>(<span class="fn">float</span>(<span class="str">"3.14"</span>))   <span class="cmt">// 3.14</span>
+
+<span class="cmt">// range(...) — 生成数字数组</span>
+<span class="fn">range</span>(<span class="num">3</span>)              <span class="cmt">// [0, 1, 2]</span>
+<span class="fn">range</span>(<span class="num">2</span>, <span class="num">5</span>)           <span class="cmt">// [2, 3, 4]</span>
+<span class="fn">range</span>(<span class="num">0</span>, <span class="num">10</span>, <span class="num">2</span>)       <span class="cmt">// [0, 2, 4, 6, 8]</span>
+<span class="fn">range</span>(<span class="num">10</span>, <span class="num">0</span>, -<span class="num">2</span>)     <span class="cmt">// [10, 8, 6, 4, 2]</span>
+
+<span class="cmt">// bin(num) / oct(num) / hex(num) — 进制转换</span>
+<span class="fn">print</span>(<span class="fn">hex</span>(<span class="num">255</span>))    <span class="cmt">// "0xFF"</span>
+<span class="fn">print</span>(<span class="fn">bin</span>(<span class="num">5</span>))      <span class="cmt">// "0b101"</span>
+<span class="fn">print</span>(<span class="fn">oct</span>(<span class="num">63</span>))     <span class="cmt">// "0o77"</span>
+
+<span class="cmt">// assert(cond, msg?) — 断言</span>
+<span class="fn">assert</span>(<span class="num">2</span> + <span class="num">2</span> == <span class="num">4</span>)           <span class="cmt">// 通过</span>
+<span class="fn">assert</span>(<span class="num">2</span> + <span class="num">2</span> == <span class="num">5</span>, <span class="str">"Math broken!"</span>)  <span class="cmt">// 抛出 RuntimeError</span></code></pre>
+        </div>
+    </div>
+</main>
+
+<footer class="footer">
+    <p>Vora · <a href="https://github.com/Vora-lang/Vora" target="_blank" rel="noopener">github.com/Vora-lang/Vora</a></p>
+</footer>
+</body>
+</html>

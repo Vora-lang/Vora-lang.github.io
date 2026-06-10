@@ -1,0 +1,610 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>语言参考 — Vora 文档</title>
+<link rel="icon" href="../vora_logo.svg" type="image/svg+xml" />
+<style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+        --bg: #ffffff; --card: #f5f5f7; --border: #e0e0e0;
+        --text: #1d1d1f; --text2: #6e6e73; --kw: #7c3aed; --str: #059669;
+        --num: #d97706; --fn: #2563eb; --lit: #ea580c; --cmt: #a1a1aa;
+        --radius: 10px;
+        --mono: "Cascadia Code", "Fira Code", "JetBrains Mono", "Consolas", monospace;
+        --sans: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+    }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body { font-family: var(--sans); background: var(--bg); color: var(--text); line-height: 1.7; -webkit-font-smoothing: antialiased; }
+    .nav { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0 24px; }
+    .nav-inner { max-width: 960px; margin: 0 auto; display: flex; align-items: center; gap: 24px; height: 52px; font-size: 0.9rem; font-weight: 500; }
+    .nav a { color: var(--text2); text-decoration: none; transition: color 0.2s; }
+    .nav a:hover { color: var(--kw); }
+    .nav .active { color: var(--kw); }
+    .section { max-width: 960px; margin: 0 auto; padding: 60px 24px; }
+    .section h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 8px; }
+    .section h2 { font-size: 1.5rem; font-weight: 700; margin: 48px 0 12px; padding-top: 24px; border-top: 1px solid var(--border); }
+    .section h2:first-of-type { border-top: none; padding-top: 0; }
+    .section h3 { font-size: 1.15rem; font-weight: 600; margin: 28px 0 8px; }
+    .section-desc { color: var(--text2); margin-bottom: 32px; font-size: 1.05rem; }
+    .code { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 22px; font-family: var(--mono); font-size: 0.88rem; line-height: 1.65; overflow-x: auto; margin-bottom: 20px; color: var(--text); }
+    .shell { background: #1e1e2e; color: #cdd6f4; border-radius: var(--radius); padding: 14px 18px; font-family: var(--mono); font-size: 0.85rem; line-height: 1.6; overflow-x: auto; margin-bottom: 20px; }
+    .shell .prompt { color: #a6e3a1; }
+    .shell .out { color: #bac2de; }
+    code { font-family: var(--mono); font-size: 0.88em; }
+    p code, li code, td code { background: #f3f0ff; color: var(--kw); padding: 2px 6px; border-radius: 4px; font-size: 0.85em; }
+    .kw { color: var(--kw); } .str { color: var(--str); } .num { color: var(--num); }
+    .fn { color: var(--fn); } .lit { color: var(--lit); } .cmt { color: var(--cmt); font-style: italic; }
+    .interp { color: #db2777; } .type { color: #0d9488; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.92rem; margin: 16px 0 32px; }
+    th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--border); }
+    th { font-weight: 600; color: var(--text2); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    tr:hover td { background: #fafafa; }
+    .note { background: #fefce8; border: 1px solid #fde68a; border-radius: var(--radius); padding: 14px 18px; margin: 20px 0; font-size: 0.9rem; color: #92400e; }
+    .note strong { color: #d97706; }
+    .footer { border-top: 1px solid var(--border); padding: 40px 24px; text-align: center; color: var(--text2); font-size: 0.85rem; }
+    .footer a { color: var(--kw); text-decoration: none; }
+    .footer a:hover { text-decoration: underline; }
+    ul, ol { margin: 8px 0 16px 24px; }
+    li { margin-bottom: 4px; }
+    @media (max-width: 768px) { .section h1 { font-size: 1.6rem; } .section h2 { font-size: 1.3rem; } }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+    <div class="nav-inner">
+        <a href="../index.html" style="font-size:1.2rem;font-weight:800;background:linear-gradient(135deg,#6366f1,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-decoration:none;">Vora</a>
+        <a href="../index.html#quickstart">快速开始</a>
+        <a href="../index.html#syntax">语法</a>
+        <a href="index.html">文档</a>
+        <a href="language.html" class="active">语言参考</a>
+    </div>
+</nav>
+
+<main class="section">
+    <h1>📖 语言参考</h1>
+    <p class="section-desc">Vora 语言的完整语法参考 —— 类型系统、运算符、控制流、函数、对象、异常处理。</p>
+
+    <!-- ====== 目录 ====== -->
+    <nav style="margin-bottom:40px">
+        <ol style="columns:2;column-gap:32px;margin:0;padding:0;list-style-position:inside">
+            <li><a href="#types">类型系统</a></li>
+            <li><a href="#variables">变量与作用域</a></li>
+            <li><a href="#operators">运算符</a></li>
+            <li><a href="#control-flow">控制流</a></li>
+            <li><a href="#functions">函数与闭包</a></li>
+            <li><a href="#objects">对象与继承</a></li>
+            <li><a href="#errors">异常处理</a></li>
+            <li><a href="#strings">字符串与插值</a></li>
+            <li><a href="#arrays">数组</a></li>
+            <li><a href="#comments">注释</a></li>
+            <li><a href="#builtins">内建函数</a></li>
+        </ol>
+    </nav>
+
+    <!-- ====== 类型系统 ====== -->
+    <h2 id="types">1. 类型系统</h2>
+    <p>Vora 是<strong>动态类型</strong>语言，变量在运行时持有任意类型的值。</p>
+
+    <h3>运行时类型</h3>
+    <table>
+        <thead><tr><th>类型</th><th>字面量</th><th>C++ 内部表示</th><th>说明</th></tr></thead>
+        <tbody>
+            <tr><td><strong>Null</strong></td><td><code>null</code></td><td><code>std::nullptr_t</code></td><td>空值，所有未初始化的默认值</td></tr>
+            <tr><td><strong>Number</strong></td><td><code>42</code>, <code>3.14</code></td><td><code>double</code></td><td>IEEE 754 双精度浮点（唯一数值类型）</td></tr>
+            <tr><td><strong>Boolean</strong></td><td><code>true</code>, <code>false</code></td><td><code>bool</code></td><td>逻辑真/假</td></tr>
+            <tr><td><strong>String</strong></td><td><code>"hello"</code>, <code>'world'</code></td><td><code>std::string</code></td><td>UTF-8 编码，单引号和双引号等价</td></tr>
+            <tr><td><strong>Array</strong></td><td><code>[1, 2, 3]</code></td><td><code>shared_ptr&lt;Array&gt;</code></td><td>动态数组，元素可为任意类型</td></tr>
+            <tr><td><strong>Function</strong></td><td><code>func f() {}</code></td><td><code>shared_ptr&lt;Callable&gt;</code></td><td>一等公民，可作为值传递</td></tr>
+            <tr><td><strong>Object</strong></td><td><code>Obj Foo() {}</code></td><td><code>shared_ptr&lt;ObjectInstance&gt;</code></td><td>类实例，含属性和方法</td></tr>
+        </tbody>
+    </table>
+
+    <h3>数字字面量</h3>
+    <p>Vora 支持多种进制的数字表示：</p>
+    <div class="code">
+        <span class="num">42</span>          <span class="cmt">// 十进制</span>
+        <span class="num">3.14</span>        <span class="cmt">// 浮点数</span>
+        <span class="num">0xFF</span>        <span class="cmt">// 十六进制 (255)</span>
+        <span class="num">0o77</span>        <span class="cmt">// 八进制 (63)</span>
+        <span class="num">0b101</span>       <span class="cmt">// 二进制 (5)</span>
+    </div>
+    <p><code>1 / 2</code> 结果为 <code>0.5</code>，与 Python 3 语义一致。没有整数除法。</p>
+
+    <h3>真值规则</h3>
+    <p>只有 <code>null</code> 和 <code>false</code> 被视为"假"（falsy），其余所有值——包括 <code>0</code>、<code>""</code>、<code>[]</code>——均为"真"（truthy）。</p>
+    <div class="code">
+        <span class="lit">null</span>   <span class="cmt">→ falsy</span>
+        <span class="lit">false</span>  <span class="cmt">→ falsy</span>
+        <span class="num">0</span>      <span class="cmt">→ truthy</span>
+        <span class="str">""</span>     <span class="cmt">→ truthy</span>
+        []     <span class="cmt">→ truthy</span>
+    </div>
+
+    <!-- ====== 变量 ====== -->
+    <h2 id="variables">2. 变量与作用域</h2>
+
+    <h3>变量声明</h3>
+    <p>使用 <code>let</code> 关键字声明变量。必须显式声明，不能对未声明变量赋值。</p>
+    <div class="code">
+        <span class="kw">let</span> x = <span class="num">10</span><br />
+        <span class="kw">let</span> name = <span class="str">"Vora"</span><br />
+        <span class="kw">let</span> arr = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]
+    </div>
+
+    <h3>类型标注（可选）</h3>
+    <p>声明时可添加 <code>:int</code> 或 <code>:float</code> 标注（当前仅作文档用途，不强制校验）：</p>
+    <div class="code">
+        <span class="kw">let</span> x:<span class="type">int</span> = <span class="num">42</span><br />
+        <span class="kw">let</span> y:<span class="type">float</span> = <span class="num">3.14</span>
+    </div>
+
+    <h3>赋值</h3>
+    <p>赋值运算符 <code>=</code> 沿<strong>词法作用域链</strong>向上查找变量并更新其值。如果在当前作用域和所有父作用域中都找不到，则报运行时错误。</p>
+    <div class="code">
+        <span class="kw">let</span> x = <span class="num">10</span><br />
+        x = <span class="num">20</span>     <span class="cmt">// 重新赋值</span><br />
+        x = x + <span class="num">1</span>  <span class="cmt">// x 现在是 21</span>
+    </div>
+
+    <h3>块作用域</h3>
+    <p><code>{ }</code> 块创建新的作用域。内层可以遮蔽（shadow）外层变量。</p>
+    <div class="code">
+        <span class="kw">let</span> x = <span class="num">10</span><br />
+        {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">let</span> x = <span class="num">30</span>   <span class="cmt">// 遮蔽外层的 x</span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">print</span>(x)     <span class="cmt">// 30</span><br />
+        }<br />
+        <span class="fn">print</span>(x)         <span class="cmt">// 10（外层 x 未受影响）</span>
+    </div>
+
+    <!-- ====== 运算符 ====== -->
+    <h2 id="operators">3. 运算符</h2>
+
+    <h3>运算符优先级表</h3>
+    <table>
+        <thead><tr><th>优先级</th><th>运算符</th><th>结合性</th><th>说明</th></tr></thead>
+        <tbody>
+            <tr><td>1</td><td><code>=</code></td><td>右</td><td>赋值</td></tr>
+            <tr><td>1</td><td><code>||</code> <code>or</code></td><td>左</td><td>逻辑或（短路求值）</td></tr>
+            <tr><td>2</td><td><code>&&</code> <code>and</code></td><td>左</td><td>逻辑与（短路求值）</td></tr>
+            <tr><td>2</td><td><code>? :</code></td><td>右</td><td>三元条件运算符</td></tr>
+            <tr><td>3</td><td><code>==</code> <code>!=</code></td><td>左</td><td>相等性比较</td></tr>
+            <tr><td>4</td><td><code>&lt;</code> <code>&lt;=</code> <code>&gt;</code> <code>&gt;=</code></td><td>左</td><td>关系比较</td></tr>
+            <tr><td>5</td><td><code>+</code> <code>-</code></td><td>左</td><td>加法/减法（+ 同时支持字符串拼接和数组合并）</td></tr>
+            <tr><td>6</td><td><code>*</code> <code>/</code> <code>%</code></td><td>左</td><td>乘法/除法/取模</td></tr>
+            <tr><td>7</td><td><code>**</code></td><td>右</td><td>幂运算</td></tr>
+            <tr><td>—</td><td><code>++</code> <code>--</code></td><td>—</td><td>自增/自减（前缀和后缀）</td></tr>
+            <tr><td>—</td><td><code>+=</code> <code>-=</code> <code>*=</code> <code>/=</code> <code>%=</code></td><td>右</td><td>复合赋值</td></tr>
+            <tr><td>—</td><td><code>!</code> <code>-</code></td><td>右</td><td>一元：逻辑非 / 算术取反</td></tr>
+        </tbody>
+    </table>
+
+    <h3>算术运算符</h3>
+    <div class="code">
+        <span class="num">10</span> + <span class="num">3</span>    <span class="cmt">// 13</span><br />
+        <span class="num">10</span> - <span class="num">3</span>    <span class="cmt">// 7</span><br />
+        <span class="num">10</span> * <span class="num">3</span>    <span class="cmt">// 30</span><br />
+        <span class="num">10</span> / <span class="num">3</span>    <span class="cmt">// 3.333...</span><br />
+        <span class="num">10</span> % <span class="num">3</span>    <span class="cmt">// 1</span><br />
+        <span class="num">2</span> ** <span class="num">8</span>    <span class="cmt">// 256（右结合：2 ** 3 ** 2 = 2 ** 9 = 512）</span>
+    </div>
+
+    <h3>字符串拼接</h3>
+    <p><code>+</code> 运算符对字符串进行拼接。一方为字符串、另一方非字符串时，非字符串方被自动转为字符串。</p>
+    <div class="code">
+        <span class="str">"Hello"</span> + <span class="str">" "</span> + <span class="str">"World"</span>   <span class="cmt">// "Hello World"</span><br />
+        <span class="str">"The answer is "</span> + <span class="num">42</span>       <span class="cmt">// "The answer is 42"</span>
+    </div>
+
+    <h3>数组操作</h3>
+    <div class="code">
+        [<span class="num">1</span>, <span class="num">2</span>] + [<span class="num">3</span>, <span class="num">4</span>]   <span class="cmt">// [1, 2, 3, 4]（合并）</span><br />
+        [<span class="num">1</span>, <span class="num">2</span>] + <span class="num">99</span>         <span class="cmt">// [1, 2, 99]（追加）</span><br />
+        <span class="num">99</span> + [<span class="num">1</span>, <span class="num">2</span>]         <span class="cmt">// [99, 1, 2]（前插）</span>
+    </div>
+
+    <h3>比较运算符</h3>
+    <div class="code">
+        <span class="num">5</span> &lt; <span class="num">10</span>     <span class="cmt">// true</span><br />
+        <span class="num">5</span> == <span class="num">5</span>    <span class="cmt">// true</span><br />
+        <span class="str">"a"</span> != <span class="str">"b"</span>  <span class="cmt">// true</span><br />
+        <span class="lit">null</span> == <span class="lit">null</span>  <span class="cmt">// true</span>
+    </div>
+
+    <h3>逻辑运算符（短路求值）</h3>
+    <p><code>&&</code> 和 <code>||</code> 执行短路求值，返回<strong>实际值</strong>而非布尔化结果。这赋予它们类似 Lua 的强大语义：</p>
+    <div class="code">
+        <span class="cmt">// 短路求值：右操作数可能不被执行</span><br />
+        <span class="lit">false</span> && <span class="fn">crash</span>()  <span class="cmt">// crash() 永远不会被调用</span><br />
+        <span class="lit">true</span> || <span class="fn">crash</span>()   <span class="cmt">// crash() 永远不会被调用</span><br /><br />
+        <span class="cmt">// 返回实际值</span><br />
+        <span class="num">0</span> || <span class="str">"default"</span>     <span class="cmt">// "default"（0 是 truthy，所以短路返回 0！）</span><br />
+        <span class="lit">null</span> || <span class="str">"fallback"</span>  <span class="cmt">// "fallback"（null 是 falsy，返回右值）</span><br />
+        <span class="str">"hi"</span> && <span class="num">42</span>       <span class="cmt">// 42（"hi" 是 truthy，返回右值）</span>
+    </div>
+    <div class="note"><strong>注意：</strong>Vora 中 <code>0</code> 是 truthy！这与 C/JavaScript 不同。<code>||</code> 仅对 <code>null</code> 和 <code>false</code> 触发短路。</div>
+
+    <h3>三元运算符 <code>? :</code></h3>
+    <div class="code">
+        <span class="kw">let</span> result = score > <span class="num">60</span> ? <span class="str">"pass"</span> : <span class="str">"fail"</span><br /><br />
+        <span class="cmt">// 右结合：a ? b : c ? d : e → a ? b : (c ? d : e)</span><br />
+        <span class="kw">let</span> grade = score > <span class="num">90</span> ? <span class="str">"A"</span> : score > <span class="num">80</span> ? <span class="str">"B"</span> : <span class="str">"C"</span>
+    </div>
+
+    <h3>自增/自减</h3>
+    <div class="code">
+        <span class="kw">let</span> x = <span class="num">5</span><br />
+        <span class="fn">print</span>(x++)   <span class="cmt">// 5（后缀：先返回，后自增）</span><br />
+        <span class="fn">print</span>(x)     <span class="cmt">// 6</span><br />
+        <span class="fn">print</span>(++x)   <span class="cmt">// 7（前缀：先自增，后返回）</span>
+    </div>
+
+    <h3>复合赋值</h3>
+    <div class="code">
+        <span class="kw">let</span> x = <span class="num">10</span><br />
+        x += <span class="num">5</span>     <span class="cmt">// x = 15（对应 x = x + 5）</span><br />
+        x -= <span class="num">3</span>     <span class="cmt">// x = 12</span><br />
+        x *= <span class="num">2</span>     <span class="cmt">// x = 24</span><br />
+        x /= <span class="num">3</span>     <span class="cmt">// x = 8</span><br />
+        x %= <span class="num">5</span>     <span class="cmt">// x = 3</span>
+    </div>
+
+    <!-- ====== 控制流 ====== -->
+    <h2 id="control-flow">4. 控制流</h2>
+
+    <h3>if / else</h3>
+    <div class="code">
+        <span class="kw">if</span> (x > <span class="num">0</span>) {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">print</span>(<span class="str">"positive"</span>)<br />
+        } <span class="kw">else</span> <span class="kw">if</span> (x &lt; <span class="num">0</span>) {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">print</span>(<span class="str">"negative"</span>)<br />
+        } <span class="kw">else</span> {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">print</span>(<span class="str">"zero"</span>)<br />
+        }
+    </div>
+    <p>条件表达式 <strong>不需要</strong> 加括号 —— <code>if x > 0 { }</code> 同样有效。<code>else if</code> 通过嵌套 <code>IfStmt</code> 实现。</p>
+
+    <h3>while 循环</h3>
+    <div class="code">
+        <span class="kw">let</span> i = <span class="num">0</span><br />
+        <span class="kw">while</span> (i &lt; <span class="num">5</span>) {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">print</span>(i)<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;i += <span class="num">1</span><br />
+        }
+    </div>
+
+    <h3>for-in 循环</h3>
+    <p>支持三种可迭代对象：数组、字符串、<code>range()</code>。</p>
+    <div class="code">
+        <span class="cmt">// 遍历数组</span><br />
+        <span class="kw">for</span> item <span class="kw">in</span> [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>] {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">print</span>(item)<br />
+        }<br /><br />
+        <span class="cmt">// 遍历字符串（逐字符）</span><br />
+        <span class="kw">for</span> ch <span class="kw">in</span> <span class="str">"Vora"</span> {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">print</span>(ch)   <span class="cmt">// V, o, r, a</span><br />
+        }<br /><br />
+        <span class="cmt">// 遍历 range</span><br />
+        <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">5</span>) {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">print</span>(i)   <span class="cmt">// 0, 1, 2, 3, 4</span><br />
+        }
+    </div>
+    <p>每次迭代创建新的作用域，循环变量在迭代结束后不可见。</p>
+
+    <h3>break / continue</h3>
+    <div class="code">
+        <span class="kw">while</span> (<span class="lit">true</span>) {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">if</span> (condition) <span class="kw">break</span>     <span class="cmt">// 退出循环</span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">if</span> (skip) <span class="kw">continue</span>        <span class="cmt">// 跳过本次迭代</span><br />
+        }
+    </div>
+
+    <!-- ====== 函数 ====== -->
+    <h2 id="functions">5. 函数与闭包</h2>
+
+    <h3>函数声明</h3>
+    <div class="code">
+        <span class="kw">func</span> <span class="fn">add</span>(a, b) {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span> a + b<br />
+        }<br /><br />
+        <span class="kw">let</span> result = <span class="fn">add</span>(<span class="num">3</span>, <span class="num">4</span>)  <span class="cmt">// 7</span>
+    </div>
+
+    <h3>一等公民</h3>
+    <p>函数可以赋值给变量、作为参数传递、作为返回值。</p>
+    <div class="code">
+        <span class="kw">let</span> f = <span class="kw">func</span>(x) { <span class="kw">return</span> x * <span class="num">2</span> }<br />
+        <span class="fn">print</span>(<span class="fn">f</span>(<span class="num">5</span>))  <span class="cmt">// 10</span>
+    </div>
+
+    <h3>return</h3>
+    <p>函数通过 <code>return</code> 返回值。无 <code>return</code> 语句或 <code>return</code> 无表达式时，函数返回 <code>null</code>。</p>
+
+    <h3>闭包</h3>
+    <p>Vora 支持完整的词法闭包 —— 内层函数捕获定义时所在作用域的变量：</p>
+    <div class="code">
+        <span class="kw">func</span> <span class="fn">makeCounter</span>() {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">let</span> count = <span class="num">0</span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span> <span class="kw">func</span>() {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;count = count + <span class="num">1</span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span> count<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;}<br />
+        }<br /><br />
+        <span class="kw">let</span> c = <span class="fn">makeCounter</span>()<br />
+        <span class="fn">print</span>(<span class="fn">c</span>())  <span class="cmt">// 1</span><br />
+        <span class="fn">print</span>(<span class="fn">c</span>())  <span class="cmt">// 2</span><br />
+        <span class="fn">print</span>(<span class="fn">c</span>())  <span class="cmt">// 3</span>
+    </div>
+    <p>每个闭包拥有自己独立的捕获环境（多个实例互不影响）：</p>
+    <div class="code">
+        <span class="kw">let</span> c1 = <span class="fn">makeCounter</span>()<br />
+        <span class="kw">let</span> c2 = <span class="fn">makeCounter</span>()<br />
+        <span class="fn">print</span>(<span class="fn">c1</span>())  <span class="cmt">// 1</span><br />
+        <span class="fn">print</span>(<span class="fn">c1</span>())  <span class="cmt">// 2</span><br />
+        <span class="fn">print</span>(<span class="fn">c2</span>())  <span class="cmt">// 1（独立）</span>
+    </div>
+
+    <p><strong>VM 实现：</strong>编译器通过 <code>resolveUpvalue()</code> 在编译期确定每个内层引用对应外层哪个局部变量，运行时 VM 维护 <code>openUpvalues</code> 链表以正确共享捕获的变量。这比解释器的 <code>Environment::snapshot()</code> 全量深拷贝更高效。</p>
+
+    <h3>参数校验</h3>
+    <div class="code">
+        <span class="kw">func</span> <span class="fn">greet</span>(name) {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">print</span>(<span class="str">"Hello "</span> + name)<br />
+        }<br />
+        <span class="fn">greet</span>(<span class="str">"World"</span>)   <span class="cmt">// ✅ 1 个参数</span><br />
+        <span class="fn">greet</span>()            <span class="cmt">// ❌ 参数个数不匹配，抛出错误</span>
+    </div>
+    <p>变参函数（如 <code>print</code>、<code>range</code>）的 arity 设为 <code>-1</code>，允许任意数量的参数。</p>
+
+    <!-- ====== 对象 ====== -->
+    <h2 id="objects">6. 对象与继承</h2>
+
+    <h3>Obj 声明</h3>
+    <p><code>Obj</code> 关键字定义类。构造函数参数列在类名后的括号中。类体内可以设置属性（通过 <code>this</code>）和定义方法。</p>
+    <div class="code">
+        <span class="kw">Obj</span> <span class="type">Person</span>(name, age) {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">this</span>.name = name<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">this</span>.age = age<br /><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">func</span> <span class="fn">greet</span>() {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">print</span>(<span class="str">"Hi, I'm "</span> + <span class="kw">this</span>.name)<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;}<br />
+        }<br /><br />
+        <span class="kw">let</span> p = <span class="type">Person</span>(<span class="str">"Alice"</span>, <span class="num">25</span>)<br />
+        p.<span class="fn">greet</span>()              <span class="cmt">// Hi, I'm Alice</span><br />
+        <span class="fn">print</span>(p.name)          <span class="cmt">// Alice</span><br />
+        p.age = <span class="num">26</span>              <span class="cmt">// 属性赋值</span>
+    </div>
+
+    <h3>单继承</h3>
+    <p>语法：<code>Obj Child : Parent (params) { ... }</code>。构造函数链从根到叶执行，参数按索引从父类构造函数签名中获取。</p>
+    <div class="code">
+        <span class="kw">Obj</span> <span class="type">Animal</span>(name) {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">this</span>.name = name<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">func</span> <span class="fn">speak</span>() { <span class="fn">print</span>(<span class="str">"..."</span>) }<br />
+        }<br /><br />
+        <span class="kw">Obj</span> <span class="type">Dog</span> : <span class="type">Animal</span> (name, breed) {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">this</span>.breed = breed<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">func</span> <span class="fn">speak</span>() {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">print</span>(<span class="str">"Woof! I'm "</span> + <span class="kw">this</span>.name + <span class="str">" the "</span> + <span class="kw">this</span>.breed)<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;}<br />
+        }<br /><br />
+        <span class="kw">Obj</span> <span class="type">Puppy</span> : <span class="type">Dog</span> (name, breed, toy) {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">this</span>.toy = toy<br />
+        }<br /><br />
+        <span class="kw">let</span> d = <span class="type">Dog</span>(<span class="str">"Rex"</span>, <span class="str">"Husky"</span>)<br />
+        d.<span class="fn">speak</span>()       <span class="cmt">// Woof! I'm Rex the Husky</span><br />
+        <span class="fn">print</span>(d.name)   <span class="cmt">// Rex（父类构造函数设置的属性）</span>
+    </div>
+
+    <h3>继承机制</h3>
+    <ul>
+        <li><strong>构造函数链</strong>：从最远祖先到当前子类依次执行。父类构造函数的参数按索引从子类参数列表的前 N 个获取。</li>
+        <li><strong>方法查找</strong>：当前类 → 父类 → 父类的父类 → ... 沿着继承链向上搜索。</li>
+        <li><strong>方法覆盖</strong>：子类同名方法覆盖父类方法。没有 <code>super</code> 关键字（无法显式调用父类被覆盖的方法）。</li>
+        <li><strong>多层继承</strong>：<code>A → B → C</code> 支持任意深度。</li>
+        <li><strong>this 绑定</strong>：方法调用时 <code>this</code> 自动绑定到调用对象。</li>
+    </ul>
+
+    <!-- ====== 异常处理 ====== -->
+    <h2 id="errors">7. 异常处理</h2>
+
+    <h3>try / catch / finally</h3>
+    <p>支持三种组合形式：<code>try/catch</code>、<code>try/finally</code>、<code>try/catch/finally</code>。</p>
+    <div class="code">
+        <span class="kw">try</span> {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">let</span> x = <span class="num">1</span> / <span class="num">0</span><br />
+        } <span class="kw">catch</span> (e) {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">print</span>(<span class="str">"Error: "</span> + e)<br />
+        } <span class="kw">finally</span> {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">print</span>(<span class="str">"Cleanup always runs"</span>)<br />
+        }
+    </div>
+    <p><strong><code>finally</code> 块始终执行</strong>，无论 try 块正常结束/抛出异常/遇到 <code>return</code>/<code>break</code>/<code>continue</code>。VM 编译器会捕获 try 体内的非局部跳转，在字节码级重放到 finally 块后跳至原目标。</p>
+
+    <h3>throw</h3>
+    <p><code>throw</code> 可抛出<strong>任意 Vora 值</strong>——字符串、数字、对象等：</p>
+    <div class="code">
+        <span class="kw">throw</span> <span class="str">"something went wrong"</span><br />
+        <span class="kw">throw</span> <span class="num">42</span><br />
+        <span class="kw">throw</span> <span class="type">ValidationError</span>(<span class="str">"Invalid input"</span>)
+    </div>
+
+    <h3>自定义错误</h3>
+    <div class="code">
+        <span class="kw">Obj</span> <span class="type">ValidationError</span>(msg) {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">this</span>.message = msg<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">func</span> <span class="fn">toString</span>() { <span class="kw">return</span> <span class="str">"ValidationError: "</span> + <span class="kw">this</span>.message }<br />
+        }<br /><br />
+        <span class="kw">func</span> <span class="fn">checkAge</span>(age) {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">if</span> (age &lt; <span class="num">0</span>) <span class="kw">throw</span> <span class="type">ValidationError</span>(<span class="str">"Age cannot be negative"</span>)<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">if</span> (age > <span class="num">150</span>) <span class="kw">throw</span> <span class="type">ValidationError</span>(<span class="str">"Age out of range"</span>)<br />
+        }<br /><br />
+        <span class="kw">try</span> {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">checkAge</span>(-<span class="num">5</span>)<br />
+        } <span class="kw">catch</span> (e) {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">print</span>(e.message)  <span class="cmt">// "Age cannot be negative"</span><br />
+        }
+    </div>
+
+    <h3>catch 变量绑定</h3>
+    <ul>
+        <li>捕获到内建运行时错误（如除以零）时，<code>e</code> 绑定为错误消息<strong>字符串</strong></li>
+        <li>捕获到用户 <code>throw</code> 的值时，<code>e</code> 绑定为<strong>原值</strong>（字符串、对象、数字等）</li>
+    </ul>
+
+    <!-- ====== 字符串 ====== -->
+    <h2 id="strings">8. 字符串与插值</h2>
+
+    <h3>字符串字面量</h3>
+    <p>单引号 <code>'...'</code> 和双引号 <code>"..."</code> 完全等价。支持转义序列：<code>\n</code>、<code>\t</code>、<code>\r</code>、<code>\0</code>、<code>\\</code>、<code>\"</code>、<code>\'</code>。未识别转义保留原文不报错。</p>
+
+    <h3>字符串插值</h3>
+    <p><code>${...}</code> 在字符串中嵌入 Vora 表达式：</p>
+    <div class="code">
+        <span class="kw">let</span> name = <span class="str">"World"</span><br />
+        <span class="fn">print</span>(<span class="str">"Hello <span class="interp">${name}</span>!"</span>)           <span class="cmt">// "Hello World!"</span><br /><br />
+        <span class="cmt">// 多级属性访问</span><br />
+        <span class="kw">Obj</span> <span class="type">Point</span>(x, y) { <span class="kw">this</span>.x = x; <span class="kw">this</span>.y = y }<br />
+        <span class="kw">let</span> p = <span class="type">Point</span>(<span class="num">10</span>, <span class="num">20</span>)<br />
+        <span class="fn">print</span>(<span class="str">"Position: (<span class="interp">${p.x}</span>, <span class="interp">${p.y}</span>)"</span>)  <span class="cmt">// "Position: (10, 20)"</span><br /><br />
+        <span class="cmt">// 未定义变量 — 保留原文，不报错</span><br />
+        <span class="fn">print</span>(<span class="str">"Hello <span class="interp">${undefined_var}</span>!"</span>)  <span class="cmt">// "Hello ${undefined_var}!"</span>
+    </div>
+    <p>VM 在编译期解析插值表达式，生成 <code>OP_INTERPOLATE</code> 指令而非运行时扫描——效率更高。</p>
+
+    <h3>字符串索引</h3>
+    <div class="code">
+        <span class="kw">let</span> s = <span class="str">"Vora"</span><br />
+        <span class="fn">print</span>(s[<span class="num">0</span>])  <span class="cmt">// "V"</span><br />
+        <span class="fn">print</span>(s[<span class="num">3</span>])  <span class="cmt">// "a"</span>
+    </div>
+
+    <!-- ====== 数组 ====== -->
+    <h2 id="arrays">9. 数组</h2>
+    <div class="code">
+        <span class="cmt">// 创建</span><br />
+        <span class="kw">let</span> arr = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]<br />
+        <span class="kw">let</span> mixed = [<span class="num">42</span>, <span class="str">"hello"</span>, <span class="lit">true</span>, <span class="lit">null</span>]<br /><br />
+        <span class="cmt">// 索引（从 0 开始）</span><br />
+        <span class="fn">print</span>(arr[<span class="num">0</span>])  <span class="cmt">// 1</span><br />
+        <span class="fn">print</span>(arr[<span class="num">1</span>])  <span class="cmt">// 2</span><br /><br />
+        <span class="cmt">// 索引赋值</span><br />
+        arr[<span class="num">0</span>] = <span class="num">99</span><br /><br />
+        <span class="cmt">// 越界访问 — 抛出 RuntimeError</span><br />
+        <span class="cmt">// arr[999] → 运行时错误</span><br /><br />
+        <span class="cmt">// 合并</span><br />
+        <span class="kw">let</span> c = [<span class="num">1</span>, <span class="num">2</span>] + [<span class="num">3</span>, <span class="num">4</span>]   <span class="cmt">// [1, 2, 3, 4]</span><br /><br />
+        <span class="cmt">// 追加</span><br />
+        <span class="kw">let</span> d = [<span class="num">1</span>, <span class="num">2</span>] + <span class="num">99</span>         <span class="cmt">// [1, 2, 99]</span><br />
+        <span class="kw">let</span> e = <span class="num">99</span> + [<span class="num">1</span>, <span class="num">2</span>]         <span class="cmt">// [99, 1, 2]</span><br /><br />
+        <span class="cmt">// 嵌套数组</span><br />
+        <span class="kw">let</span> matrix = [[<span class="num">1</span>, <span class="num">2</span>], [<span class="num">3</span>, <span class="num">4</span>]]<br />
+        <span class="fn">print</span>(matrix[<span class="num">0</span>][<span class="num">1</span>])  <span class="cmt">// 2</span>
+    </div>
+    <p><strong>当前限制：</strong>数组没有 <code>.length</code> 属性、<code>.push()</code>、<code>.pop()</code> 等方法 —— 这些在 P0 路线图中优先实现。</p>
+
+    <!-- ====== 注释 ====== -->
+    <h2 id="comments">10. 注释</h2>
+    <div class="code">
+        <span class="cmt">// 行注释</span><br /><br />
+        <span class="cmt">/* 块注释 */</span><br /><br />
+        <span class="cmt">/* 外层<br />&nbsp;&nbsp;&nbsp;/* 内层 */<br />&nbsp;&nbsp;&nbsp;仍在注释中 */</span>
+    </div>
+    <p>块注释<strong>支持嵌套</strong>——使用 depth 计数器跟踪嵌套级别，正确匹配 <code>/*</code> 和 <code>*/</code> 对。</p>
+
+    <h3>语句分隔符</h3>
+    <p>分号 <code>;</code> 可选——Vora 不强制要求分号。块内语句通过换行自然分隔。</p>
+
+    <!-- ====== 内建函数 ====== -->
+    <h2 id="builtins">11. 内建函数参考</h2>
+
+    <table>
+        <thead><tr><th>函数</th><th>参数</th><th>返回值</th><th>说明</th></tr></thead>
+        <tbody>
+            <tr>
+                <td><code>print(...)</code></td>
+                <td>变参（0+）</td>
+                <td>null</td>
+                <td>空格分隔输出各参数，末尾自动换行</td>
+            </tr>
+            <tr>
+                <td><code>clock()</code></td>
+                <td>0</td>
+                <td>Number</td>
+                <td>Unix 时间戳，单位秒，毫秒级精度</td>
+            </tr>
+            <tr>
+                <td><code>input(prompt?)</code></td>
+                <td>变参（0-1）</td>
+                <td>String</td>
+                <td>从 stdin 读取一行。可选 prompt 参数输出提示文本</td>
+            </tr>
+            <tr>
+                <td><code>int(value)</code></td>
+                <td>1</td>
+                <td>Number</td>
+                <td>转为整数（截断小数部分）。接受 number / string / bool</td>
+            </tr>
+            <tr>
+                <td><code>float(value)</code></td>
+                <td>1</td>
+                <td>Number</td>
+                <td>转为浮点数。接受 number / string / bool</td>
+            </tr>
+            <tr>
+                <td><code>range(stop)</code></td>
+                <td>1</td>
+                <td>Array</td>
+                <td>生成 <code>[0, 1, ..., stop-1]</code></td>
+            </tr>
+            <tr>
+                <td><code>range(start, stop)</code></td>
+                <td>2</td>
+                <td>Array</td>
+                <td>生成 <code>[start, start+1, ..., stop-1]</code></td>
+            </tr>
+            <tr>
+                <td><code>range(start, stop, step)</code></td>
+                <td>3</td>
+                <td>Array</td>
+                <td>生成带步长的数列。step 可为负数</td>
+            </tr>
+            <tr>
+                <td><code>assert(cond, msg?)</code></td>
+                <td>变参（1-2）</td>
+                <td>null</td>
+                <td>条件为假时抛出 RuntimeError（可选错误消息）</td>
+            </tr>
+            <tr>
+                <td><code>bin(num)</code></td>
+                <td>1</td>
+                <td>String</td>
+                <td>数字 → 二进制字符串，如 <code>"0b101"</code></td>
+            </tr>
+            <tr>
+                <td><code>oct(num)</code></td>
+                <td>1</td>
+                <td>String</td>
+                <td>数字 → 八进制字符串，如 <code>"0o12"</code></td>
+            </tr>
+            <tr>
+                <td><code>hex(num)</code></td>
+                <td>1</td>
+                <td>String</td>
+                <td>数字 → 十六进制字符串，如 <code>"0xFF"</code></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="note"><strong>提示：</strong>所有内建函数在 VM（默认后端）和解释器中均可使用。<code>NativeFunction</code> 通过 <code>callDirectly()</code> 桥接 VM，无需 Interpreter 实例。</div>
+</main>
+
+<footer class="footer">
+    <p>Vora · <a href="https://github.com/Vora-lang/Vora" target="_blank" rel="noopener">github.com/Vora-lang/Vora</a></p>
+    <p style="margin-top:8px"><a href="index.html">← 返回文档首页</a></p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Vora 文档</title>
+<link rel="icon" href="../vora_logo.svg" type="image/svg+xml" />
+<style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+        --bg: #ffffff; --card: #f5f5f7; --border: #e0e0e0;
+        --text: #1d1d1f; --text2: #6e6e73; --kw: #7c3aed; --str: #059669;
+        --num: #d97706; --fn: #2563eb; --lit: #ea580c; --cmt: #a1a1aa;
+        --radius: 10px;
+        --mono: "Cascadia Code", "Fira Code", "JetBrains Mono", "Consolas", monospace;
+        --sans: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+    }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body { font-family: var(--sans); background: var(--bg); color: var(--text); line-height: 1.7; -webkit-font-smoothing: antialiased; }
+    .nav { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0 24px; }
+    .nav-inner { max-width: 960px; margin: 0 auto; display: flex; align-items: center; gap: 24px; height: 52px; font-size: 0.9rem; font-weight: 500; }
+    .nav-logo { font-size: 1.2rem; font-weight: 800; background: linear-gradient(135deg, #6366f1, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-right: auto; }
+    .nav a { color: var(--text2); text-decoration: none; transition: color 0.2s; }
+    .nav a:hover { color: var(--kw); }
+    .nav .active { color: var(--kw); }
+    .section { max-width: 960px; margin: 0 auto; padding: 60px 24px; }
+    .section h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 8px; }
+    .section h2 { font-size: 1.5rem; font-weight: 700; margin: 40px 0 12px; }
+    .section-desc { color: var(--text2); margin-bottom: 32px; font-size: 1.05rem; }
+    .card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; text-decoration: none; color: var(--text); transition: border-color 0.25s, box-shadow 0.25s; display: block; }
+    .card:hover { border-color: #c4b5fd; box-shadow: 0 0 24px rgba(124,58,237,0.08); }
+    .card-icon { font-size: 2rem; margin-bottom: 12px; }
+    .card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; color: var(--kw); }
+    .card p { font-size: 0.9rem; color: var(--text2); line-height: 1.6; }
+    .footer { border-top: 1px solid var(--border); padding: 40px 24px; text-align: center; color: var(--text2); font-size: 0.85rem; }
+    .footer a { color: var(--kw); text-decoration: none; }
+    .footer a:hover { text-decoration: underline; }
+    @media (max-width: 768px) { .card-grid { grid-template-columns: 1fr; } .section h1 { font-size: 1.6rem; } }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+    <div class="nav-inner">
+        <a href="../index.html" style="font-size:1.2rem;font-weight:800;background:linear-gradient(135deg,#6366f1,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-decoration:none;">Vora</a>
+        <a href="../index.html#quickstart">快速开始</a>
+        <a href="../index.html#syntax">语法</a>
+        <a href="index.html" class="active">文档</a>
+    </div>
+</nav>
+
+<main class="section">
+    <h1>📚 Vora 文档</h1>
+    <p class="section-desc">从零开始学习 Vora —— 一门类 JavaScript 语法、Lua 级简单性、Wren 式面向对象的动态类型脚本语言。</p>
+
+    <div class="card-grid">
+        <a href="getting-started.html" class="card">
+            <div class="card-icon">🚀</div>
+            <h3>快速开始</h3>
+            <p>安装与构建 Vora，运行你的第一个脚本，理解双后端（VM + 解释器）架构。</p>
+        </a>
+        <a href="language.html" class="card">
+            <div class="card-icon">📖</div>
+            <h3>语言参考</h3>
+            <p>完整的语法参考：类型系统、运算符、变量作用域、控制流、字符串插值、注释。</p>
+        </a>
+        <a href="language.html#functions" class="card">
+            <div class="card-icon">🔧</div>
+            <h3>函数与闭包</h3>
+            <p>函数声明与调用、闭包捕获、一等公民、内建函数完整参考。</p>
+        </a>
+        <a href="language.html#objects" class="card">
+            <div class="card-icon">🏛️</div>
+            <h3>对象与继承</h3>
+            <p>Obj 声明、构造函数、方法定义、单继承、this 绑定、方法覆盖。</p>
+        </a>
+        <a href="language.html#errors" class="card">
+            <div class="card-icon">⚠️</div>
+            <h3>异常处理</h3>
+            <p>try/catch/finally 三种组合、throw 任意值、自定义错误对象、finally 确保执行。</p>
+        </a>
+        <a href="examples.html" class="card">
+            <div class="card-icon">💡</div>
+            <h3>示例程序</h3>
+            <p>从 Hello World 到递归、闭包计数器、继承链等实用示例代码。</p>
+        </a>
+    </div>
+
+    <h2>双后端架构</h2>
+    <p style="color:var(--text2);margin-bottom:24px">Vora 拥有两个执行后端，确保正确性和性能。</p>
+    <div class="card-grid">
+        <div class="card">
+            <h3>⚡ 字节码 VM（默认）</h3>
+            <p>50 条指令的栈式虚拟机。支持闭包 upvalue、全局变量驻留、快速数值操作码、常量折叠、完整的异常处理路由。性能远超树遍历解释器。</p>
+        </div>
+        <div class="card">
+            <h3>🐢 树遍历解释器</h3>
+            <p>直接遍历 AST 执行。作为参考实现，代码清晰可读。通过 <code>--interpreter</code> 标志启用，适合学习和调试。</p>
+        </div>
+    </div>
+
+    <h2>平台支持</h2>
+    <table style="width:100%;border-collapse:collapse;font-size:0.92rem;margin-top:16px">
+        <thead><tr><th style="text-align:left;padding:10px 14px;border-bottom:1px solid var(--border);font-weight:600;color:var(--text2);font-size:0.8rem;text-transform:uppercase;letter-spacing:0.05em">平台</th><th style="text-align:left;padding:10px 14px;border-bottom:1px solid var(--border);font-weight:600;color:var(--text2);font-size:0.8rem;text-transform:uppercase;letter-spacing:0.05em">架构</th><th style="text-align:left;padding:10px 14px;border-bottom:1px solid var(--border);font-weight:600;color:var(--text2);font-size:0.8rem;text-transform:uppercase;letter-spacing:0.05em">包格式</th></tr></thead>
+        <tbody>
+            <tr><td style="padding:10px 14px;border-bottom:1px solid var(--border)">Windows</td><td style="padding:10px 14px;border-bottom:1px solid var(--border)">x64, x86, ARM64</td><td style="padding:10px 14px;border-bottom:1px solid var(--border)">.msi, .zip</td></tr>
+            <tr><td style="padding:10px 14px;border-bottom:1px solid var(--border)">Linux</td><td style="padding:10px 14px;border-bottom:1px solid var(--border)">x64, x86, aarch64, armhf</td><td style="padding:10px 14px;border-bottom:1px solid var(--border)">.deb, .rpm, .pkg.tar.xz</td></tr>
+            <tr><td style="padding:10px 14px;border-bottom:1px solid var(--border)">macOS</td><td style="padding:10px 14px;border-bottom:1px solid var(--border)">universal (x86_64 + arm64)</td><td style="padding:10px 14px;border-bottom:1px solid var(--border)">.tar.gz</td></tr>
+        </tbody>
+    </table>
+</main>
+
+<footer class="footer">
+    <p>Vora · <a href="https://github.com/Vora-lang/Vora" target="_blank" rel="noopener">github.com/Vora-lang/Vora</a></p>
+    <p style="margin-top:8px">Vora is a dynamically typed scripting language. It features JavaScript-like syntax, Lua-level simplicity, and Wren-style object orientation.</p>
+</footer>
+</body>
+</html>

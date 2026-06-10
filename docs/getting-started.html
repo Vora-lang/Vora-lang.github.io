@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>快速开始 — Vora 文档</title>
+<link rel="icon" href="../vora_logo.svg" type="image/svg+xml" />
+<style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+        --bg: #ffffff; --card: #f5f5f7; --border: #e0e0e0;
+        --text: #1d1d1f; --text2: #6e6e73; --kw: #7c3aed; --str: #059669;
+        --num: #d97706; --fn: #2563eb; --lit: #ea580c; --cmt: #a1a1aa;
+        --radius: 10px;
+        --mono: "Cascadia Code", "Fira Code", "JetBrains Mono", "Consolas", monospace;
+        --sans: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+    }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body { font-family: var(--sans); background: var(--bg); color: var(--text); line-height: 1.7; -webkit-font-smoothing: antialiased; }
+    .nav { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0 24px; }
+    .nav-inner { max-width: 960px; margin: 0 auto; display: flex; align-items: center; gap: 24px; height: 52px; font-size: 0.9rem; font-weight: 500; }
+    .nav-logo { font-size: 1.2rem; font-weight: 800; background: linear-gradient(135deg, #6366f1, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-right: auto; }
+    .nav a { color: var(--text2); text-decoration: none; transition: color 0.2s; }
+    .nav a:hover { color: var(--kw); }
+    .nav .active { color: var(--kw); }
+    .section { max-width: 960px; margin: 0 auto; padding: 60px 24px; }
+    .section h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 8px; }
+    .section h2 { font-size: 1.5rem; font-weight: 700; margin: 48px 0 12px; padding-top: 24px; border-top: 1px solid var(--border); }
+    .section h2:first-of-type { border-top: none; padding-top: 0; }
+    .section h3 { font-size: 1.15rem; font-weight: 600; margin: 28px 0 8px; }
+    .section-desc { color: var(--text2); margin-bottom: 32px; font-size: 1.05rem; }
+    .shell { background: #1e1e2e; color: #cdd6f4; border-radius: var(--radius); padding: 18px 22px; font-family: var(--mono); font-size: 0.88rem; line-height: 1.7; overflow-x: auto; margin-bottom: 20px; }
+    .shell .prompt { color: #a6e3a1; }
+    .shell .out { color: #bac2de; }
+    .shell .cmt { color: #6c7086; font-style: italic; }
+    .code { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 22px; font-family: var(--mono); font-size: 0.88rem; line-height: 1.65; overflow-x: auto; margin-bottom: 20px; color: var(--text); }
+    code { font-family: var(--mono); font-size: 0.88em; }
+    p code, li code { background: #f3f0ff; color: var(--kw); padding: 2px 6px; border-radius: 4px; font-size: 0.85em; }
+    .kw { color: var(--kw); } .str { color: var(--str); } .num { color: var(--num); }
+    .fn { color: var(--fn); } .lit { color: var(--lit); } .cmt { color: var(--cmt); font-style: italic; }
+    .interp { color: #db2777; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.92rem; margin: 16px 0 32px; }
+    th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--border); }
+    th { font-weight: 600; color: var(--text2); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .note { background: #fefce8; border: 1px solid #fde68a; border-radius: var(--radius); padding: 14px 18px; margin: 20px 0; font-size: 0.9rem; color: #92400e; }
+    .note strong { color: #d97706; }
+    .footer { border-top: 1px solid var(--border); padding: 40px 24px; text-align: center; color: var(--text2); font-size: 0.85rem; }
+    .footer a { color: var(--kw); text-decoration: none; }
+    .footer a:hover { text-decoration: underline; }
+    ul, ol { margin: 8px 0 16px 24px; }
+    li { margin-bottom: 4px; }
+    @media (max-width: 768px) { .section h1 { font-size: 1.6rem; } .section h2 { font-size: 1.3rem; } }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+    <div class="nav-inner">
+        <a href="../index.html" style="font-size:1.2rem;font-weight:800;background:linear-gradient(135deg,#6366f1,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-decoration:none;">Vora</a>
+        <a href="../index.html#quickstart">快速开始</a>
+        <a href="../index.html#syntax">语法</a>
+        <a href="index.html">文档</a>
+        <a href="getting-started.html" class="active">快速开始</a>
+    </div>
+</nav>
+
+<main class="section">
+    <h1>🚀 快速开始</h1>
+    <p class="section-desc">5 分钟内构建 Vora 并运行你的第一个脚本。</p>
+
+    <h2>系统要求</h2>
+    <table>
+        <thead><tr><th>平台</th><th>编译器</th><th>CMake</th></tr></thead>
+        <tbody>
+            <tr><td>Windows</td><td>MSVC 2019+ (Visual Studio)</td><td>≥ 3.16</td></tr>
+            <tr><td>Linux</td><td>GCC 9+ / Clang 12+</td><td>≥ 3.16</td></tr>
+            <tr><td>macOS</td><td>Apple Clang 13+ (Xcode)</td><td>≥ 3.16</td></tr>
+        </tbody>
+    </table>
+    <p>Vora 的核心原则是 <strong>零外部依赖</strong>——纯 C++17 + STL，无需安装任何第三方库。</p>
+
+    <h2>构建 Vora</h2>
+
+    <h3>Windows</h3>
+    <div class="shell">
+        <span class="cmt"># 默认：x64 Debug</span><br />
+        <span class="prompt">PS&gt; </span>.\build.ps1<br /><br />
+        <span class="cmt"># 指定架构和配置</span><br />
+        <span class="prompt">PS&gt; </span>.\build.ps1 -Architecture x64 -Config Debug<br /><br />
+        <span class="cmt"># ARM64 发布版 + MSI 安装包</span><br />
+        <span class="prompt">PS&gt; </span>.\build.ps1 -Architecture arm64 -Config Release -Package<br /><br />
+        <span class="cmt"># 32 位 x86 Debug</span><br />
+        <span class="prompt">PS&gt; </span>.\build.ps1 -Architecture x86 -Config Debug
+    </div>
+
+    <h3>Linux / macOS</h3>
+    <div class="shell">
+        <span class="cmt"># 默认：x64 debug</span><br />
+        <span class="prompt">$ </span>./build.sh<br /><br />
+        <span class="cmt"># 指定架构 + 配置（短标志）</span><br />
+        <span class="prompt">$ </span>./build.sh -a x64 -c debug<br /><br />
+        <span class="cmt"># 发布版 + 原生打包 (.deb/.rpm/.pkg.tar.xz)</span><br />
+        <span class="prompt">$ </span>./build.sh -c release -p<br /><br />
+        <span class="cmt"># 交叉编译 ARM64</span><br />
+        <span class="prompt">$ </span>./build.sh -a arm64 -c release -p
+    </div>
+
+    <h3>手动 CMake 构建</h3>
+    <div class="shell">
+        <span class="cmt"># 列出所有预设</span><br />
+        <span class="prompt">$ </span>cmake --list-presets<br /><br />
+        <span class="cmt"># 配置 + 构建 + 测试</span><br />
+        <span class="prompt">$ </span>cmake --preset linux-x64-debug<br />
+        <span class="prompt">$ </span>cmake --build --preset linux-x64-debug<br />
+        <span class="prompt">$ </span>ctest --preset linux-x64-debug
+    </div>
+
+    <h2>安装 Vora</h2>
+
+    <h3>从 Release 包安装</h3>
+    <table>
+        <thead><tr><th>平台</th><th>包格式</th><th>安装命令</th></tr></thead>
+        <tbody>
+            <tr><td>Windows</td><td>.msi</td><td>双击安装（可选自定义目录，自动注册 PATH）</td></tr>
+            <tr><td>Debian/Ubuntu</td><td>.deb</td><td><code>sudo dpkg -i vora-*.deb</code></td></tr>
+            <tr><td>Fedora/RHEL</td><td>.rpm</td><td><code>sudo rpm -i vora-*.rpm</code></td></tr>
+            <tr><td>Arch Linux</td><td>.pkg.tar.xz</td><td><code>sudo pacman -U vora-*.pkg.tar.xz</code></td></tr>
+            <tr><td>macOS</td><td>.tar.gz</td><td><code>tar xzf vora-*.tar.gz -C /usr/local/bin</code></td></tr>
+        </tbody>
+    </table>
+    <p>安装后，在终端输入 <code>vora</code> 即可使用（Windows 下 <code>vora</code> 通过 <code>vora.cmd</code> 启动器映射到 <code>Vora.exe</code>）。</p>
+
+    <h2>运行 Vora 程序</h2>
+
+    <h3>执行脚本文件</h3>
+    <div class="shell">
+        <span class="cmt"># VM 模式（默认）</span><br />
+        <span class="prompt">PS&gt; </span>vora hello.va<br />
+        <span class="out">Hello, World!</span><br /><br />
+        <span class="cmt"># 解释器模式（参考实现）</span><br />
+        <span class="prompt">PS&gt; </span>vora hello.va --interpreter<br />
+        <span class="out">Hello, World!</span>
+    </div>
+
+    <h3>REPL 交互模式</h3>
+    <div class="shell">
+        <span class="prompt">PS&gt; </span>vora --repl<br />
+        <span class="out">Vora REPL</span><br />
+        <span class="prompt">&gt; </span>let x = 42<br />
+        <span class="prompt">&gt; </span>x * 2<br />
+        <span class="out">84</span><br />
+        <span class="prompt">&gt; </span>print("Hello ${x}")<br />
+        <span class="out">Hello 42</span>
+    </div>
+
+    <h3>调试选项</h3>
+    <div class="shell">
+        <span class="cmt"># 打印 Token 流 &amp; 字节码反汇编</span><br />
+        <span class="prompt">PS&gt; </span>vora hello.va --tokens<br /><br />
+        <span class="cmt"># 打印 AST（S-expression 格式）</span><br />
+        <span class="prompt">PS&gt; </span>vora hello.va --ast-printer
+    </div>
+
+    <h2>你的第一个 Vora 程序</h2>
+
+    <div class="code">
+        <span class="cmt">// hello.va</span><br />
+        <span class="kw">func</span> <span class="fn">greet</span>(name) {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span> <span class="str">"Hello, "</span> + name + <span class="str">"!"</span><br />
+        }<br /><br />
+        <span class="kw">let</span> names = [<span class="str">"World"</span>, <span class="str">"Vora"</span>, <span class="str">"你"</span>]<br />
+        <span class="kw">for</span> name <span class="kw">in</span> names {<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">print</span>(<span class="fn">greet</span>(name))<br />
+        }
+    </div>
+    <div class="shell">
+        <span class="prompt">$ </span>vora hello.va<br />
+        <span class="out">Hello, World!</span><br />
+        <span class="out">Hello, Vora!</span><br />
+        <span class="out">Hello, 你!</span>
+    </div>
+
+    <h2>构建架构总览</h2>
+    <table>
+        <thead><tr><th>平台</th><th>支持的架构</th></tr></thead>
+        <tbody>
+            <tr><td>Windows</td><td>x64, x86 (Win32), ARM64</td></tr>
+            <tr><td>Linux</td><td>x64, x86 (i386), aarch64 (ARM64), armhf (ARM32 硬浮点)</td></tr>
+            <tr><td>macOS</td><td>universal (x86_64 + arm64 双架构)</td></tr>
+        </tbody>
+    </table>
+
+    <div class="note">
+        <strong>提示：</strong>Vora 提供 20 个 CMake 预设（CMakePresets.json），覆盖全部平台/架构/配置组合。CI（GitHub Actions）对 18 个组合进行自动化构建和测试。
+    </div>
+
+    <h2>下一步</h2>
+    <ul>
+        <li><a href="language.html">语言参考</a> — 完整的语法和类型系统</li>
+        <li><a href="examples.html">示例程序</a> — 从简单到复杂的代码示例</li>
+        <li><a href="https://github.com/Vora-lang/Vora" target="_blank" rel="noopener">GitHub 仓库</a> — 源码、测试、CI</li>
+    </ul>
+</main>
+
+<footer class="footer">
+    <p>Vora · <a href="https://github.com/Vora-lang/Vora" target="_blank" rel="noopener">github.com/Vora-lang/Vora</a></p>
+</footer>
+</body>
+</html>
