@@ -43,11 +43,14 @@
     tr:hover td { background: #fafafa; }
     .note { background: #fefce8; border: 1px solid #fde68a; border-radius: var(--radius); padding: 14px 18px; margin: 20px 0; font-size: 0.9rem; color: #92400e; }
     .note strong { color: #d97706; }
+    .version-tag { font-size: 0.85rem; color: var(--text2); font-style: italic; margin: 4px 0 16px; }
     .footer { border-top: 1px solid var(--border); padding: 40px 24px; text-align: center; color: var(--text2); font-size: 0.85rem; }
     .footer a { color: var(--kw); text-decoration: none; }
     .footer a:hover { text-decoration: underline; }
     ul, ol { margin: 8px 0 16px 24px; }
     li { margin-bottom: 4px; }
+    hr { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+    blockquote { border-left: 3px solid #c4b5fd; padding: 8px 16px; margin: 16px 0; background: #faf5ff; border-radius: 0 var(--radius) var(--radius) 0; }
     @media (max-width: 768px) { .section h1 { font-size: 1.6rem; } .section h2 { font-size: 1.3rem; } }
 </style>
 </head>
@@ -64,593 +67,679 @@
 </nav>
 
 <main class="section">
-    <h1>📖 语言参考</h1>
-    <p class="section-desc">Vora 语言的完整语法参考 —— 类型系统、运算符、控制流、函数、对象、异常处理。</p>
+<h2 id="目录-table-of-contents">目录 / Table of Contents</h2>
+<br>
+<ol>
+<li><a href="#1-快速开始--quick-start">快速开始</a></li>
+<li><a href="#2-类型系统--type-system">类型系统</a></li>
+<li><a href="#3-变量与作用域--variables--scope">变量与作用域</a></li>
+<li><a href="#4-运算符--operators">运算符</a></li>
+<li><a href="#5-控制流--control-flow">控制流</a></li>
+<li><a href="#6-函数与闭包--functions--closures">函数与闭包</a></li>
+<li><a href="#7-生成器--generators">生成器</a> <strong>v0.21+</strong></li>
+<li><a href="#8-对象与继承--objects--inheritance">对象与继承</a></li>
+<li><a href="#9-异常处理--exception-handling">异常处理</a></li>
+<li><a href="#10-模块系统--modules">模块系统</a></li>
+<li><a href="#11-字符串插值--string-interpolation">字符串插值</a></li>
+<li><a href="#12-内建函数--built-in-functions">内建函数</a></li>
+<li><a href="#13-标准库--standard-library">标准库</a></li>
+<li><a href="#14-附录方法速查--method-reference">附录：方法速查</a></li>
+</ol>
+<br>
+<hr>
+<br>
+<h2 id="1-快速开始-quick-start">1. 快速开始 / Quick Start</h2>
+<br>
+<h3 id="hello-world">Hello World</h3>
+<br>
+<div class="code"><pre><span class="fn">print</span>(<span class="str">&quot;Hello, World!&quot;</span>)</pre></div>
+<br>
+<h3 id="运行程序">运行程序</h3>
+<br>
+<div class="code"><pre># 执行脚本文件
+vora hello.va
 
-    <!-- ====== 目录 ====== -->
-    <nav style="margin-bottom:40px">
-        <ol style="columns:2;column-gap:32px;margin:0;padding:0;list-style-position:inside">
-            <li><a href="#types">类型系统</a></li>
-            <li><a href="#variables">变量与作用域</a></li>
-            <li><a href="#operators">运算符</a></li>
-            <li><a href="#control-flow">控制流</a></li>
-            <li><a href="#functions">函数与闭包</a></li>
-            <li><a href="#objects">对象与继承</a></li>
-            <li><a href="#errors">异常处理</a></li>
-            <li><a href="#strings">字符串与插值</a></li>
-            <li><a href="#arrays">数组</a></li>
-            <li><a href="#comments">注释</a></li>
-            <li><a href="#builtins">内建函数</a></li>
-            <li><a href="#array-methods">数组内建方法</a></li>
-            <li><a href="#string-methods">字符串内建方法</a></li>
-        </ol>
-    </nav>
+# 交互模式 (REPL)
+vora --repl</pre></div>
+<br>
+<hr>
+<br>
+<h2 id="2-类型系统-type-system">2. 类型系统 / Type System</h2>
+<br>
+<blockquote>
+<p class="version-tag">引入版本 / Since: v0.1</p>
+</blockquote>
+<br>
+<p>Vora 是动态类型语言，变量无固定类型，值有类型。</p>
+<br>
+<table>
+<tr><th>类型 / Type</th><th>字面量 / Literal</th><th>说明</th></tr>
+<tr><td><strong>Null</strong></td><td><code>null</code></td><td>空值，falsy 值之一</td></tr>
+<tr><td><strong>Boolean</strong></td><td><code>true</code>, <code>false</code></td><td>布尔值</td></tr>
+<tr><td><strong>Int</strong></td><td><code>42</code>, <code>-7</code>, <code>0xFF</code>, <code>0o77</code>, <code>0b101</code></td><td>64 位有符号整数</td></tr>
+<tr><td><strong>Float</strong></td><td><code>3.14</code>, <code>1e10</code>, <code>2.5e-3</code></td><td>64 位浮点数</td></tr>
+<tr><td><strong>String</strong></td><td><code>"hello"</code>, <code>'hello'</code></td><td>UTF-8 字符串，双引号或单引号</td></tr>
+<tr><td><strong>Array</strong></td><td><code>[1, 2, 3]</code></td><td>动态数组</td></tr>
+<tr><td><strong>Dict</strong></td><td><code>{key: "value"}</code></td><td>字符串键字典</td></tr>
+<tr><td><strong>Function</strong></td><td><code>func(x) { return x * 2 }</code></td><td>一等公民函数</td></tr>
+<tr><td><strong>Object</strong></td><td><code>Obj Foo() { ... }</code></td><td>类实例</td></tr>
+</table>
+<br>
+<h3 id="类型检查">类型检查</h3>
+<br>
+<div class="code"><pre><span class="fn">type</span>(<span class="num">42</span>)         <span class="cmt">// &quot;int&quot;</span>
+<span class="fn">type</span>(<span class="num">3.14</span>)       <span class="cmt">// &quot;float&quot;</span>
+<span class="fn">type</span>(<span class="str">&quot;hi&quot;</span>)       <span class="cmt">// &quot;string&quot;</span>
+<span class="fn">type</span>([<span class="num">1</span>, <span class="num">2</span>])     <span class="cmt">// &quot;array&quot;</span>
+<span class="fn">type</span>({a: <span class="num">1</span>})     <span class="cmt">// &quot;dict&quot;</span>
+<span class="fn">type</span>(<span class="kw">null</span>)       <span class="cmt">// &quot;null&quot;</span>
+<span class="fn">type</span>(<span class="kw">true</span>)       <span class="cmt">// &quot;boolean&quot;</span>
+<span class="fn">type</span>(<span class="kw">func</span>(){})   <span class="cmt">// &quot;function&quot;</span></pre></div>
+<br>
+<h3 id="truthy-falsy">Truthy / Falsy</h3>
+<br>
+<p><code>null</code>、<code>false</code>、<code>0</code>、<code>0.0</code>、<code>""</code>、<code>[]</code>、<code>{}</code> 是 <strong>falsy</strong>。其他所有值均为 <strong>truthy</strong>（与 Python 一致）。</p>
+<br>
+<div class="code"><pre><span class="kw">if</span> (<span class="num">0</span>)     { <span class="fn">print</span>(<span class="str">&quot;no&quot;</span>)  }  <span class="cmt">// ❌ 不输出 — 0 是 falsy</span>
+<span class="kw">if</span> (<span class="str">&quot;&quot;</span>)    { <span class="fn">print</span>(<span class="str">&quot;no&quot;</span>)  }  <span class="cmt">// ❌ 不输出 — 空字符串是 falsy</span>
+<span class="kw">if</span> ([])    { <span class="fn">print</span>(<span class="str">&quot;no&quot;</span>)  }  <span class="cmt">// ❌ 不输出 — 空数组是 falsy</span>
+<span class="kw">if</span> ({})    { <span class="fn">print</span>(<span class="str">&quot;no&quot;</span>)  }  <span class="cmt">// ❌ 不输出 — 空字典是 falsy</span>
+<span class="kw">if</span> (<span class="kw">null</span>)  { <span class="fn">print</span>(<span class="str">&quot;no&quot;</span>)  }  <span class="cmt">// ❌ 不输出 — null 是 falsy</span>
+<span class="kw">if</span> (<span class="kw">false</span>) { <span class="fn">print</span>(<span class="str">&quot;no&quot;</span>)  }  <span class="cmt">// ❌ 不输出 — false 是 falsy</span>
+<span class="kw">if</span> (<span class="num">1</span>)     { <span class="fn">print</span>(<span class="str">&quot;yes&quot;</span>) }  <span class="cmt">// ✅ 输出 yes — 非零是 truthy</span>
+<span class="kw">if</span> (<span class="str">&quot;hi&quot;</span>)  { <span class="fn">print</span>(<span class="str">&quot;yes&quot;</span>) }  <span class="cmt">// ✅ 输出 yes — 非空字符串是 truthy</span>
+<span class="kw">if</span> ([<span class="num">1</span>])   { <span class="fn">print</span>(<span class="str">&quot;yes&quot;</span>) }  <span class="cmt">// ✅ 输出 yes — 非空数组是 truthy</span></pre></div>
+<br>
+<hr>
+<br>
+<h2 id="3-变量与作用域-variables-scope">3. 变量与作用域 / Variables & Scope</h2>
+<br>
+<blockquote>
+<p class="version-tag"><code>let</code> 引入版本: v0.1 | <code>const</code> 引入版本: v0.20</p>
+</blockquote>
+<br>
+<h3 id="声明">声明</h3>
+<br>
+<div class="code"><pre><span class="kw">let</span> x = <span class="num">10</span>          <span class="cmt">// 可变绑定</span>
+<span class="kw">const</span> y = <span class="num">42</span>        <span class="cmt">// 不可变绑定，声明时必须初始化</span></pre></div>
+<br>
+<h3 id="赋值">赋值</h3>
+<br>
+<div class="code"><pre>x = <span class="num">20</span>              <span class="cmt">// ✅ 可变变量可重新赋值</span>
+<span class="cmt">// y = 10           // ❌ 编译错误：不可对 const 变量赋值</span>
+<span class="cmt">// y += 1           // ❌ 编译错误</span>
+<span class="cmt">// y++              // ❌ 编译错误</span></pre></div>
+<br>
+<h3 id="作用域">作用域</h3>
+<br>
+<p>Vora 使用<strong>块级作用域</strong>（<code>{}</code> 界定）。变量沿作用域链向上查找。</p>
+<br>
+<div class="code"><pre><span class="kw">let</span> a = <span class="str">&quot;outer&quot;</span>
+{
+    <span class="kw">let</span> b = <span class="str">&quot;inner&quot;</span>
+    <span class="fn">print</span>(a)        <span class="cmt">// &quot;outer&quot; — 外层变量可见</span>
+    <span class="fn">print</span>(b)        <span class="cmt">// &quot;inner&quot;</span>
+}
+<span class="cmt">// print(b)         // ❌ 错误：b 不在作用域内</span></pre></div>
+<br>
+<hr>
+<br>
+<h2 id="4-运算符-operators">4. 运算符 / Operators</h2>
+<br>
+<h3 id="算术运算符">算术运算符</h3>
+<br>
+<table>
+<tr><th>运算符</th><th>说明</th><th>示例</th></tr>
+<tr><td><code>+</code> <code>-</code> <code>*</code> <code>/</code> <code>%</code></td><td>加减乘除取模</td><td><code>3 + 4 * 2</code> → <code>11</code></td></tr>
+<tr><td><code>**</code></td><td>幂运算（右结合）</td><td><code>2 <strong> 3 </strong> 2</code> → <code>512</code></td></tr>
+<tr><td><code>++</code> <code>--</code></td><td>自增/自减（前后缀）</td><td><code>x++</code>, <code>--y</code></td></tr>
+</table>
+<br>
+<h3 id="比较运算符">比较运算符</h3>
+<br>
+<p><code><</code> <code><=</code> <code>></code> <code>>=</code> <code>==</code> <code>!=</code></p>
+<br>
+<ul>
+<li><code>int == float</code> 跨类型比较值：<code>42 == 42.0</code> → <code>true</code></li>
+<li><code>null == null</code> → <code>true</code></li>
+</ul>
+<br>
+<h3 id="逻辑运算符-短路求值">逻辑运算符（短路求值）</h3>
+<br>
+<p><code>&&</code> 和 <code>||</code> 返回<strong>实际值</strong>而非布尔值：</p>
+<br>
+<div class="code"><pre><span class="kw">null</span> || <span class="str">&quot;fallback&quot;</span>   <span class="cmt">// &quot;fallback&quot; — null 是 falsy</span>
+<span class="str">&quot;hi&quot;</span> &amp;&amp; <span class="num">42</span>           <span class="cmt">// 42 — &quot;hi&quot; 是 truthy</span>
+<span class="num">0</span> || <span class="str">&quot;default&quot;</span>       <span class="cmt">// &quot;default&quot; — 0 是 falsy（Python 风格）</span>
+[] || <span class="str">&quot;fallback&quot;</span>     <span class="cmt">// &quot;fallback&quot; — 空数组是 falsy</span></pre></div>
+<br>
+<h3 id="三元运算符">三元运算符 <code>?:</code></h3>
+<br>
+<div class="code"><pre><span class="kw">let</span> result = score &gt; <span class="num">60</span> ? <span class="str">&quot;pass&quot;</span> : <span class="str">&quot;fail&quot;</span>
+<span class="cmt">// 右结合：a ? b : c ? d : e  →  a ? b : (c ? d : e)</span></pre></div>
+<br>
+<h3 id="复合赋值">复合赋值</h3>
+<br>
+<div class="code"><pre>x += <span class="num">5</span>    <span class="cmt">// x = x + 5</span>
+x -= <span class="num">3</span>    <span class="cmt">// x = x - 3</span>
+x *= <span class="num">2</span>    <span class="cmt">// x = x * 2</span>
+x /= <span class="num">3</span>    <span class="cmt">// x = x / 3</span>
+x %= <span class="num">5</span>    <span class="cmt">// x = x % 5</span></pre></div>
+<br>
+<h3 id="数字系统字面量">数字系统字面量</h3>
+<br>
+<div class="code"><pre>0xFF      <span class="cmt">// 255   (十六进制 / hex)</span>
+0o77      <span class="cmt">// 63    (八进制 / octal)</span>
+0b101     <span class="cmt">// 5     (二进制 / binary)</span></pre></div>
+<br>
+<hr>
+<br>
+<h2 id="5-控制流-control-flow">5. 控制流 / Control Flow</h2>
+<br>
+<h3 id="if-else">if / else</h3>
+<br>
+<div class="code"><pre><span class="kw">if</span> (x &gt; <span class="num">0</span>) {
+    <span class="fn">print</span>(<span class="str">&quot;positive&quot;</span>)
+} <span class="kw">else</span> <span class="kw">if</span> (x &lt; <span class="num">0</span>) {
+    <span class="fn">print</span>(<span class="str">&quot;negative&quot;</span>)
+} <span class="kw">else</span> {
+    <span class="fn">print</span>(<span class="str">&quot;zero&quot;</span>)
+}</pre></div>
+<br>
+<p>条件周围括号可选。</p>
+<br>
+<h3 id="while-循环">while 循环</h3>
+<br>
+<div class="code"><pre><span class="kw">let</span> i = <span class="num">0</span>
+<span class="kw">while</span> (i &lt; <span class="num">5</span>) {
+    <span class="fn">print</span>(i)
+    i += <span class="num">1</span>
+}</pre></div>
+<br>
+<h3 id="for-in-循环">for-in 循环</h3>
+<br>
+<blockquote>
+<p class="version-tag">引入版本: v0.5 | 对象遍历: v0.16 | 迭代器协议: v0.21</p>
+</blockquote>
+<br>
+<div class="code"><pre><span class="cmt">// 遍历数组</span>
+<span class="kw">for</span> item <span class="kw">in</span> [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>] { <span class="fn">print</span>(item) }
 
-    <!-- ====== 类型系统 ====== -->
-    <h2 id="types">1. 类型系统</h2>
-    <p>Vora 是<strong>动态类型</strong>语言，变量在运行时持有任意类型的值。</p>
+<span class="cmt">// 遍历字符串</span>
+<span class="kw">for</span> ch <span class="kw">in</span> <span class="str">&quot;Vora&quot;</span> { <span class="fn">print</span>(ch) }
 
-    <h3>运行时类型</h3>
-    <table>
-        <thead><tr><th>类型</th><th>字面量</th><th>C++ 内部表示</th><th>说明</th></tr></thead>
-        <tbody>
-            <tr><td><strong>Null</strong></td><td><code>null</code></td><td><code>std::nullptr_t</code></td><td>空值，所有未初始化的默认值</td></tr>
-            <tr><td><strong>Number</strong></td><td><code>42</code>, <code>3.14</code></td><td><code>double</code></td><td>IEEE 754 双精度浮点（唯一数值类型）</td></tr>
-            <tr><td><strong>Boolean</strong></td><td><code>true</code>, <code>false</code></td><td><code>bool</code></td><td>逻辑真/假</td></tr>
-            <tr><td><strong>String</strong></td><td><code>"hello"</code>, <code>'world'</code></td><td><code>std::string</code></td><td>UTF-8 编码，单引号和双引号等价</td></tr>
-            <tr><td><strong>Array</strong></td><td><code>[1, 2, 3]</code></td><td><code>shared_ptr&lt;Array&gt;</code></td><td>动态数组，元素可为任意类型</td></tr>
-            <tr><td><strong>Function</strong></td><td><code>func f() {}</code></td><td><code>shared_ptr&lt;Callable&gt;</code></td><td>一等公民，可作为值传递</td></tr>
-            <tr><td><strong>Object</strong></td><td><code>Obj Foo() {}</code></td><td><code>shared_ptr&lt;ObjectInstance&gt;</code></td><td>类实例，含属性和方法</td></tr>
-        </tbody>
-    </table>
+<span class="cmt">// 遍历 range</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">5</span>) { <span class="fn">print</span>(i) }    <span class="cmt">// 0, 1, 2, 3, 4</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">5</span>) { <span class="fn">print</span>(i) } <span class="cmt">// 1, 2, 3, 4</span>
 
-    <h3>数字字面量</h3>
-    <p>Vora 支持多种进制的数字表示：</p>
-    <div class="code">
-        <span class="num">42</span>          <span class="cmt">// 十进制</span>
-        <span class="num">3.14</span>        <span class="cmt">// 浮点数</span>
-        <span class="num">0xFF</span>        <span class="cmt">// 十六进制 (255)</span>
-        <span class="num">0o77</span>        <span class="cmt">// 八进制 (63)</span>
-        <span class="num">0b101</span>       <span class="cmt">// 二进制 (5)</span>
-    </div>
-    <p><code>1 / 2</code> 结果为 <code>0.5</code>，与 Python 3 语义一致。没有整数除法。</p>
+<span class="cmt">// 遍历字典（迭代键）</span>
+<span class="kw">for</span> key <span class="kw">in</span> dict { <span class="fn">print</span>(key) }</pre></div>
+<br>
+<h3 id="c-风格-for-循环">C 风格 for 循环</h3>
+<br>
+<blockquote>
+<p class="version-tag">引入版本: v0.19</p>
+</blockquote>
+<br>
+<div class="code"><pre><span class="cmt">// 完整形式</span>
+<span class="kw">for</span> (<span class="kw">let</span> i = <span class="num">0</span>; i &lt; <span class="num">5</span>; i = i + <span class="num">1</span>) {
+    <span class="fn">print</span>(i)
+}
 
-    <h3>真值规则</h3>
-    <p>只有 <code>null</code> 和 <code>false</code> 被视为"假"（falsy），其余所有值——包括 <code>0</code>、<code>""</code>、<code>[]</code>——均为"真"（truthy）。</p>
-    <div class="code">
-        <span class="lit">null</span>   <span class="cmt">→ falsy</span>
-        <span class="lit">false</span>  <span class="cmt">→ falsy</span>
-        <span class="num">0</span>      <span class="cmt">→ truthy</span>
-        <span class="str">""</span>     <span class="cmt">→ truthy</span>
-        []     <span class="cmt">→ truthy</span>
-    </div>
+<span class="cmt">// 省略初始化</span>
+<span class="kw">let</span> k = <span class="num">0</span>
+<span class="kw">for</span> (; k &lt; <span class="num">3</span>; k = k + <span class="num">1</span>) { <span class="fn">print</span>(k) }
 
-    <!-- ====== 变量 ====== -->
-    <h2 id="variables">2. 变量与作用域</h2>
+<span class="cmt">// 无条件循环 + break</span>
+<span class="kw">for</span> (<span class="kw">let</span> j = <span class="num">0</span>; ; j = j + <span class="num">1</span>) {
+    <span class="kw">if</span> (j &gt;= <span class="num">10</span>) { <span class="kw">break</span> }
+}</pre></div>
+<br>
+<p><code>for-in</code> 与 <code>C-for</code> 通过 <code>for (</code> 前缀区分。</p>
+<br>
+<h3 id="break-continue">break / continue</h3>
+<br>
+<blockquote>
+<p class="version-tag">引入版本: v0.5</p>
+</blockquote>
+<br>
+<div class="code"><pre><span class="kw">while</span> (<span class="kw">true</span>) {
+    <span class="kw">if</span> (done) { <span class="kw">break</span> }       <span class="cmt">// 退出循环</span>
+    <span class="kw">if</span> (skip) { <span class="kw">continue</span> }    <span class="cmt">// 跳过本次迭代</span>
+}</pre></div>
+<br>
+<hr>
+<br>
+<h2 id="6-函数与闭包-functions-closures">6. 函数与闭包 / Functions & Closures</h2>
+<br>
+<h3 id="函数声明">函数声明</h3>
+<br>
+<blockquote>
+<p class="version-tag">引入版本: v0.7</p>
+</blockquote>
+<br>
+<div class="code"><pre><span class="kw">func</span> add(a, b) {
+    <span class="kw">return</span> a + b
+}
+add(<span class="num">3</span>, <span class="num">4</span>)  <span class="cmt">// 7</span></pre></div>
+<br>
+<p>无 <code>return</code> 或 <code>return;</code> 时，函数返回 <code>null</code>。</p>
+<br>
+<h3 id="匿名函数-lambda">匿名函数（Lambda）</h3>
+<br>
+<blockquote>
+<p class="version-tag">引入版本: v0.19</p>
+</blockquote>
+<br>
+<div class="code"><pre><span class="kw">let</span> square = <span class="kw">func</span>(x) { <span class="kw">return</span> x * x }
+square(<span class="num">7</span>)  <span class="cmt">// 49</span>
 
-    <h3>变量声明</h3>
-    <p>使用 <code>let</code> 关键字声明变量。必须显式声明，不能对未声明变量赋值。</p>
-    <div class="code">
-        <span class="kw">let</span> x = <span class="num">10</span><br />
-        <span class="kw">let</span> name = <span class="str">"Vora"</span><br />
-        <span class="kw">let</span> arr = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]
-    </div>
+<span class="cmt">// 作为回调</span>
+[<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>].map(<span class="kw">func</span>(x) { <span class="kw">return</span> x * <span class="num">2</span> })
 
-    <h3>类型标注（可选）</h3>
-    <p>声明时可添加 <code>:int</code> 或 <code>:float</code> 标注（当前仅作文档用途，不强制校验）：</p>
-    <div class="code">
-        <span class="kw">let</span> x:<span class="type">int</span> = <span class="num">42</span><br />
-        <span class="kw">let</span> y:<span class="type">float</span> = <span class="num">3.14</span>
-    </div>
+<span class="cmt">// 立即调用 (IIFE)</span>
+<span class="kw">let</span> r = <span class="kw">func</span>(a, b) { <span class="kw">return</span> a + b }(<span class="num">3</span>, <span class="num">4</span>)  <span class="cmt">// 7</span></pre></div>
+<br>
+<h3 id="闭包">闭包</h3>
+<br>
+<p>函数捕获定义时所在作用域的变量：</p>
+<br>
+<div class="code"><pre><span class="kw">func</span> makeCounter() {
+    <span class="kw">let</span> count = <span class="num">0</span>
+    <span class="kw">return</span> <span class="kw">func</span>() {
+        count = count + <span class="num">1</span>
+        <span class="kw">return</span> count
+    }
+}
 
-    <h3>赋值</h3>
-    <p>赋值运算符 <code>=</code> 沿<strong>词法作用域链</strong>向上查找变量并更新其值。如果在当前作用域和所有父作用域中都找不到，则报运行时错误。</p>
-    <div class="code">
-        <span class="kw">let</span> x = <span class="num">10</span><br />
-        x = <span class="num">20</span>     <span class="cmt">// 重新赋值</span><br />
-        x = x + <span class="num">1</span>  <span class="cmt">// x 现在是 21</span>
-    </div>
+<span class="kw">let</span> c = makeCounter()
+c()  <span class="cmt">// 1</span>
+c()  <span class="cmt">// 2</span>
+c()  <span class="cmt">// 3</span></pre></div>
+<br>
+<h3 id="默认参数">默认参数</h3>
+<br>
+<blockquote>
+<p class="version-tag">引入版本: v0.15</p>
+</blockquote>
+<br>
+<div class="code"><pre><span class="kw">func</span> greet(name, greeting = <span class="str">&quot;Hello&quot;</span>) {
+    <span class="kw">return</span> greeting + <span class="str">&quot;, &quot;</span> + name
+}
+greet(<span class="str">&quot;World&quot;</span>)              <span class="cmt">// &quot;Hello, World&quot;</span>
+greet(<span class="str">&quot;Vora&quot;</span>, <span class="str">&quot;Hi&quot;</span>)         <span class="cmt">// &quot;Hi, Vora&quot;</span>
 
-    <h3>块作用域</h3>
-    <p><code>{ }</code> 块创建新的作用域。内层可以遮蔽（shadow）外层变量。</p>
-    <div class="code">
-        <span class="kw">let</span> x = <span class="num">10</span><br />
-        {<br />
-        &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">let</span> x = <span class="num">30</span>   <span class="cmt">// 遮蔽外层的 x</span><br />
-        &nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">print</span>(x)     <span class="cmt">// 30</span><br />
-        }<br />
-        <span class="fn">print</span>(x)         <span class="cmt">// 10（外层 x 未受影响）</span>
-    </div>
+<span class="cmt">// 默认值可引用前置参数</span>
+<span class="kw">func</span> addOne(a, b = a + <span class="num">1</span>) { <span class="kw">return</span> b }
+addOne(<span class="num">5</span>)                   <span class="cmt">// 6</span></pre></div>
+<br>
+<h3 id="尾调用优化-tco">尾调用优化 (TCO)</h3>
+<br>
+<blockquote>
+<p class="version-tag">引入版本: v0.20</p>
+</blockquote>
+<br>
+<p>当 <code>return</code> 后直接跟函数调用时，自动复用栈帧。支持无限尾递归：</p>
+<br>
+<div class="code"><pre><span class="kw">func</span> fact(n, acc) {
+    <span class="kw">if</span> (n &lt;= <span class="num">1</span>) { <span class="kw">return</span> acc }
+    <span class="kw">return</span> fact(n - <span class="num">1</span>, n * acc)    <span class="cmt">// 尾调用 — 不增长栈</span>
+}
+fact(<span class="num">10000</span>, <span class="num">1</span>)  <span class="cmt">// ✅ 正常完成</span></pre></div>
+<br>
+<hr>
+<br>
+<h2 id="7-生成器-generators">7. 生成器 / Generators</h2>
+<br>
+<blockquote>
+<p class="version-tag">引入版本: v0.21</p>
+</blockquote>
+<br>
+<h3 id="yield-语法">yield 语法</h3>
+<br>
+<div class="code"><pre><span class="kw">func</span> countTo(n) {
+    <span class="kw">let</span> i = <span class="num">1</span>
+    <span class="kw">while</span> (i &lt;= n) {
+        <span class="kw">yield</span> i
+        i = i + <span class="num">1</span>
+    }
+}</pre></div>
+<br>
+<h3 id="iter-next-协议">iter() / next() 协议</h3>
+<br>
+<div class="code"><pre><span class="kw">let</span> gen = <span class="fn">iter</span>(countTo(<span class="num">3</span>))
+<span class="fn">print</span>(<span class="fn">next</span>(gen))  <span class="cmt">// 1</span>
+<span class="fn">print</span>(<span class="fn">next</span>(gen))  <span class="cmt">// 2</span>
+<span class="fn">print</span>(<span class="fn">next</span>(gen))  <span class="cmt">// 3</span>
+<span class="cmt">// next(gen) 抛出 StopIteration — 可被 try/catch 捕获</span></pre></div>
+<br>
+<h3 id="for-in-消费生成器">for-in 消费生成器</h3>
+<br>
+<div class="code"><pre><span class="kw">for</span> x <span class="kw">in</span> countTo(<span class="num">5</span>) {
+    <span class="fn">print</span>(x)   <span class="cmt">// 1, 2, 3, 4, 5</span>
+}</pre></div>
+<br>
+<hr>
+<br>
+<h2 id="8-对象与继承-objects-inheritance">8. 对象与继承 / Objects & Inheritance</h2>
+<br>
+<h3 id="obj-声明">Obj 声明</h3>
+<br>
+<blockquote>
+<p class="version-tag">引入版本: v0.7</p>
+</blockquote>
+<br>
+<div class="code"><pre><span class="kw">Obj</span> Person(name, age) {
+    <span class="kw">this</span>.name = name
+    <span class="kw">this</span>.age = age
 
-    <!-- ====== 运算符 ====== -->
-    <h2 id="operators">3. 运算符</h2>
+    <span class="kw">func</span> greet() {
+        <span class="fn">print</span>(<span class="str">&quot;Hi, I'm &quot;</span> + <span class="kw">this</span>.name)
+    }
+}
 
-    <h3>运算符优先级表</h3>
-    <table>
-        <thead><tr><th>优先级</th><th>运算符</th><th>结合性</th><th>说明</th></tr></thead>
-        <tbody>
-            <tr><td>1</td><td><code>=</code></td><td>右</td><td>赋值</td></tr>
-            <tr><td>1</td><td><code>||</code> <code>or</code></td><td>左</td><td>逻辑或（短路求值）</td></tr>
-            <tr><td>2</td><td><code>&&</code> <code>and</code></td><td>左</td><td>逻辑与（短路求值）</td></tr>
-            <tr><td>2</td><td><code>? :</code></td><td>右</td><td>三元条件运算符</td></tr>
-            <tr><td>3</td><td><code>==</code> <code>!=</code></td><td>左</td><td>相等性比较</td></tr>
-            <tr><td>4</td><td><code>&lt;</code> <code>&lt;=</code> <code>&gt;</code> <code>&gt;=</code></td><td>左</td><td>关系比较</td></tr>
-            <tr><td>5</td><td><code>+</code> <code>-</code></td><td>左</td><td>加法/减法（+ 同时支持字符串拼接和数组合并）</td></tr>
-            <tr><td>6</td><td><code>*</code> <code>/</code> <code>%</code></td><td>左</td><td>乘法/除法/取模</td></tr>
-            <tr><td>7</td><td><code>**</code></td><td>右</td><td>幂运算</td></tr>
-            <tr><td>—</td><td><code>++</code> <code>--</code></td><td>—</td><td>自增/自减（前缀和后缀）</td></tr>
-            <tr><td>—</td><td><code>+=</code> <code>-=</code> <code>*=</code> <code>/=</code> <code>%=</code></td><td>右</td><td>复合赋值</td></tr>
-            <tr><td>—</td><td><code>!</code> <code>-</code></td><td>右</td><td>一元：逻辑非 / 算术取反</td></tr>
-        </tbody>
-    </table>
+<span class="kw">let</span> p = Person(<span class="str">&quot;Alice&quot;</span>, <span class="num">25</span>)
+p.greet()           <span class="cmt">// Hi, I'm Alice</span>
+<span class="fn">print</span>(p.name)       <span class="cmt">// Alice</span>
+p.age = <span class="num">26</span>          <span class="cmt">// 属性赋值</span></pre></div>
+<br>
+<h3 id="单继承">单继承</h3>
+<br>
+<div class="code"><pre><span class="kw">Obj</span> Animal(name) {
+    <span class="kw">this</span>.name = name
+    <span class="kw">func</span> speak() { <span class="fn">print</span>(<span class="str">&quot;...&quot;</span>) }
+}
 
-    <h3>算术运算符</h3>
-    <div class="code">
-        <span class="num">10</span> + <span class="num">3</span>    <span class="cmt">// 13</span><br />
-        <span class="num">10</span> - <span class="num">3</span>    <span class="cmt">// 7</span><br />
-        <span class="num">10</span> * <span class="num">3</span>    <span class="cmt">// 30</span><br />
-        <span class="num">10</span> / <span class="num">3</span>    <span class="cmt">// 3.333...</span><br />
-        <span class="num">10</span> % <span class="num">3</span>    <span class="cmt">// 1</span><br />
-        <span class="num">2</span> ** <span class="num">8</span>    <span class="cmt">// 256（右结合：2 ** 3 ** 2 = 2 ** 9 = 512）</span>
-    </div>
+<span class="kw">Obj</span> Dog : Animal (name, breed) {
+    <span class="kw">this</span>.breed = breed
+    <span class="kw">func</span> speak() {
+        <span class="fn">print</span>(<span class="str">&quot;Woof! I'm &quot;</span> + <span class="kw">this</span>.name)
+    }
+}
 
-    <h3>字符串拼接</h3>
-    <p><code>+</code> 运算符对字符串进行拼接。一方为字符串、另一方非字符串时，非字符串方被自动转为字符串。</p>
-    <div class="code">
-        <span class="str">"Hello"</span> + <span class="str">" "</span> + <span class="str">"World"</span>   <span class="cmt">// "Hello World"</span><br />
-        <span class="str">"The answer is "</span> + <span class="num">42</span>       <span class="cmt">// "The answer is 42"</span>
-    </div>
+<span class="kw">let</span> d = Dog(<span class="str">&quot;Rex&quot;</span>, <span class="str">&quot;Husky&quot;</span>)
+d.speak()  <span class="cmt">// Woof! I'm Rex</span></pre></div>
+<br>
+<h3 id="多继承-c3-mro">多继承 (C3 MRO)</h3>
+<br>
+<blockquote>
+<p class="version-tag">引入版本: v0.15</p>
+</blockquote>
+<br>
+<div class="code"><pre><span class="kw">Obj</span> A() { <span class="kw">func</span> who() { <span class="kw">return</span> <span class="str">&quot;A&quot;</span> } }
+<span class="kw">Obj</span> B() { <span class="kw">func</span> who() { <span class="kw">return</span> <span class="str">&quot;B&quot;</span> } }
+<span class="kw">Obj</span> C : A, B () {}
 
-    <h3>数组操作</h3>
-    <div class="code">
-        [<span class="num">1</span>, <span class="num">2</span>] + [<span class="num">3</span>, <span class="num">4</span>]   <span class="cmt">// [1, 2, 3, 4]（合并）</span><br />
-        [<span class="num">1</span>, <span class="num">2</span>] + <span class="num">99</span>         <span class="cmt">// [1, 2, 99]（追加）</span><br />
-        <span class="num">99</span> + [<span class="num">1</span>, <span class="num">2</span>]         <span class="cmt">// [99, 1, 2]（前插）</span>
-    </div>
+<span class="kw">let</span> c = C()
+c.who()  <span class="cmt">// &quot;A&quot; — C3 线性化确定方法解析顺序</span></pre></div>
+<br>
+<h3 id="super-关键字">super 关键字</h3>
+<br>
+<blockquote>
+<p class="version-tag">引入版本: v0.15</p>
+</blockquote>
+<br>
+<div class="code"><pre><span class="kw">Obj</span> Parent() {
+    <span class="kw">func</span> greet() { <span class="kw">return</span> <span class="str">&quot;Hello from Parent&quot;</span> }
+}
 
-    <h3>比较运算符</h3>
-    <div class="code">
-        <span class="num">5</span> &lt; <span class="num">10</span>     <span class="cmt">// true</span><br />
-        <span class="num">5</span> == <span class="num">5</span>    <span class="cmt">// true</span><br />
-        <span class="str">"a"</span> != <span class="str">"b"</span>  <span class="cmt">// true</span><br />
-        <span class="lit">null</span> == <span class="lit">null</span>  <span class="cmt">// true</span>
-    </div>
+<span class="kw">Obj</span> Child : Parent () {
+    <span class="kw">func</span> greet() {
+        <span class="kw">return</span> <span class="kw">super</span>.greet() + <span class="str">&quot; and Child&quot;</span>
+    }
+}
 
-    <h3>逻辑运算符（短路求值）</h3>
-    <p><code>&&</code> 和 <code>||</code> 执行短路求值，返回<strong>实际值</strong>而非布尔化结果。这赋予它们类似 Lua 的强大语义：</p>
-    <div class="code">
-        <span class="cmt">// 短路求值：右操作数可能不被执行</span><br />
-        <span class="lit">false</span> && <span class="fn">crash</span>()  <span class="cmt">// crash() 永远不会被调用</span><br />
-        <span class="lit">true</span> || <span class="fn">crash</span>()   <span class="cmt">// crash() 永远不会被调用</span><br /><br />
-        <span class="cmt">// 返回实际值</span><br />
-        <span class="num">0</span> || <span class="str">"default"</span>     <span class="cmt">// "default"（0 是 truthy，所以短路返回 0！）</span><br />
-        <span class="lit">null</span> || <span class="str">"fallback"</span>  <span class="cmt">// "fallback"（null 是 falsy，返回右值）</span><br />
-        <span class="str">"hi"</span> && <span class="num">42</span>       <span class="cmt">// 42（"hi" 是 truthy，返回右值）</span>
-    </div>
-    <div class="note"><strong>注意：</strong>Vora 中 <code>0</code> 是 truthy！这与 C/JavaScript 不同。<code>||</code> 仅对 <code>null</code> 和 <code>false</code> 触发短路。</div>
+Child().greet()  <span class="cmt">// &quot;Hello from Parent and Child&quot;</span></pre></div>
+<br>
+<hr>
+<br>
+<h2 id="9-异常处理-exception-handling">9. 异常处理 / Exception Handling</h2>
+<br>
+<blockquote>
+<p class="version-tag">引入版本: v0.7 | finally 完善: v0.10</p>
+</blockquote>
+<br>
+<h3 id="try-catch-finally">try / catch / finally</h3>
+<br>
+<div class="code"><pre><span class="kw">try</span> {
+    <span class="kw">throw</span> <span class="str">&quot;something went wrong&quot;</span>
+} <span class="kw">catch</span> (e) {
+    <span class="fn">print</span>(<span class="str">&quot;Caught: &quot;</span> + e)
+} <span class="kw">finally</span> {
+    <span class="fn">print</span>(<span class="str">&quot;Always runs&quot;</span>)
+}</pre></div>
+<br>
+<h3 id="throw">throw</h3>
+<br>
+<div class="code"><pre><span class="kw">throw</span> <span class="str">&quot;error message&quot;</span>
+<span class="kw">throw</span> <span class="num">404</span>
+<span class="kw">throw</span> {code: <span class="num">500</span>, msg: <span class="str">&quot;Server Error&quot;</span>}</pre></div>
+<br>
+<p><code>throw</code> 可以抛出任何类型的值。</p>
+<br>
+<hr>
+<br>
+<h2 id="10-模块系统-modules">10. 模块系统 / Modules</h2>
+<br>
+<blockquote>
+<p class="version-tag">引入版本: v0.21</p>
+</blockquote>
+<br>
+<h3 id="import">import</h3>
+<br>
+<div class="code"><pre><span class="kw">import</span> <span class="str">&quot;json&quot;</span>                    <span class="cmt">// 导入整个模块</span>
+<span class="kw">import</span> <span class="str">&quot;math&quot;</span> <span class="kw">as</span> m              <span class="cmt">// 导入并重命名</span>
 
-    <h3>三元运算符 <code>? :</code></h3>
-    <div class="code">
-        <span class="kw">let</span> result = score > <span class="num">60</span> ? <span class="str">"pass"</span> : <span class="str">"fail"</span><br /><br />
-        <span class="cmt">// 右结合：a ? b : c ? d : e → a ? b : (c ? d : e)</span><br />
-        <span class="kw">let</span> grade = score > <span class="num">90</span> ? <span class="str">"A"</span> : score > <span class="num">80</span> ? <span class="str">"B"</span> : <span class="str">"C"</span>
-    </div>
+<span class="cmt">// 使用</span>
+<span class="kw">let</span> data = json.parse(<span class="str">&quot;[1, 2]&quot;</span>)
+<span class="fn">print</span>(m.<span class="fn">sqrt</span>(<span class="num">16</span>))               <span class="cmt">// 4.0</span></pre></div>
+<br>
+<h3 id="from-import">from ... import</h3>
+<br>
+<div class="code"><pre><span class="kw">from</span> <span class="str">&quot;json&quot;</span> <span class="kw">import</span> parse, stringify
 
-    <h3>自增/自减</h3>
-    <div class="code">
-        <span class="kw">let</span> x = <span class="num">5</span><br />
-        <span class="fn">print</span>(x++)   <span class="cmt">// 5（后缀：先返回，后自增）</span><br />
-        <span class="fn">print</span>(x)     <span class="cmt">// 6</span><br />
-        <span class="fn">print</span>(++x)   <span class="cmt">// 7（前缀：先自增，后返回）</span>
-    </div>
+<span class="kw">let</span> data = parse(<span class="str">&quot;[1, 2, 3]&quot;</span>)
+<span class="fn">print</span>(stringify(data))</pre></div>
+<br>
+<h3 id="export">export</h3>
+<br>
+<div class="code"><pre><span class="cmt">// mylib.va</span>
+<span class="kw">export</span> <span class="kw">let</span> PI = <span class="num">3.14159</span>
+<span class="kw">export</span> <span class="kw">func</span> greet(name) { <span class="kw">return</span> <span class="str">&quot;Hi, &quot;</span> + name }
 
-    <h3>复合赋值</h3>
-    <div class="code">
-        <span class="kw">let</span> x = <span class="num">10</span><br />
-        x += <span class="num">5</span>     <span class="cmt">// x = 15（对应 x = x + 5）</span><br />
-        x -= <span class="num">3</span>     <span class="cmt">// x = 12</span><br />
-        x *= <span class="num">2</span>     <span class="cmt">// x = 24</span><br />
-        x /= <span class="num">3</span>     <span class="cmt">// x = 8</span><br />
-        x %= <span class="num">5</span>     <span class="cmt">// x = 3</span>
-    </div>
+<span class="cmt">// main.va</span>
+<span class="kw">import</span> <span class="str">&quot;./mylib&quot;</span>
+<span class="fn">print</span>(mylib.PI)
+<span class="fn">print</span>(mylib.greet(<span class="str">&quot;World&quot;</span>))</pre></div>
+<br>
+<p>模块路径支持：</p>
+<ul>
+<li>裸名 → 搜索 <code>std/</code> 目录 → 当前目录</li>
+<li><code>"./foo"</code> → 相对路径</li>
+<li><code>"../bar"</code> → 父目录相对路径</li>
+</ul>
+<br>
+<hr>
+<br>
+<h2 id="11-字符串插值-string-interpolation">11. 字符串插值 / String Interpolation</h2>
+<br>
+<blockquote>
+<p class="version-tag">引入版本: v0.8</p>
+</blockquote>
+<br>
+<div class="code"><pre><span class="kw">let</span> name = <span class="str">&quot;World&quot;</span>
+<span class="fn">print</span>(<span class="str">&quot;Hello ${name}!&quot;</span>)         <span class="cmt">// Hello World!</span>
 
-    <!-- ====== 控制流 ====== -->
-    <h2 id="control-flow">4. 控制流</h2>
+<span class="kw">let</span> obj = Person(<span class="str">&quot;Alice&quot;</span>, <span class="num">25</span>)
+<span class="fn">print</span>(<span class="str">&quot;Name: ${obj.name}&quot;</span>)      <span class="cmt">// Name: Alice</span></pre></div>
+<br>
+<p><code>${...}</code> 内支持表达式和属性访问。未找到变量时保留原始文本。</p>
+<br>
+<hr>
+<br>
+<h2 id="12-内建函数-built-in-functions">12. 内建函数 / Built-in Functions</h2>
+<br>
+<h3 id="输出-output">输出 / Output</h3>
+<br>
+<table>
+<tr><th>函数</th><th>说明</th></tr>
+<tr><td><code>print(args...)</code></td><td>打印参数到 stdout，空格分隔，自动换行</td></tr>
+</table>
+<br>
+<h3 id="类型-type">类型 / Type</h3>
+<br>
+<table>
+<tr><th>函数</th><th>说明</th></tr>
+<tr><td><code>type(v)</code></td><td>返回类型名：<code>"int"</code>, <code>"float"</code>, <code>"string"</code>, <code>"array"</code>, <code>"dict"</code>, <code>"boolean"</code>, <code>"null"</code>, <code>"function"</code>, <code>"object"</code></td></tr>
+<tr><td><code>int(v)</code></td><td>转换为整数</td></tr>
+<tr><td><code>float(v)</code></td><td>转换为浮点数</td></tr>
+<tr><td><code>toString(v)</code></td><td>转换为字符串</td></tr>
+</table>
+<br>
+<h3 id="工具-utility">工具 / Utility</h3>
+<br>
+<table>
+<tr><th>函数</th><th>说明</th></tr>
+<tr><td><code>len(v)</code></td><td>返回数组元素数 / 字符串长度 / 字典键数</td></tr>
+<tr><td><code>clock()</code></td><td>返回自 Epoch 以来的秒数（浮点）</td></tr>
+<tr><td><code>assert(cond, msg?)</code></td><td>条件为 falsy 时抛出异常</td></tr>
+<tr><td><code>input(prompt?)</code></td><td>从 stdin 读取一行，EOF 返回 <code>null</code></td></tr>
+<tr><td><code>range(stop)</code> / <code>range(start, stop)</code> / <code>range(start, stop, step)</code></td><td>生成数值数组</td></tr>
+</table>
+<br>
+<h3 id="进制转换-number-base">进制转换 / Number Base</h3>
+<br>
+<table>
+<tr><th>函数</th><th>说明</th><th>示例</th></tr>
+<tr><td><code>bin(n)</code></td><td>转二进制字符串</td><td><code>bin(42)</code> → <code>"0b101010"</code></td></tr>
+<tr><td><code>oct(n)</code></td><td>转八进制字符串</td><td><code>oct(63)</code> → <code>"0o77"</code></td></tr>
+<tr><td><code>hex(n)</code></td><td>转十六进制字符串</td><td><code>hex(255)</code> → <code>"0xff"</code></td></tr>
+</table>
+<br>
+<h3 id="迭代器-iterator">迭代器 / Iterator</h3>
+<br>
+<blockquote>
+<p class="version-tag">引入版本: v0.21</p>
+</blockquote>
+<br>
+<table>
+<tr><th>函数</th><th>说明</th></tr>
+<tr><td><code>iter(collection)</code></td><td>创建迭代器（支持 Array、String、Dict、Generator）</td></tr>
+<tr><td><code>next(it)</code></td><td>前进迭代器，返回下一个元素。耗尽时抛出 <code>StopIteration</code></td></tr>
+</table>
+<br>
+<hr>
+<br>
+<h2 id="13-标准库-standard-library">13. 标准库 / Standard Library</h2>
+<br>
+<h3 id="std-math">std/math</h3>
+<br>
+<blockquote>
+<p class="version-tag">引入版本: v0.21</p>
+</blockquote>
+<br>
+<div class="code"><pre><span class="kw">import</span> <span class="str">&quot;math&quot;</span>
 
-    <h3>if / else</h3>
-    <div class="code">
-        <span class="kw">if</span> (x > <span class="num">0</span>) {<br />
-        &nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">print</span>(<span class="str">"positive"</span>)<br />
-        } <span class="kw">else</span> <span class="kw">if</span> (x &lt; <span class="num">0</span>) {<br />
-        &nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">print</span>(<span class="str">"negative"</span>)<br />
-        } <span class="kw">else</span> {<br />
-        &nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">print</span>(<span class="str">"zero"</span>)<br />
-        }
-    </div>
-    <p>条件表达式 <strong>不需要</strong> 加括号 —— <code>if x > 0 { }</code> 同样有效。<code>else if</code> 通过嵌套 <code>IfStmt</code> 实现。</p>
+math.<span class="fn">abs</span>(-<span class="num">5</span>)           <span class="cmt">// 5</span>
+math.<span class="fn">sqrt</span>(<span class="num">16</span>)          <span class="cmt">// 4.0</span>
+math.<span class="fn">sin</span>(math.PI / <span class="num">2</span>)  <span class="cmt">// ~1.0</span>
+math.<span class="fn">cos</span>(<span class="num">0</span>)            <span class="cmt">// 1.0</span>
+math.<span class="fn">min</span>([<span class="num">3</span>, <span class="num">1</span>, <span class="num">2</span>])    <span class="cmt">// 1</span>
+math.<span class="fn">max</span>([<span class="num">3</span>, <span class="num">1</span>, <span class="num">2</span>])    <span class="cmt">// 3</span>
 
-    <h3>while 循环</h3>
-    <div class="code">
-        <span class="kw">let</span> i = <span class="num">0</span><br />
-        <span class="kw">while</span> (i &lt; <span class="num">5</span>) {<br />
-        &nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">print</span>(i)<br />
-        &nbsp;&nbsp;&nbsp;&nbsp;i += <span class="num">1</span><br />
-        }
-    </div>
+<span class="cmt">// 常量</span>
+math.PI      <span class="cmt">// 3.141592653589793</span>
+math.E       <span class="cmt">// 2.718281828459045</span>
+math.TAU     <span class="cmt">// 6.283185307179586</span>
 
-    <h3>for-in 循环</h3>
-    <p>支持三种可迭代对象：数组、字符串、<code>range()</code>。</p>
-    <div class="code">
-        <span class="cmt">// 遍历数组</span><br />
-        <span class="kw">for</span> item <span class="kw">in</span> [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>] {<br />
-        &nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">print</span>(item)<br />
-        }<br /><br />
-        <span class="cmt">// 遍历字符串（逐字符）</span><br />
-        <span class="kw">for</span> ch <span class="kw">in</span> <span class="str">"Vora"</span> {<br />
-        &nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">print</span>(ch)   <span class="cmt">// V, o, r, a</span><br />
-        }<br /><br />
-        <span class="cmt">// 遍历 range</span><br />
-        <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">5</span>) {<br />
-        &nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">print</span>(i)   <span class="cmt">// 0, 1, 2, 3, 4</span><br />
-        }
-    </div>
-    <p>每次迭代创建新的作用域，循环变量在迭代结束后不可见。</p>
+<span class="cmt">// 随机数</span>
+math.random.<span class="fn">int</span>(<span class="num">1</span>, <span class="num">100</span>)           <span class="cmt">// 1~100 随机整数</span>
+math.random.<span class="fn">float</span>(<span class="num">0</span>, <span class="num">1</span>, <span class="num">2</span>)        <span class="cmt">// 0~1 随机浮点, 2 位小数</span></pre></div>
+<br>
+<h3 id="std-json">std/json</h3>
+<br>
+<blockquote>
+<p class="version-tag">引入版本: v0.21</p>
+</blockquote>
+<br>
+<div class="code"><pre><span class="kw">import</span> <span class="str">&quot;json&quot;</span>
 
-    <h3>break / continue</h3>
-    <div class="code">
-        <span class="kw">while</span> (<span class="lit">true</span>) {<br />
-        &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">if</span> (condition) <span class="kw">break</span>     <span class="cmt">// 退出循环</span><br />
-        &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">if</span> (skip) <span class="kw">continue</span>        <span class="cmt">// 跳过本次迭代</span><br />
-        }
-    </div>
+<span class="cmt">// 解析</span>
+json.parse(<span class="str">&quot;42&quot;</span>)                  <span class="cmt">// 42</span>
+json.parse(<span class="str">&quot;[1, 2, 3]&quot;</span>)           <span class="cmt">// [1, 2, 3]</span>
+json.parse(<span class="str">'{&quot;a&quot;: 1}'</span>)            <span class="cmt">// {a: 1}</span>
+json.parse(<span class="str">&quot;not json&quot;</span>)            <span class="cmt">// null (解析失败)</span>
 
-    <!-- ====== 函数 ====== -->
-    <h2 id="functions">5. 函数与闭包</h2>
+<span class="cmt">// 序列化</span>
+json.stringify({a: <span class="num">1</span>})            <span class="cmt">// '{&quot;a&quot;:1}'</span>
+json.stringify([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>], <span class="num">2</span>)      <span class="cmt">// 2 空格缩进的 pretty-print</span>
 
-    <h3>函数声明</h3>
-    <div class="code">
-        <span class="kw">func</span> <span class="fn">add</span>(a, b) {<br />
-        &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span> a + b<br />
-        }<br /><br />
-        <span class="kw">let</span> result = <span class="fn">add</span>(<span class="num">3</span>, <span class="num">4</span>)  <span class="cmt">// 7</span>
-    </div>
-
-    <h3>一等公民</h3>
-    <p>函数可以赋值给变量、作为参数传递、作为返回值。</p>
-    <div class="code">
-        <span class="kw">let</span> f = <span class="kw">func</span>(x) { <span class="kw">return</span> x * <span class="num">2</span> }<br />
-        <span class="fn">print</span>(<span class="fn">f</span>(<span class="num">5</span>))  <span class="cmt">// 10</span>
-    </div>
-
-    <h3>return</h3>
-    <p>函数通过 <code>return</code> 返回值。无 <code>return</code> 语句或 <code>return</code> 无表达式时，函数返回 <code>null</code>。</p>
-
-    <h3>闭包</h3>
-    <p>Vora 支持完整的词法闭包 —— 内层函数捕获定义时所在作用域的变量：</p>
-    <div class="code">
-        <span class="kw">func</span> <span class="fn">makeCounter</span>() {<br />
-        &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">let</span> count = <span class="num">0</span><br />
-        &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span> <span class="kw">func</span>() {<br />
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;count = count + <span class="num">1</span><br />
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span> count<br />
-        &nbsp;&nbsp;&nbsp;&nbsp;}<br />
-        }<br /><br />
-        <span class="kw">let</span> c = <span class="fn">makeCounter</span>()<br />
-        <span class="fn">print</span>(<span class="fn">c</span>())  <span class="cmt">// 1</span><br />
-        <span class="fn">print</span>(<span class="fn">c</span>())  <span class="cmt">// 2</span><br />
-        <span class="fn">print</span>(<span class="fn">c</span>())  <span class="cmt">// 3</span>
-    </div>
-    <p>每个闭包拥有自己独立的捕获环境（多个实例互不影响）：</p>
-    <div class="code">
-        <span class="kw">let</span> c1 = <span class="fn">makeCounter</span>()<br />
-        <span class="kw">let</span> c2 = <span class="fn">makeCounter</span>()<br />
-        <span class="fn">print</span>(<span class="fn">c1</span>())  <span class="cmt">// 1</span><br />
-        <span class="fn">print</span>(<span class="fn">c1</span>())  <span class="cmt">// 2</span><br />
-        <span class="fn">print</span>(<span class="fn">c2</span>())  <span class="cmt">// 1（独立）</span>
-    </div>
-
-    <p><strong>VM 实现：</strong>编译器通过 <code>resolveUpvalue()</code> 在编译期确定每个内层引用对应外层哪个局部变量，运行时 VM 维护 <code>openUpvalues</code> 链表以正确共享捕获的变量。这比解释器的 <code>Environment::snapshot()</code> 全量深拷贝更高效。</p>
-
-    <h3>参数校验</h3>
-    <div class="code">
-        <span class="kw">func</span> <span class="fn">greet</span>(name) {<br />
-        &nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">print</span>(<span class="str">"Hello "</span> + name)<br />
-        }<br />
-        <span class="fn">greet</span>(<span class="str">"World"</span>)   <span class="cmt">// ✅ 1 个参数</span><br />
-        <span class="fn">greet</span>()            <span class="cmt">// ❌ 参数个数不匹配，抛出错误</span>
-    </div>
-    <p>变参函数（如 <code>print</code>、<code>range</code>）的 arity 设为 <code>-1</code>，允许任意数量的参数。</p>
-
-    <!-- ====== 对象 ====== -->
-    <h2 id="objects">6. 对象与继承</h2>
-
-    <h3>Obj 声明</h3>
-    <p><code>Obj</code> 关键字定义类。构造函数参数列在类名后的括号中。类体内可以设置属性（通过 <code>this</code>）和定义方法。</p>
-    <div class="code">
-        <span class="kw">Obj</span> <span class="type">Person</span>(name, age) {<br />
-        &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">this</span>.name = name<br />
-        &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">this</span>.age = age<br /><br />
-        &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">func</span> <span class="fn">greet</span>() {<br />
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">print</span>(<span class="str">"Hi, I'm "</span> + <span class="kw">this</span>.name)<br />
-        &nbsp;&nbsp;&nbsp;&nbsp;}<br />
-        }<br /><br />
-        <span class="kw">let</span> p = <span class="type">Person</span>(<span class="str">"Alice"</span>, <span class="num">25</span>)<br />
-        p.<span class="fn">greet</span>()              <span class="cmt">// Hi, I'm Alice</span><br />
-        <span class="fn">print</span>(p.name)          <span class="cmt">// Alice</span><br />
-        p.age = <span class="num">26</span>              <span class="cmt">// 属性赋值</span>
-    </div>
-
-    <h3>单继承</h3>
-    <p>语法：<code>Obj Child : Parent (params) { ... }</code>。构造函数链从根到叶执行，参数按索引从父类构造函数签名中获取。</p>
-    <div class="code">
-        <span class="kw">Obj</span> <span class="type">Animal</span>(name) {<br />
-        &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">this</span>.name = name<br />
-        &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">func</span> <span class="fn">speak</span>() { <span class="fn">print</span>(<span class="str">"..."</span>) }<br />
-        }<br /><br />
-        <span class="kw">Obj</span> <span class="type">Dog</span> : <span class="type">Animal</span> (name, breed) {<br />
-        &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">this</span>.breed = breed<br />
-        &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">func</span> <span class="fn">speak</span>() {<br />
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">print</span>(<span class="str">"Woof! I'm "</span> + <span class="kw">this</span>.name + <span class="str">" the "</span> + <span class="kw">this</span>.breed)<br />
-        &nbsp;&nbsp;&nbsp;&nbsp;}<br />
-        }<br /><br />
-        <span class="kw">Obj</span> <span class="type">Puppy</span> : <span class="type">Dog</span> (name, breed, toy) {<br />
-        &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">this</span>.toy = toy<br />
-        }<br /><br />
-        <span class="kw">let</span> d = <span class="type">Dog</span>(<span class="str">"Rex"</span>, <span class="str">"Husky"</span>)<br />
-        d.<span class="fn">speak</span>()       <span class="cmt">// Woof! I'm Rex the Husky</span><br />
-        <span class="fn">print</span>(d.name)   <span class="cmt">// Rex（父类构造函数设置的属性）</span>
-    </div>
-
-    <h3>继承机制</h3>
-    <ul>
-        <li><strong>构造函数链</strong>：从最远祖先到当前子类依次执行。父类构造函数的参数按索引从子类参数列表的前 N 个获取。</li>
-        <li><strong>方法查找</strong>：当前类 → 父类 → 父类的父类 → ... 沿着继承链向上搜索。</li>
-        <li><strong>方法覆盖</strong>：子类同名方法覆盖父类方法。没有 <code>super</code> 关键字（无法显式调用父类被覆盖的方法）。</li>
-        <li><strong>多层继承</strong>：<code>A → B → C</code> 支持任意深度。</li>
-        <li><strong>this 绑定</strong>：方法调用时 <code>this</code> 自动绑定到调用对象。</li>
-    </ul>
-
-    <!-- ====== 异常处理 ====== -->
-    <h2 id="errors">7. 异常处理</h2>
-
-    <h3>try / catch / finally</h3>
-    <p>支持三种组合形式：<code>try/catch</code>、<code>try/finally</code>、<code>try/catch/finally</code>。</p>
-    <div class="code">
-        <span class="kw">try</span> {<br />
-        &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">let</span> x = <span class="num">1</span> / <span class="num">0</span><br />
-        } <span class="kw">catch</span> (e) {<br />
-        &nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">print</span>(<span class="str">"Error: "</span> + e)<br />
-        } <span class="kw">finally</span> {<br />
-        &nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">print</span>(<span class="str">"Cleanup always runs"</span>)<br />
-        }
-    </div>
-    <p><strong><code>finally</code> 块始终执行</strong>，无论 try 块正常结束/抛出异常/遇到 <code>return</code>/<code>break</code>/<code>continue</code>。VM 编译器会捕获 try 体内的非局部跳转，在字节码级重放到 finally 块后跳至原目标。</p>
-
-    <h3>throw</h3>
-    <p><code>throw</code> 可抛出<strong>任意 Vora 值</strong>——字符串、数字、对象等：</p>
-    <div class="code">
-        <span class="kw">throw</span> <span class="str">"something went wrong"</span><br />
-        <span class="kw">throw</span> <span class="num">42</span><br />
-        <span class="kw">throw</span> <span class="type">ValidationError</span>(<span class="str">"Invalid input"</span>)
-    </div>
-
-    <h3>自定义错误</h3>
-    <div class="code">
-        <span class="kw">Obj</span> <span class="type">ValidationError</span>(msg) {<br />
-        &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">this</span>.message = msg<br />
-        &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">func</span> <span class="fn">toString</span>() { <span class="kw">return</span> <span class="str">"ValidationError: "</span> + <span class="kw">this</span>.message }<br />
-        }<br /><br />
-        <span class="kw">func</span> <span class="fn">checkAge</span>(age) {<br />
-        &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">if</span> (age &lt; <span class="num">0</span>) <span class="kw">throw</span> <span class="type">ValidationError</span>(<span class="str">"Age cannot be negative"</span>)<br />
-        &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">if</span> (age > <span class="num">150</span>) <span class="kw">throw</span> <span class="type">ValidationError</span>(<span class="str">"Age out of range"</span>)<br />
-        }<br /><br />
-        <span class="kw">try</span> {<br />
-        &nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">checkAge</span>(-<span class="num">5</span>)<br />
-        } <span class="kw">catch</span> (e) {<br />
-        &nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">print</span>(e.message)  <span class="cmt">// "Age cannot be negative"</span><br />
-        }
-    </div>
-
-    <h3>catch 变量绑定</h3>
-    <ul>
-        <li>捕获到内建运行时错误（如除以零）时，<code>e</code> 绑定为错误消息<strong>字符串</strong></li>
-        <li>捕获到用户 <code>throw</code> 的值时，<code>e</code> 绑定为<strong>原值</strong>（字符串、对象、数字等）</li>
-    </ul>
-
-    <!-- ====== 字符串 ====== -->
-    <h2 id="strings">8. 字符串与插值</h2>
-
-    <h3>字符串字面量</h3>
-    <p>单引号 <code>'...'</code> 和双引号 <code>"..."</code> 完全等价。支持转义序列：<code>\n</code>、<code>\t</code>、<code>\r</code>、<code>\0</code>、<code>\\</code>、<code>\"</code>、<code>\'</code>。未识别转义保留原文不报错。</p>
-
-    <h3>字符串插值</h3>
-    <p><code>${...}</code> 在字符串中嵌入 Vora 表达式：</p>
-    <div class="code">
-        <span class="kw">let</span> name = <span class="str">"World"</span><br />
-        <span class="fn">print</span>(<span class="str">"Hello <span class="interp">${name}</span>!"</span>)           <span class="cmt">// "Hello World!"</span><br /><br />
-        <span class="cmt">// 多级属性访问</span><br />
-        <span class="kw">Obj</span> <span class="type">Point</span>(x, y) { <span class="kw">this</span>.x = x; <span class="kw">this</span>.y = y }<br />
-        <span class="kw">let</span> p = <span class="type">Point</span>(<span class="num">10</span>, <span class="num">20</span>)<br />
-        <span class="fn">print</span>(<span class="str">"Position: (<span class="interp">${p.x}</span>, <span class="interp">${p.y}</span>)"</span>)  <span class="cmt">// "Position: (10, 20)"</span><br /><br />
-        <span class="cmt">// 未定义变量 — 保留原文，不报错</span><br />
-        <span class="fn">print</span>(<span class="str">"Hello <span class="interp">${undefined_var}</span>!"</span>)  <span class="cmt">// "Hello ${undefined_var}!"</span>
-    </div>
-    <p>VM 在编译期解析插值表达式，生成 <code>OP_INTERPOLATE</code> 指令而非运行时扫描——效率更高。</p>
-
-    <h3>字符串索引</h3>
-    <div class="code">
-        <span class="kw">let</span> s = <span class="str">"Vora"</span><br />
-        <span class="fn">print</span>(s[<span class="num">0</span>])  <span class="cmt">// "V"</span><br />
-        <span class="fn">print</span>(s[<span class="num">3</span>])  <span class="cmt">// "a"</span>
-    </div>
-
-    <!-- ====== 数组 ====== -->
-    <h2 id="arrays">9. 数组</h2>
-    <div class="code">
-        <span class="cmt">// 创建</span><br />
-        <span class="kw">let</span> arr = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]<br />
-        <span class="kw">let</span> mixed = [<span class="num">42</span>, <span class="str">"hello"</span>, <span class="lit">true</span>, <span class="lit">null</span>]<br /><br />
-        <span class="cmt">// 索引（从 0 开始）</span><br />
-        <span class="fn">print</span>(arr[<span class="num">0</span>])  <span class="cmt">// 1</span><br />
-        <span class="fn">print</span>(arr[<span class="num">1</span>])  <span class="cmt">// 2</span><br /><br />
-        <span class="cmt">// 索引赋值</span><br />
-        arr[<span class="num">0</span>] = <span class="num">99</span><br /><br />
-        <span class="cmt">// 越界访问 — 抛出 RuntimeError</span><br />
-        <span class="cmt">// arr[999] → 运行时错误</span><br /><br />
-        <span class="cmt">// 合并</span><br />
-        <span class="kw">let</span> c = [<span class="num">1</span>, <span class="num">2</span>] + [<span class="num">3</span>, <span class="num">4</span>]   <span class="cmt">// [1, 2, 3, 4]</span><br /><br />
-        <span class="cmt">// 追加</span><br />
-        <span class="kw">let</span> d = [<span class="num">1</span>, <span class="num">2</span>] + <span class="num">99</span>         <span class="cmt">// [1, 2, 99]</span><br />
-        <span class="kw">let</span> e = <span class="num">99</span> + [<span class="num">1</span>, <span class="num">2</span>]         <span class="cmt">// [99, 1, 2]</span><br /><br />
-        <span class="cmt">// 嵌套数组</span><br />
-        <span class="kw">let</span> matrix = [[<span class="num">1</span>, <span class="num">2</span>], [<span class="num">3</span>, <span class="num">4</span>]]<br />
-        <span class="fn">print</span>(matrix[<span class="num">0</span>][<span class="num">1</span>])  <span class="cmt">// 2</span>
-    </div>
-    <p><strong>当前限制：</strong>数组没有 <code>.length</code> 属性、<code>.push()</code>、<code>.pop()</code> 等方法 —— 这些在 P0 路线图中优先实现。</p>
-
-    <!-- ====== 注释 ====== -->
-    <h2 id="comments">10. 注释</h2>
-    <div class="code">
-        <span class="cmt">// 行注释</span><br /><br />
-        <span class="cmt">/* 块注释 */</span><br /><br />
-        <span class="cmt">/* 外层<br />&nbsp;&nbsp;&nbsp;/* 内层 */<br />&nbsp;&nbsp;&nbsp;仍在注释中 */</span>
-    </div>
-    <p>块注释<strong>支持嵌套</strong>——使用 depth 计数器跟踪嵌套级别，正确匹配 <code>/*</code> 和 <code>*/</code> 对。</p>
-
-    <h3>语句分隔符</h3>
-    <p>分号 <code>;</code> 可选——Vora 不强制要求分号。块内语句通过换行自然分隔。</p>
-
-    <!-- ====== 内建函数 ====== -->
-    <h2 id="builtins">11. 内建函数参考</h2>
-
-    <table>
-        <thead><tr><th>函数</th><th>参数</th><th>返回值</th><th>说明</th></tr></thead>
-        <tbody>
-            <tr>
-                <td><code>print(...)</code></td>
-                <td>变参（0+）</td>
-                <td>null</td>
-                <td>空格分隔输出各参数，末尾自动换行</td>
-            </tr>
-            <tr>
-                <td><code>clock()</code></td>
-                <td>0</td>
-                <td>Number</td>
-                <td>Unix 时间戳，单位秒，毫秒级精度</td>
-            </tr>
-            <tr>
-                <td><code>input(prompt?)</code></td>
-                <td>变参（0-1）</td>
-                <td>String</td>
-                <td>从 stdin 读取一行。可选 prompt 参数输出提示文本</td>
-            </tr>
-            <tr>
-                <td><code>int(value)</code></td>
-                <td>1</td>
-                <td>Int</td>
-                <td>转为 int64（截断小数部分）。接受 number / string / bool</td>
-            </tr>
-            <tr>
-                <td><code>float(value)</code></td>
-                <td>1</td>
-                <td>Float</td>
-                <td>转为 float64。接受 number / string / bool</td>
-            </tr>
-            <tr>
-                <td><code>len(value)</code></td>
-                <td>1</td>
-                <td>Int</td>
-                <td>返回数组元素数或字符串字符数</td>
-            </tr>
-            <tr>
-                <td><code>type(value)</code></td>
-                <td>1</td>
-                <td>String</td>
-                <td>返回类型名：<code>"int"</code> / <code>"float"</code> / <code>"string"</code> / <code>"array"</code> / <code>"boolean"</code> / <code>"null"</code> / <code>"function"</code> / <code>"object"</code></td>
-            </tr>
-            <tr>
-                <td><code>range(stop)</code></td>
-                <td>1</td>
-                <td>Array</td>
-                <td>生成 <code>[0, 1, ..., stop-1]</code></td>
-            </tr>
-            <tr>
-                <td><code>range(start, stop)</code></td>
-                <td>2</td>
-                <td>Array</td>
-                <td>生成 <code>[start, start+1, ..., stop-1]</code></td>
-            </tr>
-            <tr>
-                <td><code>range(start, stop, step)</code></td>
-                <td>3</td>
-                <td>Array</td>
-                <td>生成带步长的数列。step 可为负数</td>
-            </tr>
-            <tr>
-                <td><code>assert(cond, msg?)</code></td>
-                <td>变参（1-2）</td>
-                <td>null</td>
-                <td>条件为假时抛出 RuntimeError（可选错误消息）</td>
-            </tr>
-            <tr>
-                <td><code>bin(num)</code></td>
-                <td>1</td>
-                <td>String</td>
-                <td>数字 → 二进制字符串，如 <code>"0b101"</code></td>
-            </tr>
-            <tr>
-                <td><code>oct(num)</code></td>
-                <td>1</td>
-                <td>String</td>
-                <td>数字 → 八进制字符串，如 <code>"0o12"</code></td>
-            </tr>
-            <tr>
-                <td><code>hex(num)</code></td>
-                <td>1</td>
-                <td>String</td>
-                <td>数字 → 十六进制字符串，如 <code>"0xFF"</code></td>
-            </tr>
-        </tbody>
-    </table>
-
-    <h2 id="array-methods">12. 数组内建方法</h2>
-    <table>
-        <thead><tr><th>方法</th><th>参数</th><th>返回值</th><th>说明</th></tr></thead>
-        <tbody>
-            <tr><td><code>.add(item)</code></td><td>1</td><td>null</td><td>尾部追加单个元素（in-place）</td></tr>
-            <tr><td><code>.pop()</code></td><td>0</td><td>值 或 null</td><td>删除末尾元素并返回；空数组返回 null</td></tr>
-            <tr><td><code>.length</code></td><td>0 (属性)</td><td>Int</td><td>元素数量，等价于 <code>len(arr)</code></td></tr>
-            <tr><td><code>.insert(index, item)</code></td><td>2</td><td>null</td><td>在指定位置插入；越界则尾部追加</td></tr>
-            <tr><td><code>.remove(index)</code></td><td>1</td><td>值</td><td>删除指定位置元素并返回；越界报错</td></tr>
-            <tr><td><code>.indexOf(item)</code></td><td>1</td><td>Int</td><td>首次出现的索引；未找到返回 -1</td></tr>
-            <tr><td><code>.clear()</code></td><td>0</td><td>null</td><td>清空所有元素</td></tr>
-        </tbody>
-    </table>
-
-    <h2 id="string-methods">13. 字符串内建方法</h2>
-    <table>
-        <thead><tr><th>方法</th><th>参数</th><th>返回值</th><th>说明</th></tr></thead>
-        <tbody>
-            <tr><td><code>.length</code></td><td>0 (属性)</td><td>Int</td><td>字符数，等价于 <code>len(str)</code></td></tr>
-            <tr><td><code>.substring(start, end?)</code></td><td>1-2</td><td>String</td><td>子串 [start, end)；负索引从末尾倒数；end 默认到末尾</td></tr>
-            <tr><td><code>.include(sub)</code></td><td>1</td><td>Bool</td><td>是否包含子串</td></tr>
-            <tr><td><code>.startsWith(prefix)</code></td><td>1</td><td>Bool</td><td>是否以 prefix 开头</td></tr>
-            <tr><td><code>.endsWith(suffix)</code></td><td>1</td><td>Bool</td><td>是否以 suffix 结尾</td></tr>
-            <tr><td><code>.upper()</code></td><td>0</td><td>String</td><td>转大写（返回新字符串）</td></tr>
-            <tr><td><code>.lower()</code></td><td>0</td><td>String</td><td>转小写（返回新字符串）</td></tr>
-            <tr><td><code>.trim()</code></td><td>0</td><td>String</td><td>去除首尾空白（返回新字符串）</td></tr>
-            <tr><td><code>.replace(old, new)</code></td><td>2</td><td>String</td><td>替换<strong>首次</strong>出现的 old → new</td></tr>
-            <tr><td><code>.replaceAll(old, new)</code></td><td>2</td><td>String</td><td>替换<strong>所有</strong> old → new</td></tr>
-            <tr><td><code>.split(delim)</code></td><td>1</td><td>Array</td><td>按分隔符切分；空字符串则逐字符切分</td></tr>
-        </tbody>
-    </table>
-
-    <div class="note"><strong>提示：</strong>所有内建函数在 VM（默认后端）和解释器中均可使用。<code>NativeFunction</code> 通过 <code>callDirectly()</code> 桥接 VM，无需 Interpreter 实例。</div>
+<span class="cmt">// 往返</span>
+<span class="kw">let</span> data = {items: [<span class="num">1</span>, <span class="num">2</span>], ok: <span class="kw">true</span>}
+<span class="kw">let</span> s = json.stringify(data)
+<span class="kw">let</span> copy = json.parse(s)</pre></div>
+<br>
+<hr>
+<br>
+<h2 id="14-附录-方法速查-method-reference">14. 附录：方法速查 / Method Reference</h2>
+<br>
+<h3 id="array-方法">Array 方法</h3>
+<br>
+<table>
+<tr><th>方法</th><th>说明</th></tr>
+<tr><td><code>arr.length</code></td><td>数组长度</td></tr>
+<tr><td><code>arr.add(v)</code></td><td>末尾添加元素</td></tr>
+<tr><td><code>arr.pop()</code></td><td>移除并返回末尾元素（空数组返回 null）</td></tr>
+<tr><td><code>arr.insert(i, v)</code></td><td>在索引 i 处插入 v</td></tr>
+<tr><td><code>arr.remove(i)</code></td><td>移除并返回索引 i 的元素</td></tr>
+<tr><td><code>arr.indexOf(v)</code></td><td>查找 v 的索引，未找到返回 -1</td></tr>
+<tr><td><code>arr.clear()</code></td><td>清空数组</td></tr>
+</table>
+<br>
+<h3 id="string-方法">String 方法</h3>
+<br>
+<table>
+<tr><th>方法</th><th>说明</th></tr>
+<tr><td><code>str.length</code></td><td>字符串长度（字节数）</td></tr>
+<tr><td><code>str.substring(start, end?)</code></td><td>提取子串</td></tr>
+<tr><td><code>str.include(sub)</code></td><td>是否包含子串</td></tr>
+<tr><td><code>str.startsWith(prefix)</code></td><td>是否以 prefix 开头</td></tr>
+<tr><td><code>str.endsWith(suffix)</code></td><td>是否以 suffix 结尾</td></tr>
+<tr><td><code>str.upper()</code></td><td>转大写</td></tr>
+<tr><td><code>str.lower()</code></td><td>转小写</td></tr>
+<tr><td><code>str.trim()</code></td><td>去除首尾空白</td></tr>
+<tr><td><code>str.replace(old, new)</code></td><td>替换第一个匹配</td></tr>
+<tr><td><code>str.replaceAll(old, new)</code></td><td>替换全部匹配</td></tr>
+<tr><td><code>str.split(delim)</code></td><td>按分隔符切分，返回数组</td></tr>
+</table>
+<br>
+<h3 id="dict-方法">Dict 方法</h3>
+<br>
+<table>
+<tr><th>方法</th><th>说明</th></tr>
+<tr><td><code>dict.length</code></td><td>键值对数量</td></tr>
+<tr><td><code>dict.keys()</code></td><td>返回所有键的数组</td></tr>
+<tr><td><code>dict.values()</code></td><td>返回所有值的数组</td></tr>
+<tr><td><code>dict.has(key)</code></td><td>是否存在该键</td></tr>
+<tr><td><code>dict.remove(key)</code></td><td>移除键值对，返回被移除的值</td></tr>
+</table>
+<br>
+<h3 id="字符串拼接与索引">字符串拼接与索引</h3>
+<br>
+<div class="code"><pre><span class="kw">let</span> s = <span class="str">&quot;Hello&quot;</span> + <span class="str">&quot; &quot;</span> + <span class="str">&quot;World&quot;</span>   <span class="cmt">// 拼接</span>
+s[<span class="num">0</span>]                                <span class="cmt">// &quot;H&quot; — 索引访问</span></pre></div>
+<br>
+<h3 id="array-运算符">Array + 运算符</h3>
+<br>
+<div class="code"><pre>[<span class="num">1</span>, <span class="num">2</span>] + [<span class="num">3</span>, <span class="num">4</span>]    <span class="cmt">// [1, 2, 3, 4] — 合并</span>
+[<span class="num">1</span>, <span class="num">2</span>] + <span class="num">99</span>         <span class="cmt">// [1, 2, 99] — 追加</span>
+<span class="num">99</span> + [<span class="num">1</span>, <span class="num">2</span>]         <span class="cmt">// [99, 1, 2] — 前插</span></pre></div>
+<br>
+<div class="code"><pre></pre></div>
 </main>
 
 <footer class="footer">
     <p>Vora · <a href="https://github.com/Vora-lang/Vora" target="_blank" rel="noopener">github.com/Vora-lang/Vora</a></p>
-    <p style="margin-top:8px"><a href="index.html">← 返回文档首页</a></p>
 </footer>
 </body>
 </html>
