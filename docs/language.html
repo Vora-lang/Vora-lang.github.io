@@ -408,6 +408,141 @@ greet(<span class="str">&quot;Hey&quot;</span>, <span class="str">&quot;A&quot;<
 <li>适用于普通函数、匿名函数、对象构造函数和方法</li>
 </ul>
 <br>
+<h3 id="解构赋值-destructuring-assignment">解构赋值 (Destructuring Assignment)</h3>
+<br>
+<blockquote>
+<p class="version-tag">引入版本: v0.22</p>
+</blockquote>
+<br>
+<p>从数组或对象中同时提取多个值并绑定到变量：</p>
+<br>
+<p><strong>数组解构：</strong></p>
+<br>
+<div class="code"><pre><span class="kw">let</span> [a, b] = [<span class="num">1</span>, <span class="num">2</span>]
+<span class="fn">print</span>(a)  <span class="cmt">// 1</span>
+<span class="fn">print</span>(b)  <span class="cmt">// 2</span>
+
+<span class="cmt">// 嵌套解构</span>
+<span class="kw">let</span> [x, [y, z]] = [<span class="num">10</span>, [<span class="num">20</span>, <span class="num">30</span>]]
+
+<span class="cmt">// 剩余元素</span>
+<span class="kw">let</span> [first, ...rest] = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>]
+<span class="fn">print</span>(first)  <span class="cmt">// 1</span>
+<span class="fn">print</span>(rest)   <span class="cmt">// [2, 3, 4]</span></pre></div>
+<br>
+<p><strong>对象解构：</strong></p>
+<br>
+<div class="code"><pre><span class="kw">let</span> {name, age} = {name: <span class="str">&quot;Alice&quot;</span>, age: <span class="num">30</span>}
+<span class="fn">print</span>(name)  <span class="cmt">// &quot;Alice&quot;</span>
+<span class="fn">print</span>(age)   <span class="cmt">// 30</span>
+
+<span class="cmt">// 重命名属性</span>
+<span class="kw">let</span> {x: a, y: b} = {x: <span class="num">10</span>, y: <span class="num">20</span>}
+<span class="fn">print</span>(a)  <span class="cmt">// 10</span>
+
+<span class="cmt">// 嵌套对象解构</span>
+<span class="kw">let</span> {a, b: {c}} = {a: <span class="num">1</span>, b: {c: <span class="num">2</span>}}
+<span class="fn">print</span>(c)  <span class="cmt">// 2</span></pre></div>
+<br>
+<p><strong>规则：</strong></p>
+<ul>
+<li>支持 <code>let</code>、<code>const</code> 声明解构</li>
+<li>数组解构用 <code>[...]</code>，对象解构用 <code>{...}</code></li>
+<li><code>...rest</code> 必须是模式中的<strong>最后一个</strong>元素（仅函数内支持）</li>
+<li>对象解构支持简写 <code>{x}</code>（等同于 <code>{x: x}</code>）和重命名 <code>{x: a}</code></li>
+<li>对象 rest（<code>{x, ...rest}</code>）暂未支持（计划于 v0.23）</li>
+</ul>
+<br>
+<h3 id="set-与-map-数据结构">Set 与 Map 数据结构</h3>
+<br>
+<blockquote>
+<p class="version-tag">引入版本: v0.23</p>
+</blockquote>
+<br>
+<p>Vora 提供 <code>Set</code>（去重集合）和 <code>Map</code>（任意类型键的映射）两种内置数据结构。</p>
+<br>
+<p><strong>Set — 无序、不重复的值集合：</strong></p>
+<br>
+<div class="code"><pre><span class="kw">let</span> s = Set([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>])
+s.has(<span class="num">2</span>)       <span class="cmt">// true</span>
+s.add(<span class="num">4</span>)       <span class="cmt">// 添加元素</span>
+s.remove(<span class="num">1</span>)    <span class="cmt">// 删除元素</span>
+s.size         <span class="cmt">// 3</span>
+s.clear()      <span class="cmt">// 清空</span>
+
+<span class="cmt">// 创建空 Set</span>
+<span class="kw">let</span> empty = Set()
+
+<span class="cmt">// 从字符串创建（每个字符作为元素）</span>
+<span class="kw">let</span> chars = Set(<span class="str">&quot;abc&quot;</span>)  <span class="cmt">// {'a', 'b', 'c'}</span>
+
+<span class="cmt">// 遍历 Set</span>
+<span class="kw">for</span> x <span class="kw">in</span> s {
+    <span class="fn">print</span>(x)
+}</pre></div>
+<br>
+<p><strong>Set 方法：</strong></p>
+<br>
+<table>
+<tr><th>方法</th><th>参数</th><th>行为</th></tr>
+<tr><td><code>add(value)</code></td><td>1</td><td>添加元素</td></tr>
+<tr><td><code>has(value)</code></td><td>1</td><td>检查是否存在，返回 bool</td></tr>
+<tr><td><code>remove(value)</code></td><td>1</td><td>删除元素</td></tr>
+<tr><td><code>clear()</code></td><td>0</td><td>清空所有元素</td></tr>
+<tr><td><code>values()</code></td><td>0</td><td>返回所有元素的 Array</td></tr>
+<tr><td><code>size</code> / <code>length</code></td><td>属性</td><td>元素数量</td></tr>
+</table>
+<br>
+<p><strong>Set 支持 <code>+</code> 并集运算：</strong> <code>Set([1,2]) + Set([2,3])</code> → <code>{1, 2, 3}</code></p>
+<br>
+<p><strong>Map — 任意类型键的映射表：</strong></p>
+<br>
+<div class="code"><pre><span class="kw">let</span> m = Map()
+m.set(<span class="str">&quot;key&quot;</span>, <span class="num">42</span>)         <span class="cmt">// 设置键值</span>
+m.set(<span class="num">123</span>, <span class="str">&quot;integer key&quot;</span>) <span class="cmt">// 整数 key</span>
+m.set(<span class="kw">true</span>, <span class="str">&quot;bool key&quot;</span>)   <span class="cmt">// 布尔 key</span>
+
+m.get(<span class="str">&quot;key&quot;</span>)      <span class="cmt">// 42</span>
+m.has(<span class="str">&quot;key&quot;</span>)      <span class="cmt">// true</span>
+m.remove(<span class="str">&quot;key&quot;</span>)   <span class="cmt">// 删除键，返回被删值</span>
+m.size            <span class="cmt">// 2</span>
+
+<span class="cmt">// 索引语法（语法糖）</span>
+m[<span class="str">&quot;key&quot;</span>] = <span class="num">42</span>
+<span class="fn">print</span>(m[<span class="str">&quot;key&quot;</span>])   <span class="cmt">// 42</span>
+
+<span class="cmt">// 遍历 Map（遍历所有 key）</span>
+<span class="kw">for</span> k <span class="kw">in</span> m {
+    <span class="fn">print</span>(k)
+    <span class="fn">print</span>(m[k])
+}</pre></div>
+<br>
+<p><strong>Map 方法：</strong></p>
+<br>
+<table>
+<tr><th>方法</th><th>参数</th><th>行为</th></tr>
+<tr><td><code>set(key, value)</code></td><td>2</td><td>设置键值对</td></tr>
+<tr><td><code>get(key)</code></td><td>1</td><td>获取值，不存在返回 null</td></tr>
+<tr><td><code>has(key)</code></td><td>1</td><td>检查键是否存在，返回 bool</td></tr>
+<tr><td><code>remove(key)</code></td><td>1</td><td>删除键，返回被删值或 null</td></tr>
+<tr><td><code>keys()</code></td><td>0</td><td>返回所有 key 的 Array</td></tr>
+<tr><td><code>values()</code></td><td>0</td><td>返回所有 value 的 Array</td></tr>
+<tr><td><code>clear()</code></td><td>0</td><td>清空所有键值对</td></tr>
+<tr><td><code>size</code> / <code>length</code></td><td>属性</td><td>键值对数量</td></tr>
+</table>
+<br>
+<p><strong>Map 支持 <code>+</code> 合并运算：</strong> 右侧 Map 的键值会覆盖左侧同名的键。</p>
+<br>
+<p><strong>规则：</strong></p>
+<ul>
+<li>空 Set / 空 Map 为 <strong>falsy</strong>（在条件中视为 false）</li>
+<li>非空 Set / 非空 Map 为 <strong>truthy</strong></li>
+<li><code>type(Set())</code> 返回 <code>"set"</code>，<code>type(Map())</code> 返回 <code>"map"</code></li>
+<li><code>len(s)</code> 返回 Set/Map 的元素数量</li>
+<li>Set 元素和 Map key 支持所有 Value 类型，包括 Array、Dict、甚至 Set/Map 本身</li>
+<li><code>jsonStringify</code> 将 Set 序列化为 JSON array，Map 序列化为 <code>[[key, value], ...]</code> 对</li>
+</ul>
+<br>
 <h3 id="尾调用优化-tco">尾调用优化 (TCO)</h3>
 <br>
 <blockquote>
