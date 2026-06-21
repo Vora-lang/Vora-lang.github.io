@@ -373,6 +373,41 @@ greet(<span class="str">&quot;Vora&quot;</span>, <span class="str">&quot;Hi&quot
 <span class="kw">func</span> addOne(a, b = a + <span class="num">1</span>) { <span class="kw">return</span> b }
 addOne(<span class="num">5</span>)                   <span class="cmt">// 6</span></pre></div>
 <br>
+<h3 id="剩余参数-rest-parameters">剩余参数 (Rest Parameters)</h3>
+<br>
+<blockquote>
+<p class="version-tag">引入版本: v0.22</p>
+</blockquote>
+<br>
+<p>用 <code>...name</code> 将多余的实参收集为一个数组，支持可变参数函数：</p>
+<br>
+<div class="code"><pre><span class="kw">func</span> sum(a, b, ...rest) {
+    <span class="kw">return</span> rest  <span class="cmt">// rest 是包含剩余实参的数组</span>
+}
+sum(<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>)   <span class="cmt">// [3, 4]</span>
+sum(<span class="num">1</span>, <span class="num">2</span>)         <span class="cmt">// []</span>
+
+<span class="cmt">// 仅有剩余参数</span>
+<span class="kw">func</span> collectAll(...items) {
+    <span class="kw">return</span> items
+}
+collectAll(<span class="num">1</span>, <span class="str">&quot;hi&quot;</span>, <span class="kw">true</span>)  <span class="cmt">// [1, &quot;hi&quot;, true]</span>
+
+<span class="cmt">// 与默认参数组合</span>
+<span class="kw">func</span> greet(greeting = <span class="str">&quot;Hi&quot;</span>, ...names) {
+    <span class="kw">return</span> [greeting, names]
+}
+greet()                     <span class="cmt">// [&quot;Hi&quot;, []]</span>
+greet(<span class="str">&quot;Hey&quot;</span>, <span class="str">&quot;A&quot;</span>, <span class="str">&quot;B&quot;</span>)     <span class="cmt">// [&quot;Hey&quot;, [&quot;A&quot;, &quot;B&quot;]]</span></pre></div>
+<br>
+<p><strong>规则：</strong></p>
+<ul>
+<li><code>...name</code> 必须是参数列表的<strong>最后一个</strong></li>
+<li>每个函数<strong>最多一个</strong>剩余参数</li>
+<li>剩余参数<strong>不能有默认值</strong></li>
+<li>适用于普通函数、匿名函数、对象构造函数和方法</li>
+</ul>
+<br>
 <h3 id="尾调用优化-tco">尾调用优化 (TCO)</h3>
 <br>
 <blockquote>
