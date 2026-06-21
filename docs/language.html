@@ -543,6 +543,63 @@ m[<span class="str">&quot;key&quot;</span>] = <span class="num">42</span>
 <li><code>jsonStringify</code> 将 Set 序列化为 JSON array，Map 序列化为 <code>[[key, value], ...]</code> 对</li>
 </ul>
 <br>
+<h3 id="模式匹配-match-expression">模式匹配 (Match Expression)</h3>
+<br>
+<blockquote>
+<p class="version-tag">引入版本: v0.24</p>
+</blockquote>
+<br>
+<p><code>match</code> 表达式提供强大的多路分支能力，支持字面量、范围、通配符模式，可作为表达式或语句使用：</p>
+<br>
+<div class="code"><pre><span class="cmt">// 表达式形式</span>
+<span class="kw">let</span> result = match n {
+    <span class="num">1</span> =&gt; <span class="str">&quot;one&quot;</span>,
+    <span class="num">2</span> =&gt; <span class="str">&quot;two&quot;</span>,
+    <span class="num">3</span> | <span class="num">4</span> =&gt; <span class="str">&quot;small&quot;</span>,
+    _ =&gt; <span class="str">&quot;other&quot;</span>
+}
+
+<span class="cmt">// 语句形式（值被丢弃）</span>
+match x {
+    <span class="kw">true</span> =&gt; <span class="fn">print</span>(<span class="str">&quot;yes&quot;</span>),
+    <span class="kw">false</span> =&gt; <span class="fn">print</span>(<span class="str">&quot;no&quot;</span>)
+}</pre></div>
+<br>
+<p><strong>模式类型：</strong></p>
+<br>
+<table>
+<tr><th>模式</th><th>示例</th><th>说明</th></tr>
+<tr><td>字面量</td><td><code>1 => "a"</code>, <code>"hello" => "b"</code>, <code>true => "c"</code>, <code>null => "d"</code></td><td>精确匹配</td></tr>
+<tr><td>通配符</td><td><code>_ => "default"</code></td><td>匹配任何值</td></tr>
+<tr><td>范围（含等）</td><td><code>1..=5 => "low"</code></td><td><code>v >= 1 && v <= 5</code></td></tr>
+<tr><td>范围（不含等）</td><td><code>1..5 => "low"</code></td><td><code>v >= 1 && v < 5</code></td></tr>
+</table>
+<br>
+<p><strong>臂体类型：</strong></p>
+<ul>
+<li><strong>表达式体</strong>：<code>=> expr</code> — 直接返回表达式值</li>
+<li><strong>块体</strong>：<code>=> { stmts; lastExpr }</code> — 块中最后一条表达式的值作为匹配结果</li>
+</ul>
+<br>
+<div class="code"><pre>match score {
+    <span class="num">90</span>..=<span class="num">100</span> =&gt; <span class="str">&quot;A&quot;</span>,
+    <span class="num">80</span>..<span class="num">89</span> =&gt; <span class="str">&quot;B&quot;</span>,
+    <span class="num">70</span>..<span class="num">79</span> =&gt; <span class="str">&quot;C&quot;</span>,
+    _ =&gt; {
+        <span class="fn">print</span>(<span class="str">&quot;low score&quot;</span>);
+        <span class="str">&quot;F&quot;</span>
+    }
+}</pre></div>
+<br>
+<p><strong>规则：</strong></p>
+<ul>
+<li>按顺序匹配，第一个匹配的臂执行后退出</li>
+<li>通配符 <code>_</code> 必须放在最后一个臂（或任意位置，但之后的臂永远不会匹配）</li>
+<li>若无臂匹配且无通配符，match 返回 <code>null</code></li>
+<li>match 可嵌套使用</li>
+<li>臂体为块时，<strong>最后一条表达式语句</strong>的值为返回结果</li>
+</ul>
+<br>
 <h3 id="尾调用优化-tco">尾调用优化 (TCO)</h3>
 <br>
 <blockquote>
