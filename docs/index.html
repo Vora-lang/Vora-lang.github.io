@@ -58,7 +58,7 @@
         <a href="getting-started.html" class="card">
             <div class="card-icon">🚀</div>
             <h3>快速开始</h3>
-            <p>安装与构建 Vora，运行你的第一个脚本，理解双后端（VM + 解释器）架构。</p>
+            <p>安装与构建 Vora，运行你的第一个脚本，理解字节码 VM 架构。</p>
         </a>
         <a href="language.html" class="card">
             <div class="card-icon">📖</div>
@@ -87,16 +87,12 @@
         </a>
     </div>
 
-    <h2>双后端架构</h2>
-    <p style="color:var(--text2);margin-bottom:24px">Vora 拥有两个执行后端，确保正确性和性能。</p>
+    <h2>字节码 VM 架构</h2>
+    <p style="color:var(--text2);margin-bottom:24px">Vora 使用基于栈的字节码虚拟机执行脚本。</p>
     <div class="card-grid">
         <div class="card">
-            <h3>⚡ 字节码 VM（默认）</h3>
-            <p>50 条指令的栈式虚拟机。支持闭包 upvalue、全局变量驻留、快速数值操作码、常量折叠、完整的异常处理路由。性能远超树遍历解释器。</p>
-        </div>
-        <div class="card">
-            <h3>🐢 树遍历解释器</h3>
-            <p>直接遍历 AST 执行。作为参考实现，代码清晰可读。通过 <code>--interpreter</code> 标志启用，适合学习和调试。</p>
+            <h3>⚡ 字节码 VM</h3>
+            <p>50+ 条指令的栈式虚拟机。支持闭包 upvalue、全局变量驻留、快速数值操作码、常量折叠、完整的异常处理路由（try/catch/finally）、尾调用优化 (TCO)。</p>
         </div>
     </div>
 

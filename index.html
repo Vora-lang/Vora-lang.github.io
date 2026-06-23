@@ -403,7 +403,7 @@
                 式面向对象
             </p>
             <p class="meta">
-                双后端：<strong>字节码 VM</strong>（默认）+ <strong>AST 树遍历解释器</strong>（`--interpreter`）<br />
+                执行后端：<strong>字节码 VM</strong>（基于栈的虚拟机，~50 条指令）<br />
                 ~9,400 行 C++17 · 零外部依赖 · <a href="docs/index.html">📚 文档</a><br />
                 <a
                     href="https://github.com/Vora-lang/Vora"
@@ -451,9 +451,6 @@
                 <br />
                 <span class="cmt"># REPL 交互模式</span><br />
                 <span class="prompt">$ </span>vora --repl<br />
-                <br />
-                <span class="cmt"># 树遍历解释器（参考实现）</span><br />
-                <span class="prompt">$ </span>vora examples/main.va --interpreter<br />
                 <br />
                 <span class="cmt"># 打印 AST（S-expression 格式）</span><br />
                 <span class="prompt">$ </span>vora examples/main.va --ast-printer<br />
@@ -625,7 +622,7 @@ d.<span class="fn">speak</span>()      <span class="cmt">// Woof! I'm Rex</span>
         <!-- ====== 内建函数 ====== -->
         <section id="builtins" class="section">
             <h2>内建函数</h2>
-            <p class="section-desc">12 个内建函数 + 17 个数组/字符串内建方法。</p>
+            <p class="section-desc">13 个内建函数 + 17 个数组/字符串内建方法。</p>
 
             <table>
                 <thead>
@@ -657,11 +654,11 @@ d.<span class="fn">speak</span>()      <span class="cmt">// Woof! I'm Rex</span>
                     </tr>
                     <tr>
                         <td><code>len(value)</code></td>
-                        <td>返回数组长度或字符串字符数（int64）</td>
+                        <td>返回数组长度或字符串字节数（int64）</td>
                     </tr>
                     <tr>
                         <td><code>type(value)</code></td>
-                        <td>返回类型名：<code>"int"</code> / <code>"float"</code> / <code>"string"</code> / <code>"array"</code> / <code>"boolean"</code> / <code>"null"</code> / <code>"function"</code> / <code>"object"</code></td>
+                        <td>返回类型名：<code>"int"</code> / <code>"float"</code> / <code>"string"</code> / <code>"array"</code> / <code>"dict"</code> / <code>"boolean"</code> / <code>"null"</code> / <code>"function"</code> / <code>"object"</code> / <code>"set"</code> / <code>"map"</code> / <code>"class"</code></td>
                     </tr>
                     <tr>
                         <td><code>range(stop)</code></td>
@@ -715,8 +712,6 @@ d.<span class="fn">speak</span>()      <span class="cmt">// Woof! I'm Rex</span>
                 ><br />
                 │&nbsp;&nbsp;&nbsp;├── <span class="dir">parser/</span>
                 <span class="cmt">Pratt 解析器（~1,200 行）</span><br />
-                │&nbsp;&nbsp;&nbsp;├── <span class="dir">interpreter/</span>
-                <span class="cmt">树遍历解释器（~1,621 行）</span><br />
                 │&nbsp;&nbsp;&nbsp;├── <span class="dir">vm/</span>
                 <span class="cmt">字节码 VM：Compiler + 栈式虚拟机（~3,175 行）</span><br />
                 │&nbsp;&nbsp;&nbsp;└── <span class="dir">runtime/</span>
@@ -729,13 +724,13 @@ d.<span class="fn">speak</span>()      <span class="cmt">// Woof! I'm Rex</span>
                 ├── <span class="dir">.github/workflows/</span>
                 <span class="cmt">CI 多架构矩阵（18 个组合）</span><br />
                 ├── <span class="dir">examples/</span>
-                <span class="cmt">24 个示例文件（按特性编号）</span><br />
+                <span class="cmt">54 个示例文件（按特性编号 01-53 + main.va）</span><br />
                 ├── <span class="dir">tests/</span>
-                <span class="cmt">13 个测试文件 + run_tests.ps1 / run_tests.sh</span><br />
+                <span class="cmt">59 个测试文件（lexer/parser/runtime/interpreter/module/formatter）+ run_tests.ps1 / run_tests.sh</span><br />
                 ├── <span class="dir">docs/</span>
                 <span class="cmt">开发文档（10 篇，中文）</span><br />
                 ├── <span class="dir">std/</span>
-                <span class="cmt">标准库（规划中）</span><br />
+                <span class="cmt">标准库（8 个模块：array, datetime, fs, json, math, os, regex, string）</span><br />
                 ├── build.ps1 / build.sh <span class="cmt">跨平台构建脚本</span><br />
                 ├── CMakePresets.json <span class="cmt">20 个预设</span><br />
                 └── CMakeLists.txt
@@ -746,7 +741,7 @@ d.<span class="fn">speak</span>()      <span class="cmt">// Woof! I'm Rex</span>
         <section id="roadmap" class="section">
             <h2>路线图</h2>
             <p class="section-desc">
-                三阶段演进：AST 解释器（✅）→ 字节码 VM（Phase 1-4 ✅）→ JIT（规划中）。
+                字节码 VM（Phase 1-4 ✅）→ JIT（规划中）。
             </p>
 
             <table>
@@ -821,11 +816,31 @@ d.<span class="fn">speak</span>()      <span class="cmt">// Woof! I'm Rex</span>
                     <tr>
                         <td>v0.13</td>
                         <td>模块系统（import / export）</td>
-                        <td><span class="wip">⏳ 规划中</span></td>
+                        <td><span class="done">✅ 已完成</span></td>
+                    </tr>
+                    <tr>
+                        <td>v0.14-18</td>
+                        <td>多继承 + C3 MRO + super + 默认参数 + C-for + Lambda + 内部重构</td>
+                        <td><span class="done">✅ 已完成</span></td>
+                    </tr>
+                    <tr>
+                        <td>v0.19-20</td>
+                        <td>尾调用优化 (TCO) + const 声明 + 生成器 + do-while</td>
+                        <td><span class="done">✅ 已完成</span></td>
+                    </tr>
+                    <tr>
+                        <td>v0.21-22</td>
+                        <td>iter/next 协议 + 解构赋值 + rest 参数 + 列表/Dict 推导式 + defer</td>
+                        <td><span class="done">✅ 已完成</span></td>
+                    </tr>
+                    <tr>
+                        <td>v0.23-24</td>
+                        <td>Set + Map + Match 模式匹配 + ?. 可选链 + ?? 空值合并 + call-site spread</td>
+                        <td><span class="done">✅ 已完成</span></td>
                     </tr>
                     <tr>
                         <td>v1.0</td>
-                        <td>标准库、LSP、包管理器 vpm</td>
+                        <td>标准库完善、LSP 增强、JIT 编译、包管理器 vpm</td>
                         <td><span class="planned">规划中</span></td>
                     </tr>
                     <tr>
