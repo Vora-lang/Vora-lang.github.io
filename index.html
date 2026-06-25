@@ -301,9 +301,13 @@
         <span class="prompt">$</span> ./build.sh -a arm64 -c release -p  &nbsp;<span class="note">→ .deb / .rpm / .pkg.tar.xz</span><br>
         <span class="prompt">PS&gt;</span> .\build.ps1 -Architecture arm64 -Config Release -Package  &nbsp;<span class="note">→ .msi</span><br>
         <br>
-        <span class="note"># 运行脚本</span><br>
-        <span class="prompt">$</span> vora hello.va<br>
-        <span class="prompt">$</span> vora --repl<br>
+        <span class="note"># 运行与调试</span><br>
+        <span class="prompt">$</span> vora hello.va              &nbsp;<span class="note">执行脚本</span><br>
+        <span class="prompt">$</span> vora                        &nbsp;<span class="note">进入 REPL 交互模式</span><br>
+        <span class="prompt">$</span> vora --version              &nbsp;<span class="note">查看版本（-v）</span><br>
+        <span class="prompt">$</span> vora --tokens example.va    &nbsp;<span class="note">打印 Token 流与字节码</span><br>
+        <span class="prompt">$</span> vora --ast-printer example.va &nbsp;<span class="note">打印 S-expression AST</span><br>
+        <span class="prompt">$</span> vora fmt hello.va           &nbsp;<span class="note">格式化源文件（-w 原地写入）</span><br>
     </div>
 </section>
 
