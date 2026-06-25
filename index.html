@@ -1,570 +1,533 @@
 <!doctype html>
 <html lang="zh-CN">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Vora — 动态类型脚本语言</title>
-        <link
-            rel="icon"
-            href="vora_logo.svg"
-            type="image/svg+xml"
-        />
-        <style>
-            /* ====== 重置 & 基础 ====== */
-            *,
-            *::before,
-            *::after {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-            }
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Vora — 动态类型脚本语言</title>
+<link rel="icon" href="vora_logo.svg" type="image/svg+xml" />
+<style>
+    /* ═══════════════════════════════════════════════════════════════════════════
+       Vora Landing Page — Design System
+       Palette: ink (#0f172a), paper (#f8fafc), accent (#2563eb), warm (#f59e0b)
+       ═══════════════════════════════════════════════════════════════════════ */
 
-            :root {
-                --bg: #ffffff;
-                --card: #f5f5f7;
-                --border: #e0e0e0;
-                --text: #1d1d1f;
-                --text2: #6e6e73;
-                --kw: #7c3aed;
-                --str: #059669;
-                --num: #d97706;
-                --fn: #2563eb;
-                --lit: #ea580c;
-                --type: #0d9488;
-                --cmt: #a1a1aa;
-                --interp: #db2777;
-                --op: #dc2626;
-                --radius: 10px;
-                --mono:
-                    "Cascadia Code", "Fira Code", "JetBrains Mono", "Consolas",
-                    monospace;
-                --sans:
-                    "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
-            }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-            html {
-                scroll-behavior: smooth;
-                font-size: 16px;
-            }
+    :root {
+        --ink: #0f172a;
+        --ink-light: #334155;
+        --paper: #f8fafc;
+        --surface: #ffffff;
+        --muted: #64748b;
+        --accent: #2563eb;
+        --accent-glow: #3b82f6;
+        --warm: #f59e0b;
+        --border: #e2e8f0;
+        --border-light: #f1f5f9;
+        --code-bg: #1e293b;
+        --code-fg: #e2e8f0;
+        --radius: 8px;
+        --radius-lg: 14px;
+        --mono: "Cascadia Code", "JetBrains Mono", "Fira Code", "Consolas", "SF Mono", monospace;
+        --sans: "Segoe UI", system-ui, -apple-system, "Inter", sans-serif;
+    }
 
-            body {
-                font-family: var(--sans);
-                background: var(--bg);
-                color: var(--text);
-                line-height: 1.7;
-                -webkit-font-smoothing: antialiased;
-            }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body {
+        font-family: var(--sans);
+        background: var(--paper);
+        color: var(--ink);
+        line-height: 1.7;
+        -webkit-font-smoothing: antialiased;
+    }
 
-            /* ====== 导航栏 ====== */
-            .nav {
-                position: sticky;
-                top: 0;
-                z-index: 100;
-                background: rgba(255, 255, 255, 0.85);
-                backdrop-filter: blur(12px);
-                border-bottom: 1px solid var(--border);
-                padding: 0 24px;
-            }
-            .nav-inner {
-                max-width: 960px;
-                margin: 0 auto;
-                display: flex;
-                align-items: center;
-                gap: 28px;
-                height: 52px;
-                font-size: 0.9rem;
-                font-weight: 500;
-            }
-            .nav-logo {
-                font-size: 1.2rem;
-                font-weight: 800;
-                background: linear-gradient(135deg, #6366f1, #a78bfa);
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                background-clip: text;
-                margin-right: auto;
-            }
-            .nav a {
-                color: var(--text2);
-                text-decoration: none;
-                transition: color 0.2s;
-            }
-            .nav a:hover {
-                color: var(--kw);
-            }
+    /* ── Navigation ─────────────────────────────────────────────────────── */
+    .nav {
+        position: sticky; top: 0; z-index: 100;
+        background: rgba(248,250,252,0.9);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--border);
+        padding: 0 24px;
+    }
+    .nav-inner {
+        max-width: 1100px; margin: 0 auto;
+        display: flex; align-items: center; gap: 28px;
+        height: 52px; font-size: 0.88rem; font-weight: 500;
+    }
+    .nav-logo {
+        font-size: 1.2rem; font-weight: 800; color: var(--ink);
+        text-decoration: none; margin-right: auto; letter-spacing: -0.02em;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav a { color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    .nav a:hover { color: var(--ink); }
 
-            /* ====== 通用 Section ====== */
-            .section {
-                max-width: 960px;
-                margin: 0 auto;
-                padding: 80px 24px;
-            }
-            .section h2 {
-                font-size: 1.8rem;
-                font-weight: 700;
-                margin-bottom: 8px;
-            }
-            .section-desc {
-                color: var(--text2);
-                margin-bottom: 40px;
-                font-size: 1.05rem;
-            }
+    /* ── Buttons ────────────────────────────────────────────────────────── */
+    .btn {
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 10px 24px; font-size: 0.9rem; font-weight: 600;
+        border-radius: 8px; text-decoration: none;
+        transition: all 0.2s; cursor: pointer;
+    }
+    .btn-primary {
+        background: var(--accent); color: #fff;
+        box-shadow: 0 1px 3px rgba(37,99,235,0.25);
+    }
+    .btn-primary:hover { background: #1d4ed8; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(37,99,235,0.35); }
+    .btn-outline {
+        color: var(--ink); border: 1.5px solid var(--border);
+    }
+    .btn-outline:hover { border-color: var(--muted); background: var(--surface); }
 
-            /* ====== Hero ====== */
-            .hero {
-                text-align: center;
-                padding: 100px 24px 80px;
-                background: linear-gradient(180deg, #faf5ff 0%, #ffffff 100%);
-            }
-            .hero h1 {
-                font-size: 3.2rem;
-                font-weight: 800;
-                letter-spacing: -0.02em;
-                background: linear-gradient(
-                    135deg,
-                    #6366f1 0%,
-                    #a78bfa 60%,
-                    #c084fc 100%
-                );
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                background-clip: text;
-            }
-            .hero-logo {
-                display: block;
-                margin: 0 auto 8px;
-            }
-            .hero .tagline {
-                font-size: 1.3rem;
-                color: var(--text2);
-                margin: 16px 0 24px;
-            }
-            .hero .meta {
-                font-size: 0.9rem;
-                color: var(--text2);
-                margin-bottom: 32px;
-                line-height: 1.8;
-            }
-            .hero .meta span {
-                display: inline-block;
-            }
-            .hero .meta a {
-                color: var(--kw);
-                text-decoration: none;
-                font-weight: 600;
-            }
-            .btn {
-                display: inline-block;
-                padding: 10px 28px;
-                font-size: 0.95rem;
-                font-weight: 600;
-                border-radius: 8px;
-                text-decoration: none;
-                transition: all 0.25s;
-            }
-            .btn-primary {
-                background: linear-gradient(135deg, #6366f1, #8b5cf6);
-                color: #fff;
-                box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
-            }
-            .btn-primary:hover {
-                box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
-                transform: translateY(-1px);
-            }
-            .btn-ghost {
-                color: var(--kw);
-                border: 1.5px solid var(--kw);
-                margin-left: 12px;
-            }
-            .btn-ghost:hover {
-                background: #f5f3ff;
-            }
+    /* ── Hero ────────────────────────────────────────────────────────────── */
+    .hero {
+        background: linear-gradient(180deg, #f0f4ff 0%, var(--paper) 100%);
+        padding: 72px 24px 80px;
+    }
+    .hero-grid {
+        max-width: 1100px; margin: 0 auto;
+        display: grid; grid-template-columns: 1fr 1fr;
+        gap: 60px; align-items: center;
+    }
+    .hero-text { max-width: 480px; }
+    .hero-badge {
+        display: inline-block; font-size: 0.78rem; font-weight: 700;
+        color: var(--accent); background: #dbeafe;
+        padding: 4px 12px; border-radius: 20px;
+        margin-bottom: 20px; letter-spacing: 0.04em;
+        text-transform: uppercase;
+    }
+    .hero h1 {
+        font-size: 3.2rem; font-weight: 900; line-height: 1.12;
+        letter-spacing: -0.03em; color: var(--ink); margin-bottom: 16px;
+    }
+    .hero h1 em {
+        font-style: normal;
+        background: linear-gradient(135deg, var(--accent) 0%, #6366f1 100%);
+        -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    .hero .tagline {
+        font-size: 1.1rem; color: var(--muted); margin-bottom: 28px; line-height: 1.6;
+    }
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+    .hero-meta {
+        margin-top: 24px; font-size: 0.82rem; color: var(--muted);
+        display: flex; gap: 16px; flex-wrap: wrap;
+    }
+    .hero-meta span { white-space: nowrap; }
 
-            .hero pre {
-                max-width: 560px;
-                margin: 40px auto 0;
-                background: var(--card);
-                border: 1px solid var(--border);
-                border-radius: var(--radius);
-                padding: 20px 24px;
-                font-family: var(--mono);
-                font-size: 0.85rem;
-                line-height: 1.7;
-                text-align: left;
-                overflow-x: auto;
-            }
+    .hero-code {
+        background: var(--code-bg); border-radius: var(--radius-lg);
+        overflow: hidden; box-shadow: 0 20px 60px rgba(15,23,42,0.18);
+    }
+    .hero-code-bar {
+        background: #0f172a; padding: 10px 16px;
+        display: flex; gap: 8px; align-items: center;
+    }
+    .hero-code-dot { width: 11px; height: 11px; border-radius: 50%; }
+    .hero-code-dot:nth-child(1) { background: #ef4444; }
+    .hero-code-dot:nth-child(2) { background: #f59e0b; }
+    .hero-code-dot:nth-child(3) { background: #22c55e; }
+    .hero-code-bar span {
+        color: #94a3b8; font-size: 0.75rem; font-family: var(--mono);
+        margin-left: 8px;
+    }
+    .hero-code pre {
+        padding: 22px 24px 16px; margin: 0;
+        font-family: var(--mono); font-size: 0.84rem; line-height: 1.75;
+        color: var(--code-fg); overflow-x: auto;
+    }
 
-            /* ====== 代码卡片网格 ====== */
-            .code-grid {
-                display: grid;
-                grid-template-columns: repeat(2, 1fr);
-                gap: 20px;
-            }
-            .code-card {
-                background: var(--card);
-                border: 1px solid var(--border);
-                border-radius: var(--radius);
-                padding: 20px;
-                transition:
-                    border-color 0.25s,
-                    box-shadow 0.25s;
-            }
-            .code-card:hover {
-                border-color: #c4b5fd;
-                box-shadow: 0 0 24px rgba(124, 58, 237, 0.08);
-            }
-            .code-card h3 {
-                font-size: 0.85rem;
-                font-weight: 600;
-                color: var(--text2);
-                text-transform: uppercase;
-                letter-spacing: 0.06em;
-                margin-bottom: 12px;
-            }
-            .code-card pre {
-                font-family: var(--mono);
-                font-size: 0.88rem;
-                line-height: 1.65;
-                overflow-x: auto;
-                color: var(--text);
-            }
+    /* Syntax colors for dark code blocks */
+    .code-dark .kw { color: #c084fc; }      /* keywords */
+    .code-dark .fn { color: #60a5fa; }      /* functions */
+    .code-dark .str { color: #34d399; }     /* strings */
+    .code-dark .num { color: #fbbf24; }     /* numbers */
+    .code-dark .cmt { color: #64748b; font-style: italic; }
+    .code-dark .lit { color: #f87171; }     /* literals */
+    .code-dark .type { color: #2dd4bf; }    /* types */
+    .code-dark .interp { color: #f472b6; }  /* interpolation */
 
-            /* ====== Shell 命令卡片 ====== */
-            .shell-block {
-                background: #1e1e2e;
-                color: #cdd6f4;
-                border-radius: var(--radius);
-                padding: 20px 24px;
-                font-family: var(--mono);
-                font-size: 0.88rem;
-                line-height: 1.7;
-                overflow-x: auto;
-                margin-bottom: 24px;
-            }
-            .shell-block .prompt {
-                color: #a6e3a1;
-            }
-            .shell-block .out {
-                color: #bac2de;
-            }
+    /* Light syntax (for doc code blocks) */
+    .code-light .kw { color: #7c3aed; }
+    .code-light .fn { color: #2563eb; }
+    .code-light .str { color: #059669; }
+    .code-light .num { color: #d97706; }
+    .code-light .cmt { color: #a1a1aa; font-style: italic; }
+    .code-light .lit { color: #ea580c; }
+    .code-light .type { color: #0d9488; }
+    .code-light .interp { color: #db2777; }
 
-            /* ====== 表格 ====== */
-            table {
-                width: 100%;
-                border-collapse: collapse;
-                font-size: 0.92rem;
-                margin: 16px 0 32px;
-            }
-            th,
-            td {
-                text-align: left;
-                padding: 10px 14px;
-                border-bottom: 1px solid var(--border);
-            }
-            th {
-                font-weight: 600;
-                color: var(--text2);
-                font-size: 0.8rem;
-                text-transform: uppercase;
-                letter-spacing: 0.05em;
-            }
-            tr:hover td {
-                background: #fafafa;
-            }
-            .done {
-                color: #059669;
-                font-weight: 600;
-            }
-            .wip {
-                color: #d97706;
-                font-weight: 600;
-            }
-            .planned {
-                color: var(--text2);
-            }
+    /* ── Sections ───────────────────────────────────────────────────────── */
+    .section {
+        max-width: 1100px; margin: 0 auto; padding: 80px 24px;
+    }
+    .section-label {
+        font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+        letter-spacing: 0.08em; color: var(--accent); margin-bottom: 8px;
+    }
+    .section h2 {
+        font-size: 2rem; font-weight: 800; letter-spacing: -0.02em;
+        margin-bottom: 8px; color: var(--ink);
+    }
+    .section > p {
+        color: var(--muted); font-size: 1.05rem; margin-bottom: 40px; max-width: 640px;
+    }
 
-            /* ====== 项目结构 ====== */
-            .dir-tree {
-                font-family: var(--mono);
-                font-size: 0.88rem;
-                line-height: 2;
-                background: var(--card);
-                border: 1px solid var(--border);
-                border-radius: var(--radius);
-                padding: 20px 24px;
-                margin-bottom: 24px;
-                overflow-x: auto;
-            }
-            .dir-tree .dir {
-                color: var(--kw);
-                font-weight: 600;
-            }
-            .dir-tree .cmt {
-                color: var(--cmt);
-                margin-left: 8px;
-            }
+    /* ── Code cards grid ────────────────────────────────────────────────── */
+    .code-grid {
+        display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+    }
+    .code-card {
+        background: var(--surface); border: 1px solid var(--border);
+        border-radius: var(--radius); padding: 20px 22px;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .code-card:hover {
+        border-color: #93c5fd; box-shadow: 0 0 20px rgba(37,99,235,0.06);
+    }
+    .code-card h3 {
+        font-size: 0.78rem; font-weight: 700; color: var(--muted);
+        text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 14px;
+    }
+    .code-card pre {
+        font-family: var(--mono); font-size: 0.84rem; line-height: 1.7;
+        overflow-x: auto; color: var(--ink); margin: 0;
+    }
 
-            /* ====== 语法高亮 ====== */
-            .kw {
-                color: var(--kw);
-            }
-            .str {
-                color: var(--str);
-            }
-            .num {
-                color: var(--num);
-            }
-            .fn {
-                color: var(--fn);
-            }
-            .lit {
-                color: var(--lit);
-            }
-            .type {
-                color: var(--type);
-            }
-            .cmt {
-                color: var(--cmt);
-                font-style: italic;
-            }
-            .interp {
-                color: var(--interp);
-            }
-            .op {
-                color: var(--op);
-            }
+    /* ── Shell block ────────────────────────────────────────────────────── */
+    .shell-block {
+        background: var(--code-bg); color: #e2e8f0;
+        border-radius: var(--radius-lg); padding: 22px 26px;
+        font-family: var(--mono); font-size: 0.85rem; line-height: 1.8;
+        overflow-x: auto; margin-bottom: 24px;
+    }
+    .shell-block .prompt { color: #86efac; }
+    .shell-block .out { color: #cbd5e1; }
+    .shell-block .cmt2 { color: #64748b; font-style: italic; }
 
-            /* ====== 页脚 ====== */
-            .footer {
-                border-top: 1px solid var(--border);
-                padding: 40px 24px;
-                text-align: center;
-                color: var(--text2);
-                font-size: 0.85rem;
-            }
-            .footer a {
-                color: var(--kw);
-                text-decoration: none;
-            }
-            .footer a:hover {
-                text-decoration: underline;
-            }
+    /* ── Feature grid ───────────────────────────────────────────────────── */
+    .feature-grid {
+        display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+    }
+    .feature {
+        background: var(--surface); border: 1px solid var(--border);
+        border-radius: var(--radius); padding: 24px;
+    }
+    .feature-icon { font-size: 1.5rem; margin-bottom: 10px; }
+    .feature h3 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; color: var(--ink); }
+    .feature p { font-size: 0.88rem; color: var(--muted); line-height: 1.6; }
 
-            /* ====== 响应式 ====== */
-            @media (max-width: 768px) {
-                .code-grid {
-                    grid-template-columns: 1fr;
-                }
-                .hero h1 {
-                    font-size: 2.2rem;
-                }
-                .hero .tagline {
-                    font-size: 1.05rem;
-                }
-                .nav-inner {
-                    gap: 16px;
-                    font-size: 0.82rem;
-                }
-                .section {
-                    padding: 48px 16px;
-                }
-                .section h2 {
-                    font-size: 1.4rem;
-                }
-            }
-        </style>
-    </head>
-    <body>
-        <!-- ====== 导航栏 ====== -->
-        <nav class="nav">
-            <div class="nav-inner">
-                <span class="nav-logo">Vora</span>
-                <a href="#quickstart">快速开始</a>
-                <a href="#syntax">语法</a>
-                <a href="#builtins">内建函数</a>
-                <a href="#structure">结构</a>
-                <a href="#roadmap">路线图</a>
-                <a href="docs/index.html">文档</a>
-            </div>
-        </nav>
+    /* ── Tables ─────────────────────────────────────────────────────────── */
+    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin: 16px 0 32px; }
+    th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--border); }
+    th { font-weight: 700; color: var(--muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; }
+    tr:hover td { background: #f8fafc; }
+    .tag-done { color: #059669; font-weight: 700; font-size: 0.85rem; }
+    .tag-soon { color: #d97706; font-weight: 700; font-size: 0.85rem; }
+    .tag-future { color: var(--muted); font-size: 0.85rem; }
 
-        <!-- ====== Hero ====== -->
-        <header class="hero">
-            <img
-                src="vora_logo.svg"
-                alt="Vora logo"
-                class="hero-logo"
-                width="160"
-                height="160"
-            />
-            <h1>Vora</h1>
+    /* ── Directory tree ─────────────────────────────────────────────────── */
+    .dir-tree {
+        font-family: var(--mono); font-size: 0.86rem; line-height: 2;
+        background: var(--surface); border: 1px solid var(--border);
+        border-radius: var(--radius); padding: 22px 26px;
+        overflow-x: auto;
+    }
+    .dir-tree .dir { color: var(--accent); font-weight: 700; }
+    .dir-tree .note { color: var(--muted); margin-left: 6px; }
+
+    /* ── Footer ─────────────────────────────────────────────────────────── */
+    .footer {
+        border-top: 1px solid var(--border); padding: 40px 24px 48px;
+        text-align: center; color: var(--muted); font-size: 0.85rem;
+    }
+    .footer a { color: var(--accent); text-decoration: none; font-weight: 500; }
+    .footer a:hover { text-decoration: underline; }
+    .footer-links { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-bottom: 12px; }
+
+    /* ── Responsive ─────────────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+        .hero-grid { grid-template-columns: 1fr; gap: 36px; }
+        .hero h1 { font-size: 2.4rem; }
+        .hero-text { max-width: none; }
+        .code-grid { grid-template-columns: repeat(2, 1fr); }
+        .feature-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+        .hero { padding: 48px 16px 56px; }
+        .hero h1 { font-size: 1.9rem; }
+        .hero .tagline { font-size: 1rem; }
+        .code-grid { grid-template-columns: 1fr; }
+        .section { padding: 56px 16px; }
+        .section h2 { font-size: 1.5rem; }
+        .nav-inner { gap: 14px; font-size: 0.8rem; }
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════════════
+       Animations
+       ═══════════════════════════════════════════════════════════════════════ */
+
+    /* ── Hero entrance ──────────────────────────────────────────────────── */
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(24px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to   { opacity: 1; }
+    }
+    @keyframes slideRight {
+        from { opacity: 0; transform: translateX(40px); }
+        to   { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes glowPulse {
+        0%, 100% { box-shadow: 0 20px 60px rgba(15,23,42,0.18); }
+        50%      { box-shadow: 0 20px 70px rgba(37,99,235,0.12), 0 0 100px rgba(37,99,235,0.04); }
+    }
+
+    .hero-badge   { animation: fadeUp 0.6s ease-out both; }
+    .hero h1      { animation: fadeUp 0.6s 0.1s ease-out both; }
+    .hero .tagline { animation: fadeUp 0.6s 0.2s ease-out both; }
+    .hero-actions { animation: fadeUp 0.6s 0.3s ease-out both; }
+    .hero-meta    { animation: fadeUp 0.6s 0.35s ease-out both; }
+    .hero-code    { animation: slideRight 0.7s 0.25s ease-out both; }
+    .hero-code:hover { animation: glowPulse 3s ease-in-out infinite; }
+
+    /* ── Ambient hero gradient ─────────────────────────────────────────── */
+    @keyframes gradientShift {
+        0%   { background-position: 0% 50%; }
+        50%  { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+    .hero {
+        background: linear-gradient(180deg, #f0f4ff 0%, #e8eeff 40%, #f8fafc 100%);
+        background-size: 100% 200%;
+        animation: gradientShift 8s ease-in-out infinite;
+    }
+
+    /* ── Shell prompt blink ────────────────────────────────────────────── */
+    @keyframes blink {
+        0%, 100% { opacity: 1; }
+        50%      { opacity: 0.3; }
+    }
+    .shell-block .prompt::after {
+        content: "█";
+        animation: blink 1.2s step-end infinite;
+        margin-left: 2px;
+        font-size: 0.9em;
+    }
+
+    /* ── Scroll reveal ─────────────────────────────────────────────────── */
+    .reveal {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+    }
+    .reveal.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    .reveal-stagger > * {
+        opacity: 0;
+        transform: translateY(24px);
+        transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+    }
+    .reveal-stagger.visible > *:nth-child(1) { transition-delay: 0s; }
+    .reveal-stagger.visible > *:nth-child(2) { transition-delay: 0.08s; }
+    .reveal-stagger.visible > *:nth-child(3) { transition-delay: 0.16s; }
+    .reveal-stagger.visible > *:nth-child(4) { transition-delay: 0.24s; }
+    .reveal-stagger.visible > *:nth-child(5) { transition-delay: 0.32s; }
+    .reveal-stagger.visible > *:nth-child(6) { transition-delay: 0.40s; }
+    .reveal-stagger.visible > * {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* ── Card hover lift ────────────────────────────────────────────────── */
+    .code-card {
+        transition: transform 0.2s ease, border-color 0.2s, box-shadow 0.2s;
+    }
+    .code-card:hover {
+        transform: translateY(-2px);
+    }
+    .feature {
+        transition: transform 0.2s ease, border-color 0.2s, box-shadow 0.2s;
+    }
+    .feature:hover {
+        transform: translateY(-2px);
+        border-color: #93c5fd;
+        box-shadow: 0 4px 16px rgba(37,99,235,0.08);
+    }
+
+    /* ── Reduced motion ─────────────────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+        }
+        .reveal, .reveal-stagger > * {
+            opacity: 1;
+            transform: none;
+        }
+    }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     Navigation
+     ═══════════════════════════════════════════════════════════════════════ -->
+<nav class="nav">
+    <div class="nav-inner">
+        <a href="#" class="nav-logo">Vora<span>.</span></a>
+        <a href="#quickstart">快速开始</a>
+        <a href="#syntax">语法</a>
+        <a href="#features">特性</a>
+        <a href="#roadmap">路线图</a>
+        <a href="docs/index.html">文档</a>
+    </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     Hero
+     ═══════════════════════════════════════════════════════════════════════ -->
+<header class="hero">
+    <div class="hero-grid">
+        <div class="hero-text">
+            <div class="hero-badge">v0.26 · 零依赖</div>
+            <h1>一门语言，<br><em>三种灵魂</em></h1>
             <p class="tagline">
-                动态类型脚本语言 · 类 JavaScript 语法 · Lua 级简单性 · Wren
-                式面向对象
+                Vora 是动态类型脚本语言，融合 JavaScript 的熟悉语法、Lua 的轻量级简单性、Wren 的优雅面向对象。
             </p>
-            <p class="meta">
-                执行后端：<strong>字节码 VM</strong>（基于栈的虚拟机，~50 条指令）<br />
-                ~9,400 行 C++17 · 零外部依赖 · <a href="docs/index.html">📚 文档</a><br />
-                <a
-                    href="https://github.com/Vora-lang/Vora"
-                    target="_blank"
-                    rel="noopener"
-                    >github.com/Vora-lang/Vora</a
-                >
-            </p>
-            <a
-                class="btn btn-primary"
-                href="https://github.com/Vora-lang/Vora"
-                target="_blank"
-                rel="noopener"
-                >GitHub →</a
-            >
-            <a class="btn btn-ghost" href="#quickstart">快速开始 ↓</a>
-            <pre><code><span class="kw">func</span> <span class="fn">greet</span>(name) {
-    <span class="kw">return</span> <span class="str">"Hello, "</span> + name + <span class="str">"!"</span>
+            <div class="hero-actions">
+                <a class="btn btn-primary" href="https://github.com/Vora-lang/Vora" target="_blank" rel="noopener">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                    GitHub
+                </a>
+                <a class="btn btn-outline" href="#quickstart">快速开始 ↓</a>
+            </div>
+            <div class="hero-meta">
+                <span>~9,400 行 C++17</span>
+                <span>·</span>
+                <span>字节码 VM（50+ 指令）</span>
+                <span>·</span>
+                <span>Win / Linux / macOS</span>
+            </div>
+        </div>
+        <div class="hero-code">
+            <div class="hero-code-bar">
+                <div class="hero-code-dot"></div>
+                <div class="hero-code-dot"></div>
+                <div class="hero-code-dot"></div>
+                <span>hello.va</span>
+            </div>
+            <pre class="code-dark"><span class="cmt">// Vora — JavaScript-like syntax, Lua simplicity, Wren-style OOP</span>
+
+<span class="kw">Obj</span> <span class="type">Greeter</span>(greeting) {
+    <span class="kw">this</span>.greeting = greeting
+    <span class="kw">func</span> <span class="fn">say</span>(name) {
+        <span class="kw">return</span> <span class="str">"<span class="interp">${greeting}</span>, <span class="interp">${name}</span>!"</span>
+    }
 }
 
+<span class="kw">let</span> hi = <span class="type">Greeter</span>(<span class="str">"Hello"</span>)
 <span class="kw">let</span> names = [<span class="str">"World"</span>, <span class="str">"Vora"</span>, <span class="str">"你"</span>]
+
 <span class="kw">for</span> name <span class="kw">in</span> names {
-    <span class="fn">print</span>(<span class="fn">greet</span>(name))
-}</code></pre>
-        </header>
+    <span class="fn">print</span>(hi.<span class="fn">say</span>(name))
+}
 
-        <!-- ====== 快速开始 ====== -->
-        <section id="quickstart" class="section">
-            <h2>快速开始</h2>
-            <p class="section-desc">一条命令构建，开箱即用。</p>
+<span class="cmt">// → Hello, World!</span>
+<span class="cmt">// → Hello, Vora!</span>
+<span class="cmt">// → Hello, 你!</span></pre>
+        </div>
+    </div>
+</header>
 
-            <div class="shell-block">
-                <span class="cmt"># 构建（跨平台一键构建）</span><br />
-                <span class="cmt"># Windows (PowerShell) — 默认 x64 Debug</span><br />
-                <span class="prompt">PS&gt; </span>.\build.ps1<br />
-                <span class="cmt"># Linux / macOS (bash) — 默认 x64 debug</span><br />
-                <span class="prompt">$ </span>./build.sh<br />
-                <br />
-                <span class="cmt"># 多架构 + 打包</span><br />
-                <span class="prompt">PS&gt; </span>.\build.ps1 -Architecture arm64 -Config Release -Package  <span class="cmt"># → .msi</span><br />
-                <span class="prompt">$ </span>./build.sh -a arm64 -c release -p    <span class="cmt"># → .deb/.rpm/.pkg.tar.xz</span><br />
-                <br />
-                <span class="cmt"># 运行脚本（VM 模式，默认后端）</span><br />
-                <span class="prompt">$ </span>vora examples/main.va<br />
-                <br />
-                <span class="cmt"># REPL 交互模式</span><br />
-                <span class="prompt">$ </span>vora --repl<br />
-                <br />
-                <span class="cmt"># 打印 AST（S-expression 格式）</span><br />
-                <span class="prompt">$ </span>vora examples/main.va --ast-printer<br />
-                <br />
-                <span class="cmt"># 打印 Token 流 / 字节码反汇编</span><br />
-                <span class="prompt">$ </span>vora examples/main.va --tokens<br />
-                <br />
-                <span class="cmt"># 安装（Release 包）</span><br />
-                <span class="cmt"># Windows: .msi 双击安装（自定义目录 + 自动 PATH）</span><br />
-                <span class="cmt"># Linux: sudo dpkg -i vora-*.deb  |  sudo rpm -i vora-*.rpm</span><br />
-                <span class="cmt"># macOS: tar xzf vora-*.tar.gz -C /usr/local/bin</span><br />
-            </div>
-        </section>
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     Quick Start
+     ═══════════════════════════════════════════════════════════════════════ -->
+<section id="quickstart" class="section reveal">
+    <div class="section-label">开始使用</div>
+    <h2>一条命令构建，开箱即用</h2>
+    <p>跨平台一键构建脚本，支持多架构交叉编译与原生打包。</p>
 
-        <!-- ====== 语法速览 ====== -->
-        <section id="syntax" class="section">
-            <h2>语法速览</h2>
-            <p class="section-desc">
-                Vora 的语法受到 Lua 和 Wren 的启发，追求简洁与可读性。
-            </p>
+    <div class="shell-block">
+        <span class="cmt2"># Windows (PowerShell) — 默认 x64 Debug</span><br>
+        <span class="prompt">PS&gt; </span>.\build.ps1<br>
+        <span class="cmt2"># Linux / macOS — 默认 x64 debug</span><br>
+        <span class="prompt">$ </span>./build.sh<br>
+        <br>
+        <span class="cmt2"># 多架构 + 打包（Release）</span><br>
+        <span class="prompt">PS&gt; </span>.\build.ps1 -Architecture arm64 -Config Release -Package  <span class="cmt2">→ .msi</span><br>
+        <span class="prompt">$ </span>./build.sh -a arm64 -c release -p    <span class="cmt2">→ .deb / .rpm / .pkg.tar.xz</span><br>
+        <br>
+        <span class="cmt2"># 运行脚本</span><br>
+        <span class="prompt">$ </span>vora hello.va<br>
+        <span class="prompt">$ </span>vora --repl              <span class="cmt2"># 交互模式</span><br>
+        <span class="prompt">$ </span>vora hello.va --tokens    <span class="cmt2"># 查看 Token 流</span><br>
+        <span class="prompt">$ </span>vora hello.va --ast-printer  <span class="cmt2"># 查看 S-expression AST</span><br>
+        <br>
+        <span class="cmt2"># 安装（Release 包）</span><br>
+        <span class="cmt2"># Windows: .msi 双击安装（自定义目录 + 自动 PATH）</span><br>
+        <span class="cmt2"># Linux:   sudo dpkg -i vora-*.deb  |  sudo rpm -i vora-*.rpm</span><br>
+        <span class="cmt2"># macOS:   tar xzf vora-*.tar.gz -C /usr/local/bin</span>
+    </div>
+</section>
 
-            <div class="code-grid">
-                <!-- 类型与变量 -->
-                <div class="code-card">
-                    <h3>类型与变量</h3>
-                    <pre><code><span class="kw">let</span> n = <span class="num">42</span>           <span class="cmt">// Number (double)</span>
-<span class="kw">let</span> f = <span class="num">3.14</span>
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     Syntax Showcase
+     ═══════════════════════════════════════════════════════════════════════ -->
+<section id="syntax" class="section reveal">
+    <div class="section-label">语法速览</div>
+    <h2>一眼看懂，和写 JS 一样自然</h2>
+    <p>Vora 的语法受到 Lua 和 Wren 的启发，追求极简与可读性。以下是核心语法一览。</p>
+
+    <div class="code-grid reveal-stagger">
+        <div class="code-card code-light">
+            <h3>类型与变量</h3>
+            <pre><span class="kw">let</span> n = <span class="num">42</span>           <span class="cmt">// Int (int64)</span>
+<span class="kw">let</span> f = <span class="num">3.14</span>         <span class="cmt">// Float (float64)</span>
 <span class="kw">let</span> b = <span class="lit">true</span>         <span class="cmt">// Boolean</span>
-<span class="kw">let</span> s = <span class="str">"hello"</span>      <span class="cmt">// String</span>
+<span class="kw">let</span> s = <span class="str">"hello"</span>      <span class="cmt">// String (UTF-8)</span>
 <span class="kw">let</span> a = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]    <span class="cmt">// Array</span>
+<span class="kw">let</span> d = {k: <span class="str">"v"</span>}     <span class="cmt">// Dict</span>
 <span class="kw">let</span> nothing = <span class="lit">null</span>
 
 <span class="cmt">// 数字前缀</span>
-<span class="num">0xFF</span>    <span class="cmt">// 255（十六进制）</span>
-<span class="num">0o77</span>    <span class="cmt">// 63（八进制）</span>
-<span class="num">0b101</span>   <span class="cmt">// 5（二进制）</span></code></pre>
-                </div>
+<span class="num">0xFF</span> <span class="num">0o77</span> <span class="num">0b101</span></pre>
+        </div>
+        <div class="code-card code-light">
+            <h3>函数</h3>
+            <pre><span class="kw">func</span> <span class="fn">add</span>(a, b) { <span class="kw">return</span> a + b }
 
-                <!-- 字符串插值 -->
-                <div class="code-card">
-                    <h3>字符串插值</h3>
-                    <pre><code><span class="kw">let</span> name = <span class="str">"World"</span>
-<span class="fn">print</span>(<span class="str">"Hello <span class="interp">${name}</span>!"</span>)
-<span class="cmt">// → Hello World!</span>
+<span class="cmt">// Lambda</span>
+<span class="kw">let</span> double = <span class="kw">func</span>(x) { <span class="kw">return</span> x * <span class="num">2</span> }
 
-<span class="cmt">// 属性访问</span>
-<span class="kw">Obj</span> <span class="type">Person</span>(n) { <span class="kw">this</span>.name = n }
-<span class="kw">let</span> p = <span class="type">Person</span>(<span class="str">"Alice"</span>)
-<span class="fn">print</span>(<span class="str">"Hi <span class="interp">${p.name}</span>"</span>)
-<span class="cmt">// → Hi Alice</span></code></pre>
-                </div>
+<span class="cmt">// 默认参数 + 闭包</span>
+<span class="kw">func</span> <span class="fn">counter</span>(start = <span class="num">0</span>) {
+    <span class="kw">let</span> n = start
+    <span class="kw">return</span> <span class="kw">func</span>() { n += <span class="num">1</span>; <span class="kw">return</span> n }
+}</pre>
+        </div>
+        <div class="code-card code-light">
+            <h3>控制流</h3>
+            <pre><span class="kw">if</span> (x &gt; <span class="num">0</span>) { <span class="fn">print</span>(<span class="str">"+"</span>) }
+<span class="kw">else</span> { <span class="fn">print</span>(<span class="str">"-"</span>) }
 
-                <!-- 运算符 -->
-                <div class="code-card">
-                    <h3>运算符</h3>
-                    <pre><code><span class="cmt">// 算术：+ - * / % **</span>
-<span class="cmt">// 比较：&lt; &lt;= &gt; &gt;= == !=</span>
-<span class="cmt">// 逻辑：&& || !（短路求值）</span>
-<span class="cmt">// 自增/自减：++ --</span>
-<span class="cmt">// 复合赋值：+= -= *= /= %=</span>
-<span class="cmt">// 三元：? :</span>
+<span class="kw">while</span> (n &gt; <span class="num">0</span>) { n -= <span class="num">1</span> }
+<span class="kw">do</span> { n += <span class="num">1</span> } <span class="kw">while</span> (n &lt; <span class="num">5</span>)
 
-<span class="kw">let</span> x = <span class="num">10</span>
-x += <span class="num">5</span>           <span class="cmt">// x = 15</span>
-<span class="kw">let</span> result = x &gt; <span class="num">10</span> ? <span class="str">"big"</span> : <span class="str">"small"</span>
-
-<span class="cmt">// 短路求值</span>
-<span class="lit">false</span> && <span class="fn">crash</span>()  <span class="cmt">// crash() 不会被调用</span>
-<span class="lit">true</span> || <span class="fn">crash</span>()   <span class="cmt">// crash() 不会被调用</span></code></pre>
-                </div>
-
-                <!-- 函数与闭包 -->
-                <div class="code-card">
-                    <h3>函数与闭包</h3>
-                    <pre><code><span class="kw">func</span> <span class="fn">add</span>(a, b) {
-    <span class="kw">return</span> a + b
-}
-
-<span class="cmt">// 闭包 —— 捕获定义时环境</span>
-<span class="kw">func</span> <span class="fn">makeCounter</span>() {
-    <span class="kw">let</span> count = <span class="num">0</span>
-    <span class="kw">return</span> <span class="kw">func</span>() {
-        count = count + <span class="num">1</span>
-        <span class="kw">return</span> count
-    }
-}
-<span class="kw">let</span> c = <span class="fn">makeCounter</span>()
-<span class="fn">print</span>(<span class="fn">c</span>())  <span class="cmt">// 1</span>
-<span class="fn">print</span>(<span class="fn">c</span>())  <span class="cmt">// 2</span></code></pre>
-                </div>
-
-                <!-- 控制流 -->
-                <div class="code-card">
-                    <h3>控制流</h3>
-                    <pre><code><span class="cmt">// if / else</span>
-<span class="kw">if</span> (x &gt; <span class="num">0</span>) {
-    <span class="fn">print</span>(<span class="str">"positive"</span>)
-} <span class="kw">else</span> {
-    <span class="fn">print</span>(<span class="str">"non-positive"</span>)
-}
-
-<span class="cmt">// while</span>
-<span class="kw">while</span> (n &gt; <span class="num">0</span>) { n = n - <span class="num">1</span> }
-
-<span class="cmt">// for-in（数组 / 字符串 / range）</span>
-<span class="kw">for</span> item <span class="kw">in</span> [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>] { <span class="fn">print</span>(item) }
-<span class="kw">for</span> ch <span class="kw">in</span> <span class="str">"Vora"</span>       { <span class="fn">print</span>(ch) }
-<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">5</span>)      { <span class="fn">print</span>(i) }</code></pre>
-                </div>
-
-                <!-- 对象与继承 -->
-                <div class="code-card">
-                    <h3>对象与继承</h3>
-                    <pre><code><span class="kw">Obj</span> <span class="type">Animal</span>(name) {
+<span class="kw">for</span> item <span class="kw">in</span> [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>] { <span class="fn">print</span>(item) }
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">10</span>) { <span class="fn">print</span>(i) }
+<span class="kw">for</span> (<span class="kw">let</span> i=<span class="num">0</span>; i&lt;<span class="num">5</span>; i+=<span class="num">1</span>) {}</pre>
+        </div>
+        <div class="code-card code-light">
+            <h3>对象与继承</h3>
+            <pre><span class="kw">Obj</span> <span class="type">Animal</span>(name) {
     <span class="kw">this</span>.name = name
     <span class="kw">func</span> <span class="fn">speak</span>() { <span class="fn">print</span>(<span class="str">"..."</span>) }
 }
@@ -574,407 +537,218 @@ x += <span class="num">5</span>           <span class="cmt">// x = 15</span>
     <span class="kw">func</span> <span class="fn">speak</span>() {
         <span class="fn">print</span>(<span class="str">"Woof! I'm "</span> + <span class="kw">this</span>.name)
     }
+}</pre>
+        </div>
+        <div class="code-card code-light">
+            <h3>模式匹配</h3>
+            <pre><span class="kw">let</span> grade = <span class="kw">match</span> score {
+    <span class="num">90</span>..=<span class="num">100</span> =&gt; <span class="str">"A"</span>,
+    <span class="num">80</span>..=<span class="num">89</span>  =&gt; <span class="str">"B"</span>,
+    <span class="num">70</span>..=<span class="num">79</span>  =&gt; <span class="str">"C"</span>,
+    _        =&gt; <span class="str">"F"</span>
 }
 
-<span class="kw">let</span> d = <span class="type">Dog</span>(<span class="str">"Rex"</span>, <span class="str">"Husky"</span>)
-d.<span class="fn">speak</span>()      <span class="cmt">// Woof! I'm Rex</span>
-<span class="fn">print</span>(d.name)  <span class="cmt">// Rex</span></code></pre>
-                </div>
-
-                <!-- 异常处理 -->
-                <div class="code-card">
-                    <h3>异常处理</h3>
-                    <pre><code><span class="kw">try</span> {
+<span class="kw">func</span> <span class="fn">describe</span>(n) {
+    <span class="kw">return</span> <span class="kw">match</span> n {
+        <span class="num">0</span> =&gt; <span class="str">"zero"</span>,
+        <span class="num">1</span> =&gt; <span class="str">"one"</span>,
+        _ =&gt; <span class="str">"many"</span>
+    }
+}</pre>
+        </div>
+        <div class="code-card code-light">
+            <h3>异常处理</h3>
+            <pre><span class="kw">try</span> {
     <span class="kw">throw</span> <span class="str">"something went wrong"</span>
 } <span class="kw">catch</span> (e) {
     <span class="fn">print</span>(<span class="str">"Caught: "</span> + e)
 } <span class="kw">finally</span> {
-    <span class="fn">print</span>(<span class="str">"Cleanup"</span>)
+    <span class="fn">print</span>(<span class="str">"Always runs"</span>)
 }
 
-<span class="cmt">// 抛出自定义错误对象</span>
-<span class="kw">Obj</span> <span class="type">ValidationError</span>(msg) {
-    <span class="kw">this</span>.message = msg
-}
-<span class="kw">throw</span> <span class="type">ValidationError</span>(<span class="str">"Invalid input"</span>)</code></pre>
-                </div>
+<span class="cmt">// 可以 throw 任何值</span>
+<span class="kw">throw</span> <span class="num">404</span>
+<span class="kw">throw</span> {code: <span class="num">500</span>, msg:<span class="str">"err"</span>}</pre>
+        </div>
+    </div>
+</section>
 
-                <!-- Unicode 标识符 -->
-                <div class="code-card">
-                    <h3>Unicode 标识符</h3>
-                    <pre><code><span class="cmt">// 中文标识符</span>
-<span class="kw">let</span> 名字 = <span class="str">"小明"</span>
-<span class="kw">let</span> 年龄 = <span class="num">20</span>
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     Key Features
+     ═══════════════════════════════════════════════════════════════════════ -->
+<section id="features" class="section reveal">
+    <div class="section-label">为什么选择 Vora</div>
+    <h2>嵌入优先，语法现代</h2>
+    <p>Vora 从零开始为嵌入场景设计，同时提供开发者熟悉的现代语法体验。</p>
 
-<span class="kw">func</span> <span class="fn">打印信息</span>(姓名, 岁数) {
-    <span class="fn">print</span>(<span class="str">"<span class="interp">${姓名}</span> 今年 <span class="interp">${岁数}</span> 岁"</span>)
-}
-<span class="fn">打印信息</span>(名字, 年龄)
-<span class="cmt">// → 小明 今年 20 岁</span>
+    <div class="feature-grid reveal-stagger">
+        <div class="feature">
+            <div class="feature-icon">📦</div>
+            <h3>零依赖</h3>
+            <p>纯 C++17 + STL，无任何外部库依赖。一个 <code>vora.hpp</code> 单头文件即可嵌入你的项目。</p>
+        </div>
+        <div class="feature">
+            <div class="feature-icon">⚡</div>
+            <h3>字节码 VM</h3>
+            <p>基于栈的虚拟机，50+ 条指令。支持快速数值操作码、全局变量驻留、常量折叠优化。</p>
+        </div>
+        <div class="feature">
+            <div class="feature-icon">🧬</div>
+            <h3>原生 OOP</h3>
+            <p>C3 线性化多继承、super 调用、自动 this 绑定——不是 Lua 的 metatable 模拟，是真正的类系统。</p>
+        </div>
+        <div class="feature">
+            <div class="feature-icon">🔧</div>
+            <h3>8 个标准库模块</h3>
+            <p>math、json、fs、os、datetime、array、string、regex——覆盖文件 IO、日期、正则等核心场景。</p>
+        </div>
+        <div class="feature">
+            <div class="feature-icon">🌍</div>
+            <h3>跨平台构建</h3>
+            <p>CMake 预设支持 Windows (x64/x86/arm64)、Linux (x64/x86/aarch64/armhf)、macOS Universal 二进制。</p>
+        </div>
+        <div class="feature">
+            <div class="feature-icon">🛡️</div>
+            <h3>稳定可靠</h3>
+            <p>328 个 C++ 单元测试（1019 断言）+ 71 个脚本测试 + 56 个示例，100% 通过。20 项 P3 技术债已清零。</p>
+        </div>
+    </div>
+</section>
 
-<span class="cmt">// 日文 / 带重音标识符</span>
-<span class="kw">let</span> ユーザー名 = <span class="str">"tanaka"</span>
-<span class="kw">let</span> café = <span class="str">"espresso"</span></code></pre>
-                </div>
-            </div>
-        </section>
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     Project Structure
+     ═══════════════════════════════════════════════════════════════════════ -->
+<section id="structure" class="section reveal">
+    <div class="section-label">项目结构</div>
+    <h2>清晰的模块化架构</h2>
+    <p>~9,400 行 C++17，从词法分析到字节码执行，每个模块职责分明。</p>
 
-        <!-- ====== 内建函数 ====== -->
-        <section id="builtins" class="section">
-            <h2>内建函数</h2>
-            <p class="section-desc">13 个内建函数 + 17 个数组/字符串内建方法。</p>
+    <div class="dir-tree">
+        <span class="dir">Vora/</span><br>
+        ├── <span class="dir">src/</span><br>
+        │&nbsp;&nbsp;&nbsp;├── <span class="dir">lexer/</span>      <span class="note">词法分析器（~687 行）</span><br>
+        │&nbsp;&nbsp;&nbsp;├── <span class="dir">ast/</span>        <span class="note">AST 节点 + Visitor 接口 + AST Printer（~1,629 行）</span><br>
+        │&nbsp;&nbsp;&nbsp;├── <span class="dir">parser/</span>     <span class="note">Pratt 解析器（~1,200 行）</span><br>
+        │&nbsp;&nbsp;&nbsp;├── <span class="dir">vm/</span>         <span class="note">字节码 VM：Compiler + 栈式虚拟机（~3,175 行）</span><br>
+        │&nbsp;&nbsp;&nbsp;├── <span class="dir">runtime/</span>    <span class="note">值系统 / 作用域 / 可调用对象 / 错误（~719 行）</span><br>
+        │&nbsp;&nbsp;&nbsp;├── <span class="dir">gc/</span>         <span class="note">标记-清除垃圾回收器</span><br>
+        │&nbsp;&nbsp;&nbsp;├── <span class="dir">lsp/</span>        <span class="note">语义分析器（符号表、引用、诊断）</span><br>
+        │&nbsp;&nbsp;&nbsp;├── <span class="dir">formatter/</span>  <span class="note">AST 源码格式化器（vora fmt）</span><br>
+        │&nbsp;&nbsp;&nbsp;└── <span class="dir">common/</span>     <span class="note">错误报告基础设施</span><br>
+        ├── <span class="dir">std/</span>           <span class="note">标准库（8 个模块：array, datetime, fs, json, math, os, regex, string）</span><br>
+        ├── <span class="dir">examples/</span>      <span class="note">55 个示例文件 + main.va 全特性演示</span><br>
+        ├── <span class="dir">tests/</span>         <span class="note">71 个脚本测试 + 328 个 C++ 单元测试 + CI 矩阵</span><br>
+        ├── <span class="dir">docs/</span>          <span class="note">15 篇开发文档（中文）</span><br>
+        ├── <span class="dir">cmake/</span>         <span class="note">交叉编译工具链（6 个）</span><br>
+        ├── <span class="dir">res/</span>           <span class="note">图标、WiX 安装模板、启动器</span><br>
+        ├── build.ps1 / build.sh    <span class="note">跨平台构建脚本</span><br>
+        ├── CMakePresets.json       <span class="note">20 个预设配置</span><br>
+        └── CMakeLists.txt
+    </div>
+</section>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>函数</th>
-                        <th>说明</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><code>print(...)</code></td>
-                        <td>变参输出，空格分隔，末尾换行</td>
-                    </tr>
-                    <tr>
-                        <td><code>clock()</code></td>
-                        <td>返回 Unix 时间戳（秒，毫秒精度）</td>
-                    </tr>
-                    <tr>
-                        <td><code>input(prompt?)</code></td>
-                        <td>从 stdin 读取一行；可选 prompt 参数</td>
-                    </tr>
-                    <tr>
-                        <td><code>int(value)</code></td>
-                        <td>转为 int64（截断小数）；接受 number/string/bool</td>
-                    </tr>
-                    <tr>
-                        <td><code>float(value)</code></td>
-                        <td>转为 float64；接受 number/string/bool</td>
-                    </tr>
-                    <tr>
-                        <td><code>len(value)</code></td>
-                        <td>返回数组长度或字符串字节数（int64）</td>
-                    </tr>
-                    <tr>
-                        <td><code>type(value)</code></td>
-                        <td>返回类型名：<code>"int"</code> / <code>"float"</code> / <code>"string"</code> / <code>"array"</code> / <code>"dict"</code> / <code>"boolean"</code> / <code>"null"</code> / <code>"function"</code> / <code>"object"</code> / <code>"set"</code> / <code>"map"</code> / <code>"class"</code></td>
-                    </tr>
-                    <tr>
-                        <td><code>range(stop)</code></td>
-                        <td>生成 0..stop-1 的数字数组</td>
-                    </tr>
-                    <tr>
-                        <td><code>range(start, stop, step?)</code></td>
-                        <td>生成指定范围的数字数组</td>
-                    </tr>
-                    <tr>
-                        <td><code>assert(cond, msg?)</code></td>
-                        <td>断言条件为真，否则抛出 RuntimeError</td>
-                    </tr>
-                    <tr>
-                        <td><code>bin(num)</code></td>
-                        <td>数字 → 二进制字符串（如 <code>"0b101"</code>）</td>
-                    </tr>
-                    <tr>
-                        <td><code>oct(num)</code></td>
-                        <td>数字 → 八进制字符串（如 <code>"0o12"</code>）</td>
-                    </tr>
-                    <tr>
-                        <td><code>hex(num)</code></td>
-                        <td>数字 → 十六进制字符串（如 <code>"0xFF"</code>）</td>
-                    </tr>
-                </tbody>
-            </table>
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     Roadmap
+     ═══════════════════════════════════════════════════════════════════════ -->
+<section id="roadmap" class="section reveal">
+    <div class="section-label">路线图</div>
+    <h2>从 VM 到 JIT</h2>
+    <p>已完成 25 个版本迭代，覆盖语言核心的全部能力。下一步：OOP 完善 + 性能基础。</p>
 
-            <p style="margin-top:24px;color:var(--text2);font-size:0.92rem;line-height:1.8">
-                <strong>数组内建方法（7 个）：</strong><br />
-                <code>.add(item)</code> <code>.pop()</code> <code>.length</code> <code>.insert(idx, item)</code> <code>.remove(idx)</code> <code>.indexOf(item)</code> <code>.clear()</code><br /><br />
-                <strong>字符串内建方法（10 个）：</strong><br />
-                <code>.length</code> <code>.substring(start, end?)</code> <code>.include(sub)</code> <code>.startsWith(p)</code> <code>.endsWith(s)</code> <code>.upper()</code> <code>.lower()</code> <code>.trim()</code> <code>.replace(old, new)</code> <code>.replaceAll(old, new)</code> <code>.split(delim)</code>
-            </p>
-        </section>
+    <table>
+        <thead>
+            <tr><th>版本</th><th>里程碑</th><th>状态</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>v0.1–0.5</td><td>Lexer + Parser + 树遍历解释器 + 基础语言特性</td><td><span class="tag-done">✅ 已完成</span></td></tr>
+            <tr><td>v0.6–0.8</td><td>字节码 VM Phase 1–4：表达式、控制流、函数、对象、闭包</td><td><span class="tag-done">✅ 已完成</span></td></tr>
+            <tr><td>v0.9–0.10</td><td>VM 性能优化 + 异常处理完善（finally 路由、重抛）</td><td><span class="tag-done">✅ 已完成</span></td></tr>
+            <tr><td>v0.11</td><td>多架构构建系统 + 原生打包（.msi/.deb/.rpm/.pkg.tar.xz）+ CI</td><td><span class="tag-done">✅ 已完成</span></td></tr>
+            <tr><td>v0.12–0.13</td><td>int64/float64 双数值类型 + 数组/字符串方法 + 模块系统</td><td><span class="tag-done">✅ 已完成</span></td></tr>
+            <tr><td>v0.14–0.18</td><td>多继承 + C3 MRO + super + 默认参数 + C-for + Lambda</td><td><span class="tag-done">✅ 已完成</span></td></tr>
+            <tr><td>v0.19–0.22</td><td>TCO + const + 生成器 + 解构 + rest/spread + 推导式 + defer</td><td><span class="tag-done">✅ 已完成</span></td></tr>
+            <tr><td>v0.23–0.26</td><td>Set/Map + match 模式匹配 + ?./?? 运算符 + 命名参数 + 类型标注</td><td><span class="tag-done">✅ 已完成</span></td></tr>
+            <tr style="border-top: 2px solid var(--border)"><td>v0.27+</td><td>静态方法、对象 rest 解构、参数解构、NaN-boxing、Superinstruction</td><td><span class="tag-soon">进行中</span></td></tr>
+            <tr><td>v1.0</td><td>调试器 (DAP) + 包管理器 (vpm) + async/await + GC 分代回收</td><td><span class="tag-future">规划中</span></td></tr>
+            <tr><td>未来</td><td>JIT 编译（Tiered：解释器 → 基线 → 优化）+ WebAssembly 后端</td><td><span class="tag-future">长期</span></td></tr>
+        </tbody>
+    </table>
+</section>
 
-        <!-- ====== 项目结构 ====== -->
-        <section id="structure" class="section">
-            <h2>项目结构</h2>
-            <p class="section-desc">
-                ~9,400 行 C++17，零外部依赖，清晰的模块划分。支持 Windows / Linux / macOS 多架构构建与原生打包。
-            </p>
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     Docs
+     ═══════════════════════════════════════════════════════════════════════ -->
+<section id="docs" class="section reveal">
+    <div class="section-label">文档</div>
+    <h2>从入门到精通</h2>
+    <p>15 篇开发文档（中文）+ 5 个用户文档页面（HTML），覆盖从架构设计到日常使用的全部内容。</p>
 
-            <div class="dir-tree">
-                <span class="dir">Vora/</span><br />
-                ├── <span class="dir">src/</span><br />
-                │&nbsp;&nbsp;&nbsp;├── <span class="dir">lexer/</span>
-                <span class="cmt">词法分析器（~687 行）</span><br />
-                │&nbsp;&nbsp;&nbsp;├── <span class="dir">ast/</span>
-                <span class="cmt">AST 节点 + Visitor 接口 + AST Printer（~1,629 行）</span
-                ><br />
-                │&nbsp;&nbsp;&nbsp;├── <span class="dir">parser/</span>
-                <span class="cmt">Pratt 解析器（~1,200 行）</span><br />
-                │&nbsp;&nbsp;&nbsp;├── <span class="dir">vm/</span>
-                <span class="cmt">字节码 VM：Compiler + 栈式虚拟机（~3,175 行）</span><br />
-                │&nbsp;&nbsp;&nbsp;└── <span class="dir">runtime/</span>
-                <span class="cmt">值系统 / 作用域 / 可调用对象 / 错误（~719 行）</span
-                ><br />
-                ├── <span class="dir">cmake/toolchains/</span>
-                <span class="cmt">交叉编译工具链（6 个）</span><br />
-                ├── <span class="dir">res/</span>
-                <span class="cmt">图标、WiX 安装包、启动器</span><br />
-                ├── <span class="dir">.github/workflows/</span>
-                <span class="cmt">CI 多架构矩阵（18 个组合）</span><br />
-                ├── <span class="dir">examples/</span>
-                <span class="cmt">54 个示例文件（按特性编号 01-53 + main.va）</span><br />
-                ├── <span class="dir">tests/</span>
-                <span class="cmt">59 个测试文件（lexer/parser/runtime/interpreter/module/formatter）+ run_tests.ps1 / run_tests.sh</span><br />
-                ├── <span class="dir">docs/</span>
-                <span class="cmt">开发文档（10 篇，中文）</span><br />
-                ├── <span class="dir">std/</span>
-                <span class="cmt">标准库（8 个模块：array, datetime, fs, json, math, os, regex, string）</span><br />
-                ├── build.ps1 / build.sh <span class="cmt">跨平台构建脚本</span><br />
-                ├── CMakePresets.json <span class="cmt">20 个预设</span><br />
-                └── CMakeLists.txt
-            </div>
-        </section>
+    <table>
+        <thead>
+            <tr><th>文档</th><th>内容</th></tr>
+        </thead>
+        <tbody>
+            <tr><td><code>01-技术栈概览.md</code></td><td>技术栈、架构、构建命令</td></tr>
+            <tr><td><code>02-项目结构.md</code></td><td>项目结构与模块划分</td></tr>
+            <tr><td><code>03-词法分析器开发文档.md</code></td><td>Lexer 设计（单遍扫描、错误恢复、Unicode）</td></tr>
+            <tr><td><code>04-AST开发文档.md</code></td><td>AST 节点设计与 Visitor 模式</td></tr>
+            <tr><td><code>05-语法分析器开发文档.md</code></td><td>Pratt Parser 设计</td></tr>
+            <tr><td><code>06-解释器开发文档.md</code></td><td>Interpreter 设计（树遍历执行）</td></tr>
+            <tr><td><code>07-运行时系统开发文档.md</code></td><td>Value / Environment / Callable 系统</td></tr>
+            <tr><td><code>08-已实现功能总结.md</code></td><td>所有已实现功能的完整总结 + 版本历程</td></tr>
+            <tr><td><code>09-构建系统指南.md</code></td><td>多架构构建、交叉编译、打包指南</td></tr>
+            <tr><td><code>10-程序员视角-深度分析与UX路线图.md</code></td><td>深度分析 + UX 路线图</td></tr>
+            <tr><td><code>11-重新定义Vora：语义归属与功能清理.md</code></td><td>语义归属澄清、功能边界定义</td></tr>
+            <tr><td><code>12-评价：Vora的不足与缺失.md</code></td><td>项目自评：性能差距、设计反思</td></tr>
+            <tr><td><code>13-标准与反思.md</code></td><td>标准库接口设计规范与 VM 实现反思</td></tr>
+            <tr><td><code>14-技术债.md</code></td><td>P0-P3 技术债清单 + 崩溃审计 + 修复计划</td></tr>
+            <tr><td><code>15-写给用户.md</code></td><td>用户指南：与其他语言的差异对比 + 常见陷阱</td></tr>
+        </tbody>
+    </table>
+    <p style="color:var(--muted);font-size:0.9rem;margin-top:8px">
+        📚 <a href="docs/index.html" style="color:var(--accent);font-weight:600">用户文档</a> — 快速开始 · 语言参考 · <strong>语言差异指南</strong> · 示例程序（HTML）
+    </p>
+</section>
 
-        <!-- ====== 路线图 ====== -->
-        <section id="roadmap" class="section">
-            <h2>路线图</h2>
-            <p class="section-desc">
-                字节码 VM（Phase 1-4 ✅）→ JIT（规划中）。
-            </p>
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     Footer
+     ═══════════════════════════════════════════════════════════════════════ -->
+<footer class="footer">
+    <div class="footer-links">
+        <a href="https://github.com/Vora-lang/Vora" target="_blank" rel="noopener">GitHub</a>
+        <a href="docs/index.html">文档</a>
+        <a href="https://github.com/Vora-lang/Vora-LSP" target="_blank" rel="noopener">LSP 扩展</a>
+    </div>
+    <p>Vora is a dynamically typed scripting language. It features JavaScript-like syntax, Lua-level simplicity, and Wren-style object orientation.</p>
+    <p style="margin-top:8px">
+        参考：
+        <a href="https://craftinginterpreters.com/" target="_blank" rel="noopener">Crafting Interpreters</a> ·
+        <a href="https://www.lua.org/source/5.4/" target="_blank" rel="noopener">Lua 5.4</a> ·
+        <a href="https://wren.io/" target="_blank" rel="noopener">Wren</a> ·
+        <a href="https://github.com/python/cpython" target="_blank" rel="noopener">CPython</a>
+    </p>
+</footer>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>版本</th>
-                        <th>特性</th>
-                        <th>状态</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>v0.1</td>
-                        <td>词法分析器（Lexer）：Source → Token 流</td>
-                        <td><span class="done">✅ 已完成</span></td>
-                    </tr>
-                    <tr>
-                        <td>v0.2</td>
-                        <td>语法分析器（Parser）：Token → AST + Pratt 解析</td>
-                        <td><span class="done">✅ 已完成</span></td>
-                    </tr>
-                    <tr>
-                        <td>v0.3</td>
-                        <td>AST 改进、分号语句分隔符</td>
-                        <td><span class="done">✅ 已完成</span></td>
-                    </tr>
-                    <tr>
-                        <td>v0.4</td>
-                        <td>树遍历解释器、字符串插值、数组、对象、方法绑定</td>
-                        <td><span class="done">✅ 已完成</span></td>
-                    </tr>
-                    <tr>
-                        <td>v0.5</td>
-                        <td>int()/float()、range()、++/--、break/continue、复合赋值、类型标注</td>
-                        <td><span class="done">✅ 已完成</span></td>
-                    </tr>
-                    <tr>
-                        <td>v0.6</td>
-                        <td>字节码 VM Phase 1（表达式、全局变量、控制流）+ Visitor 模式重构</td>
-                        <td><span class="done">✅ 已完成</span></td>
-                    </tr>
-                    <tr>
-                        <td>v0.7</td>
-                        <td>VM Phase 2+3：局部变量、break/continue、for-in、函数、对象（Obj）、继承、try/catch/throw</td>
-                        <td><span class="done">✅ 已完成</span></td>
-                    </tr>
-                    <tr>
-                        <td>v0.8</td>
-                        <td>VM Phase 3-4：闭包（upvalue）、字符串插值、运行时错误 catch 完善；VM 设为默认后端</td>
-                        <td><span class="done">✅ 已完成</span></td>
-                    </tr>
-                    <tr>
-                        <td>v0.9</td>
-                        <td>VM 性能优化：全局变量驻留、快速数值操作码、常量折叠、移动语义</td>
-                        <td><span class="done">✅ 已完成</span></td>
-                    </tr>
-                    <tr>
-                        <td>v0.10</td>
-                        <td>VM 异常处理完善（finally 路由、异常重抛、catch handler 清理）</td>
-                        <td><span class="done">✅ 已完成</span></td>
-                    </tr>
-                    <tr style="border-top: 2px solid var(--border)">
-                        <td>v0.11</td>
-                        <td>多架构构建系统 + 应用图标 + 原生打包（.msi/.deb/.rpm/.pkg.tar.xz）+ CI</td>
-                        <td><span class="done">✅ 已完成</span></td>
-                    </tr>
-                    <tr>
-                        <td>v0.12</td>
-                        <td>int64/float64 双数值类型 + `len()`/`type()` + 数组方法(7) + 字符串方法(10)</td>
-                        <td><span class="done">✅ 已完成</span></td>
-                    </tr>
-                    <tr>
-                        <td>v0.13</td>
-                        <td>模块系统（import / export）</td>
-                        <td><span class="done">✅ 已完成</span></td>
-                    </tr>
-                    <tr>
-                        <td>v0.14-18</td>
-                        <td>多继承 + C3 MRO + super + 默认参数 + C-for + Lambda + 内部重构</td>
-                        <td><span class="done">✅ 已完成</span></td>
-                    </tr>
-                    <tr>
-                        <td>v0.19-20</td>
-                        <td>尾调用优化 (TCO) + const 声明 + 生成器 + do-while</td>
-                        <td><span class="done">✅ 已完成</span></td>
-                    </tr>
-                    <tr>
-                        <td>v0.21-22</td>
-                        <td>iter/next 协议 + 解构赋值 + rest 参数 + 列表/Dict 推导式 + defer</td>
-                        <td><span class="done">✅ 已完成</span></td>
-                    </tr>
-                    <tr>
-                        <td>v0.23-24</td>
-                        <td>Set + Map + Match 模式匹配 + ?. 可选链 + ?? 空值合并 + call-site spread</td>
-                        <td><span class="done">✅ 已完成</span></td>
-                    </tr>
-                    <tr>
-                        <td>v0.25</td>
-                        <td>类型标注运行时转换（:float/:int/:bool/:str）、WIDE 全局变量操作码</td>
-                        <td><span class="done">✅ 已完成</span></td>
-                    </tr>
-                    <tr>
-                        <td>v1.0</td>
-                        <td>标准库完善、LSP 增强、JIT 编译、包管理器 vpm</td>
-                        <td><span class="planned">规划中</span></td>
-                    </tr>
-                    <tr>
-                        <td>未来</td>
-                        <td>优化 / JIT 编译（第三版）</td>
-                        <td><span class="planned">长期</span></td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     Scroll-triggered reveal animations
+     ═══════════════════════════════════════════════════════════════════════ -->
+<script>
+(function() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-        <!-- ====== 文档 ====== -->
-        <section id="docs" class="section">
-            <h2>文档</h2>
-            <p class="section-desc">15 篇开发文档（中文）+ 5 个用户文档页面（HTML）。</p>
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.12, rootMargin: '0px 0px -30px 0px' });
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>文档</th>
-                        <th>内容</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><code>01-技术栈概览.md</code></td>
-                        <td>技术栈、架构、构建命令</td>
-                    </tr>
-                    <tr>
-                        <td><code>02-项目结构.md</code></td>
-                        <td>项目结构与模块划分</td>
-                    </tr>
-                    <tr>
-                        <td><code>03-词法分析器开发文档.md</code></td>
-                        <td>Lexer 设计（单遍扫描、错误恢复、Unicode）</td>
-                    </tr>
-                    <tr>
-                        <td><code>04-AST开发文档.md</code></td>
-                        <td>AST 节点设计与 Visitor 模式</td>
-                    </tr>
-                    <tr>
-                        <td><code>05-语法分析器开发文档.md</code></td>
-                        <td>Pratt Parser 设计</td>
-                    </tr>
-                    <tr>
-                        <td><code>06-解释器开发文档.md</code></td>
-                        <td>Interpreter 设计（树遍历执行）</td>
-                    </tr>
-                    <tr>
-                        <td><code>07-运行时系统开发文档.md</code></td>
-                        <td>Value / Environment / Callable 系统</td>
-                    </tr>
-                    <tr>
-                        <td><code>08-已实现功能总结.md</code></td>
-                        <td>所有已实现功能的完整总结 + 版本历程</td>
-                    </tr>
-                    <tr>
-                        <td><code>09-构建系统指南.md</code></td>
-                        <td>多架构构建、交叉编译、打包指南</td>
-                    </tr>
-                    <tr>
-                        <td><code>10-程序员视角-深度分析与UX路线图.md</code></td>
-                        <td>~747 行深度分析 + UX 路线图（2026-06-10 修订）</td>
-                    </tr>
-                    <tr>
-                        <td><code>11-重新定义Vora：语义归属与功能清理.md</code></td>
-                        <td>语义归属澄清、功能边界定义、排除项决策</td>
-                    </tr>
-                    <tr>
-                        <td><code>12-评价：Vora的不足与缺失.md</code></td>
-                        <td>项目自评：性能差距、功能缺失、设计反思</td>
-                    </tr>
-                    <tr>
-                        <td><code>13-标准与反思.md</code></td>
-                        <td>Vora 标准库接口设计规范与 VM 实现反思</td>
-                    </tr>
-                    <tr>
-                        <td><code>14-技术债.md</code></td>
-                        <td>P0-P3 技术债清单 + 崩溃审计 + 修复计划</td>
-                    </tr>
-                    <tr>
-                        <td><code>15-写给用户.md</code></td>
-                        <td>用户指南：与其他语言的差异对比 + 常见陷阱（教程风格）</td>
-                    </tr>
-                </tbody>
-            </table>
-            <p style="color:var(--text2);font-size:0.92rem;margin-top:8px">
-                📚 <a href="docs/index.html" style="color:var(--kw);font-weight:600">用户文档</a> — 快速开始 · 语言参考 · 语言差异指南 · 示例程序（HTML）
-            </p>
-        </section>
+    document.querySelectorAll('.reveal, .reveal-stagger').forEach(function(el) {
+        observer.observe(el);
+    });
+})();
+</script>
 
-        <!-- ====== 页脚 ====== -->
-        <footer class="footer">
-            <p>
-                Vora ·
-                <a
-                    href="https://github.com/Vora-lang/Vora"
-                    target="_blank"
-                    rel="noopener"
-                    >github.com/Vora-lang/Vora</a
-                >
-            </p>
-            <p style="margin-top: 8px">
-                参考：
-                <a
-                    href="https://craftinginterpreters.com/"
-                    target="_blank"
-                    rel="noopener"
-                    >Crafting Interpreters</a
-                >
-                ·
-                <a
-                    href="https://www.lua.org/source/5.4/"
-                    target="_blank"
-                    rel="noopener"
-                    >Lua 5.4</a
-                >
-                ·
-                <a href="https://wren.io/" target="_blank" rel="noopener"
-                    >Wren</a
-                >
-                ·
-                <a
-                    href="https://github.com/python/cpython"
-                    target="_blank"
-                    rel="noopener"
-                    >CPython</a
-                >
-            </p>
-        </footer>
-    </body>
+</body>
 </html>
