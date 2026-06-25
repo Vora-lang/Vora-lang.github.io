@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Vora — 动态类型脚本语言</title>
+<title>Vora</title>
 <link rel="icon" href="vora_logo.svg" type="image/svg+xml" />
 <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -38,7 +38,7 @@
     }
     .nav-inner {
         max-width: 780px; margin: 0 auto;
-        display: flex; align-items: center; gap: 28px;
+        display: flex; align-items: center; gap: 22px;
         height: 50px; font-size: 0.88rem; padding: 0 24px;
     }
     .nav-home {
@@ -49,6 +49,19 @@
     .nav-home svg { width: 22px; height: 22px; }
     .nav a { color: var(--muted); text-decoration: none; transition: color 0.2s; font-size: 0.85rem; }
     .nav a:hover { color: var(--ink); }
+
+    /* Language selector */
+    .lang-select {
+        display: flex; gap: 2px; margin-left: 4px;
+    }
+    .lang-select button {
+        font-family: var(--sans); font-size: 0.75rem; font-weight: 600;
+        color: var(--muted); background: none; border: none;
+        padding: 4px 8px; border-radius: 4px; cursor: pointer;
+        transition: color 0.2s, background 0.2s;
+    }
+    .lang-select button:hover { color: var(--ink); background: #eee; }
+    .lang-select button.active { color: var(--ink); background: #e8e8e4; }
 
     /* ── Page sections ────────────────────────────────────────────────── */
     .section {
@@ -179,8 +192,6 @@
     /* ═══════════════════════════════════════════════════════════════════════
        Animations
        ═══════════════════════════════════════════════════════════════════ */
-
-    /* Entrance — hero elements cascade in */
     @keyframes fadeUp {
         from { opacity: 0; transform: translateY(20px); }
         to   { opacity: 1; transform: translateY(0); }
@@ -194,14 +205,12 @@
     .hero .tagline { animation: fadeUp 0.5s 0.2s ease-out both; }
     .hero-actions  { animation: fadeUp 0.5s 0.3s ease-out both; }
 
-    /* Scroll reveal */
     .reveal {
         opacity: 0; transform: translateY(24px);
         transition: opacity 0.6s ease-out, transform 0.6s ease-out;
     }
     .reveal.visible { opacity: 1; transform: translateY(0); }
 
-    /* Staggered children */
     .stagger > * {
         opacity: 0; transform: translateY(18px);
         transition: opacity 0.45s ease-out, transform 0.45s ease-out;
@@ -214,7 +223,6 @@
     .stagger.visible > *:nth-child(6) { transition-delay: 0.35s; }
     .stagger.visible > * { opacity: 1; transform: translateY(0); }
 
-    /* Shell cursor blink */
     @keyframes cursorBlink {
         0%, 100% { opacity: 1; }
         50%      { opacity: 0.25; }
@@ -225,7 +233,6 @@
         font-size: 0.85em; margin-left: 1px;
     }
 
-    /* Reduced motion */
     @media (prefers-reduced-motion: reduce) {
         *, *::before, *::after {
             animation-duration: 0.01ms !important;
@@ -241,7 +248,8 @@
         .code-grid, .feature-list { grid-template-columns: 1fr; }
         .section { padding: 56px 16px; }
         .section h2 { font-size: 1.35rem; }
-        .nav-inner { gap: 14px; font-size: 0.8rem; }
+        .nav-inner { gap: 8px; font-size: 0.78rem; }
+        .lang-select button { padding: 3px 6px; font-size: 0.7rem; }
     }
 </style>
 </head>
@@ -260,9 +268,14 @@
             </svg>
             Vora
         </a>
-        <a href="#quickstart">快速开始</a>
-        <a href="#syntax">语法</a>
-        <a href="docs/index.html">文档 →</a>
+        <a href="#quickstart" data-i18n="nav.quickstart">快速开始</a>
+        <a href="#syntax" data-i18n="nav.syntax">语法</a>
+        <a href="docs/index.html" data-i18n="nav.docs">文档 →</a>
+        <div class="lang-select">
+            <button data-lang="zh-CN" class="active" title="简体中文">简</button>
+            <button data-lang="zh-TW" title="繁體中文">繁</button>
+            <button data-lang="en" title="English">EN</button>
+        </div>
     </div>
 </nav>
 
@@ -272,7 +285,7 @@
 <header class="hero">
     <img class="hero-logo" src="vora_logo.svg" alt="Vora logo" />
     <h1>Vora</h1>
-    <p class="tagline">
+    <p class="tagline" data-i18n="hero.tagline">
         一门动态类型的脚本语言——类 JavaScript 语法，Lua 级的简单性，Wren 式的面向对象。
     </p>
     <div class="hero-actions">
@@ -280,7 +293,7 @@
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
             GitHub
         </a>
-        <a class="btn btn-ghost" href="#quickstart">开始使用 ↓</a>
+        <a class="btn btn-ghost" href="#quickstart" data-i18n="hero.cta">开始使用 ↓</a>
     </div>
 </header>
 
@@ -288,26 +301,26 @@
      Quick Start
      ═══════════════════════════════════════════════════════════════════════ -->
 <section id="quickstart" class="section reveal">
-    <div class="section-label">快速开始</div>
-    <h2>一条命令，即刻运行</h2>
-    <p class="desc">跨平台构建，零外部依赖。支持 Windows、Linux、macOS 多架构与原生打包。</p>
+    <div class="section-label" data-i18n="quickstart.label">快速开始</div>
+    <h2 data-i18n="quickstart.heading">一条命令，即刻运行</h2>
+    <p class="desc" data-i18n="quickstart.desc">跨平台构建，零外部依赖。支持 Windows、Linux、macOS 多架构与原生打包。</p>
 
     <div class="shell-block">
-        <span class="note"># 构建（Windows / Linux / macOS）</span><br>
+        <span class="note"># <span data-i18n="shell.build">构建（Windows / Linux / macOS）</span></span><br>
         <span class="prompt cursor">PS&gt;</span> .\build.ps1<br>
         <span class="prompt">$</span> ./build.sh<br>
         <br>
-        <span class="note"># 多架构交叉编译 + 打包</span><br>
+        <span class="note"># <span data-i18n="shell.cross">多架构交叉编译 + 打包</span></span><br>
         <span class="prompt">$</span> ./build.sh -a arm64 -c release -p  &nbsp;<span class="note">→ .deb / .rpm / .pkg.tar.xz</span><br>
         <span class="prompt">PS&gt;</span> .\build.ps1 -Architecture arm64 -Config Release -Package  &nbsp;<span class="note">→ .msi</span><br>
         <br>
-        <span class="note"># 运行与调试</span><br>
-        <span class="prompt">$</span> vora hello.va              &nbsp;<span class="note">执行脚本</span><br>
-        <span class="prompt">$</span> vora                        &nbsp;<span class="note">进入 REPL 交互模式</span><br>
-        <span class="prompt">$</span> vora --version              &nbsp;<span class="note">查看版本（-v）</span><br>
-        <span class="prompt">$</span> vora --tokens example.va    &nbsp;<span class="note">打印 Token 流与字节码</span><br>
-        <span class="prompt">$</span> vora --ast-printer example.va &nbsp;<span class="note">打印 S-expression AST</span><br>
-        <span class="prompt">$</span> vora fmt hello.va           &nbsp;<span class="note">格式化源文件（-w 原地写入）</span><br>
+        <span class="note"># <span data-i18n="shell.run">运行与调试</span></span><br>
+        <span class="prompt">$</span> vora hello.va              &nbsp;<span class="note" data-i18n="shell.run-file">执行脚本</span><br>
+        <span class="prompt">$</span> vora                        &nbsp;<span class="note" data-i18n="shell.repl">进入 REPL 交互模式</span><br>
+        <span class="prompt">$</span> vora --version              &nbsp;<span class="note" data-i18n="shell.version">查看版本（-v）</span><br>
+        <span class="prompt">$</span> vora --tokens example.va    &nbsp;<span class="note" data-i18n="shell.tokens">打印 Token 流与字节码</span><br>
+        <span class="prompt">$</span> vora --ast-printer example.va &nbsp;<span class="note" data-i18n="shell.ast">打印 S-expression AST</span><br>
+        <span class="prompt">$</span> vora fmt hello.va           &nbsp;<span class="note" data-i18n="shell.fmt">格式化源文件（-w 原地写入）</span><br>
     </div>
 </section>
 
@@ -315,38 +328,38 @@
      Syntax
      ═══════════════════════════════════════════════════════════════════════ -->
 <section id="syntax" class="section reveal">
-    <div class="section-label">语法概览</div>
-    <h2>语法</h2>
-    <p class="desc">类 C 语法，大括号定义块，分号可选。运算符沿用 C 惯例（<code>&amp;&amp;</code>、<code>||</code>、<code>!</code>）。标识符支持 Unicode（中文、日文等）。</p>
+    <div class="section-label" data-i18n="syntax.label">语法概览</div>
+    <h2 data-i18n="syntax.heading">语法</h2>
+    <p class="desc" data-i18n="syntax.desc">类 C 语法，大括号定义块，分号可选。运算符沿用 C 惯例（<code>&amp;&amp;</code>、<code>||</code>、<code>!</code>）。标识符支持 Unicode（中文、日文等）。</p>
 
     <div class="code-grid stagger">
         <div class="code-card">
-            <h3>类型与变量</h3>
+            <h3 data-i18n="syntax.types">类型与变量</h3>
             <pre><span class="kw">let</span> n = <span class="num">42</span>           <span class="cmt">// Int (64-bit)</span>
 <span class="kw">let</span> f = <span class="num">3.14</span>         <span class="cmt">// Float (64-bit)</span>
-<span class="kw">let</span> s = <span class="str">"hello"</span>      <span class="cmt">// UTF-8 字符串</span>
-<span class="kw">let</span> a = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]    <span class="cmt">// 动态数组</span>
-<span class="kw">let</span> d = {k: <span class="str">"v"</span>}     <span class="cmt">// 字典</span>
+<span class="kw">let</span> s = <span class="str">"hello"</span>      <span class="cmt">// UTF-8 <span data-i18n="syntax.string">字符串</span></span>
+<span class="kw">let</span> a = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]    <span class="cmt">// <span data-i18n="syntax.array">动态数组</span></span>
+<span class="kw">let</span> d = {k: <span class="str">"v"</span>}     <span class="cmt">// <span data-i18n="syntax.dict">字典</span></span>
 <span class="kw">let</span> nothing = <span class="lit">null</span>
 
-<span class="cmt">// 数字前缀：0xFF  0o77  0b101</span></pre>
+<span class="cmt">// <span data-i18n="syntax.num-prefix">数字前缀：0xFF  0o77  0b101</span></span></pre>
         </div>
         <div class="code-card">
-            <h3>函数与闭包</h3>
+            <h3 data-i18n="syntax.func">函数与闭包</h3>
             <pre><span class="kw">func</span> <span class="fn">add</span>(a, b) { <span class="kw">return</span> a + b }
 
-<span class="cmt">// 闭包直接修改外层变量</span>
+<span class="cmt">// <span data-i18n="syntax.closure">闭包直接修改外层变量</span></span>
 <span class="kw">func</span> <span class="fn">makeCounter</span>() {
     <span class="kw">let</span> n = <span class="num">0</span>
     <span class="kw">return</span> <span class="kw">func</span>() { n += <span class="num">1</span>; <span class="kw">return</span> n }
 }
 
-<span class="cmt">// 默认参数 + 命名参数</span>
+<span class="cmt">// <span data-i18n="syntax.defaults">默认参数 + 命名参数</span></span>
 <span class="kw">func</span> <span class="fn">greet</span>(name, g = <span class="str">"Hello"</span>) { ... }
 <span class="fn">greet</span>(name=<span class="str">"Vora"</span>, g=<span class="str">"Hi"</span>)</pre>
         </div>
         <div class="code-card">
-            <h3>控制流</h3>
+            <h3 data-i18n="syntax.flow">控制流</h3>
             <pre><span class="kw">if</span> (x &gt; <span class="num">0</span>) { ... } <span class="kw">else</span> { ... }
 
 <span class="kw">while</span> (n &gt; <span class="num">0</span>) { n -= <span class="num">1</span> }
@@ -357,7 +370,7 @@
 <span class="kw">for</span> (<span class="kw">let</span> i=<span class="num">0</span>; i&lt;<span class="num">5</span>; i+=<span class="num">1</span>) { ... }</pre>
         </div>
         <div class="code-card">
-            <h3>对象与继承</h3>
+            <h3 data-i18n="syntax.oop">对象与继承</h3>
             <pre><span class="kw">Obj</span> <span class="type">Animal</span>(name) {
     <span class="kw">this</span>.name = name
     <span class="kw">func</span> <span class="fn">speak</span>() { <span class="fn">print</span>(<span class="str">"..."</span>) }
@@ -372,7 +385,7 @@
 <span class="kw">let</span> d = <span class="type">Dog</span>(<span class="str">"Rex"</span>, <span class="str">"Husky"</span>)</pre>
         </div>
         <div class="code-card">
-            <h3>模式匹配</h3>
+            <h3 data-i18n="syntax.match">模式匹配</h3>
             <pre><span class="kw">let</span> grade = <span class="kw">match</span> score {
     <span class="num">90</span>..=<span class="num">100</span> =&gt; <span class="str">"A"</span>,
     <span class="num">80</span>..=<span class="num">89</span>  =&gt; <span class="str">"B"</span>,
@@ -389,7 +402,7 @@
 }</pre>
         </div>
         <div class="code-card">
-            <h3>异常与模块</h3>
+            <h3 data-i18n="syntax.errors">异常与模块</h3>
             <pre><span class="kw">try</span> {
     <span class="kw">throw</span> <span class="str">"出错了"</span>
 } <span class="kw">catch</span> (e) {
@@ -398,7 +411,7 @@
     <span class="fn">print</span>(<span class="str">"始终执行"</span>)
 }
 
-<span class="cmt">// 模块系统</span>
+<span class="cmt">// <span data-i18n="syntax.modules">模块系统</span></span>
 <span class="kw">import</span> <span class="str">"math"</span>
 <span class="kw">from</span> <span class="str">"math"</span> <span class="kw">import</span> PI, sin, cos
 <span class="kw">export</span> <span class="kw">func</span> <span class="fn">main</span>() { ... }</pre>
@@ -410,34 +423,34 @@
      Features
      ═══════════════════════════════════════════════════════════════════════ -->
 <section id="features" class="section reveal">
-    <div class="section-label">特性</div>
-    <h2>语言特性</h2>
-    <p class="desc">纯 C++17 实现，STL 以外无外部依赖。面向嵌入场景设计，可作为 C++ 项目的脚本引擎使用。</p>
+    <div class="section-label" data-i18n="features.label">特性</div>
+    <h2 data-i18n="features.heading">语言特性</h2>
+    <p class="desc" data-i18n="features.desc">纯 C++17 实现，STL 以外无外部依赖。面向嵌入场景设计，可作为 C++ 项目的脚本引擎使用。</p>
 
     <div class="feature-list stagger">
         <div class="feature">
-            <h3>📦 零依赖</h3>
-            <p>纯 C++17 + STL。一个 <code>vora.hpp</code> 单头文件即可嵌入任何 C++ 项目。</p>
+            <h3 data-i18n="features.deps">📦 零依赖</h3>
+            <p data-i18n="features.deps-desc">纯 C++17 + STL。一个 <code>vora.hpp</code> 单头文件即可嵌入任何 C++ 项目。</p>
         </div>
         <div class="feature">
-            <h3>⚡ 字节码 VM</h3>
-            <p>基于栈的虚拟机，50+ 条指令。支持快速数值操作码、全局变量驻留、常量折叠。</p>
+            <h3 data-i18n="features.vm">⚡ 字节码 VM</h3>
+            <p data-i18n="features.vm-desc">基于栈的虚拟机，50+ 条指令。支持快速数值操作码、全局变量驻留、常量折叠。</p>
         </div>
         <div class="feature">
-            <h3>🧬 原生 OOP</h3>
-            <p>C3 线性化多继承、super 调用、自动 this 绑定。不是 metatable 模拟——是真正的类系统。</p>
+            <h3 data-i18n="features.oop">🧬 原生 OOP</h3>
+            <p data-i18n="features.oop-desc">C3 线性化多继承、super 调用、自动 this 绑定。不是 metatable 模拟——是真正的类系统。</p>
         </div>
         <div class="feature">
-            <h3>📚 8 个标准库模块</h3>
-            <p>math、json、fs、os、datetime、array、string、regex——覆盖日常开发核心场景。</p>
+            <h3 data-i18n="features.stdlib">📚 8 个标准库模块</h3>
+            <p data-i18n="features.stdlib-desc">math、json、fs、os、datetime、array、string、regex——覆盖日常开发核心场景。</p>
         </div>
         <div class="feature">
-            <h3>🌍 跨平台</h3>
-            <p>CMake 预设覆盖 Windows (x64/x86/arm64)、Linux (x64/x86/aarch64/armhf)、macOS Universal。</p>
+            <h3 data-i18n="features.cross">🌍 跨平台</h3>
+            <p data-i18n="features.cross-desc">CMake 预设覆盖 Windows (x64/x86/arm64)、Linux (x64/x86/aarch64/armhf)、macOS Universal。</p>
         </div>
         <div class="feature">
-            <h3>🛡️ 测试完备</h3>
-            <p>328 个 C++ 单元测试（1019 断言）+ 71 个脚本测试 + 56 个示例，全部通过。</p>
+            <h3 data-i18n="features.test">🛡️ 测试完备</h3>
+            <p data-i18n="features.test-desc">328 个 C++ 单元测试（1019 断言）+ 71 个脚本测试 + 56 个示例，全部通过。</p>
         </div>
     </div>
 </section>
@@ -446,28 +459,28 @@
      Project Structure
      ═══════════════════════════════════════════════════════════════════════ -->
 <section id="structure" class="section reveal">
-    <div class="section-label">项目结构</div>
-    <h2>清晰、模块化、~9,400 行</h2>
-    <p class="desc">从词法分析到字节码执行，每个模块职责单一。标准库与核心引擎解耦，按需加载。</p>
+    <div class="section-label" data-i18n="structure.label">项目结构</div>
+    <h2 data-i18n="structure.heading">清晰、模块化、~9,400 行</h2>
+    <p class="desc" data-i18n="structure.desc">从词法分析到字节码执行，每个模块职责单一。标准库与核心引擎解耦，按需加载。</p>
 
     <div class="dir-tree">
         <span class="dir">Vora/</span><br>
         ├── <span class="dir">src/</span><br>
-        │&nbsp;&nbsp;&nbsp;├── <span class="dir">lexer/</span>      <span class="desc">词法分析器（~687 行）</span><br>
-        │&nbsp;&nbsp;&nbsp;├── <span class="dir">ast/</span>        <span class="desc">AST 节点 + Visitor 接口 + AST Printer（~1,629 行）</span><br>
-        │&nbsp;&nbsp;&nbsp;├── <span class="dir">parser/</span>     <span class="desc">Pratt 解析器（~1,200 行）</span><br>
-        │&nbsp;&nbsp;&nbsp;├── <span class="dir">vm/</span>         <span class="desc">Compiler + 栈式虚拟机（~3,175 行）</span><br>
-        │&nbsp;&nbsp;&nbsp;├── <span class="dir">runtime/</span>    <span class="desc">值系统 / 作用域 / 可调用对象 / 错误</span><br>
-        │&nbsp;&nbsp;&nbsp;├── <span class="dir">gc/</span>         <span class="desc">标记-清除垃圾回收器</span><br>
-        │&nbsp;&nbsp;&nbsp;├── <span class="dir">lsp/</span>        <span class="desc">语义分析器（符号表、引用、诊断）</span><br>
-        │&nbsp;&nbsp;&nbsp;└── <span class="dir">formatter/</span>  <span class="desc">AST 源码格式化器（vora fmt）</span><br>
-        ├── <span class="dir">std/</span>           <span class="desc">标准库（8 个模块）</span><br>
-        ├── <span class="dir">examples/</span>      <span class="desc">55 个示例 + main.va 全特性演示</span><br>
-        ├── <span class="dir">tests/</span>         <span class="desc">71 个脚本测试 + 328 个单元测试</span><br>
-        ├── <span class="dir">docs/</span>          <span class="desc">15 篇开发文档（中文）</span><br>
-        ├── <span class="dir">cmake/</span>         <span class="desc">6 个交叉编译工具链</span><br>
-        ├── build.ps1 / build.sh    <span class="desc">跨平台构建脚本</span><br>
-        └── CMakePresets.json       <span class="desc">20 个预设配置</span>
+        │&nbsp;&nbsp;&nbsp;├── <span class="dir">lexer/</span>      <span class="desc" data-i18n="tree.lexer">词法分析器（~687 行）</span><br>
+        │&nbsp;&nbsp;&nbsp;├── <span class="dir">ast/</span>        <span class="desc" data-i18n="tree.ast">AST 节点 + Visitor 接口 + AST Printer（~1,629 行）</span><br>
+        │&nbsp;&nbsp;&nbsp;├── <span class="dir">parser/</span>     <span class="desc" data-i18n="tree.parser">Pratt 解析器（~1,200 行）</span><br>
+        │&nbsp;&nbsp;&nbsp;├── <span class="dir">vm/</span>         <span class="desc" data-i18n="tree.vm">Compiler + 栈式虚拟机（~3,175 行）</span><br>
+        │&nbsp;&nbsp;&nbsp;├── <span class="dir">runtime/</span>    <span class="desc" data-i18n="tree.runtime">值系统 / 作用域 / 可调用对象 / 错误</span><br>
+        │&nbsp;&nbsp;&nbsp;├── <span class="dir">gc/</span>         <span class="desc" data-i18n="tree.gc">标记-清除垃圾回收器</span><br>
+        │&nbsp;&nbsp;&nbsp;├── <span class="dir">lsp/</span>        <span class="desc" data-i18n="tree.lsp">语义分析器（符号表、引用、诊断）</span><br>
+        │&nbsp;&nbsp;&nbsp;└── <span class="dir">formatter/</span>  <span class="desc" data-i18n="tree.formatter">AST 源码格式化器（vora fmt）</span><br>
+        ├── <span class="dir">std/</span>           <span class="desc" data-i18n="tree.std">标准库（8 个模块）</span><br>
+        ├── <span class="dir">examples/</span>      <span class="desc" data-i18n="tree.examples">55 个示例 + main.va 全特性演示</span><br>
+        ├── <span class="dir">tests/</span>         <span class="desc" data-i18n="tree.tests">71 个脚本测试 + 328 个单元测试</span><br>
+        ├── <span class="dir">docs/</span>          <span class="desc" data-i18n="tree.docs">15 篇开发文档（中文）</span><br>
+        ├── <span class="dir">cmake/</span>         <span class="desc" data-i18n="tree.cmake">6 个交叉编译工具链</span><br>
+        ├── build.ps1 / build.sh    <span class="desc" data-i18n="tree.build">跨平台构建脚本</span><br>
+        └── CMakePresets.json       <span class="desc" data-i18n="tree.presets">20 个预设配置</span>
     </div>
 </section>
 
@@ -475,18 +488,18 @@
      Footer
      ═══════════════════════════════════════════════════════════════════════ -->
 <footer class="footer">
-    <p>
+    <p data-i18n="footer.desc">
         Vora is a dynamically typed scripting language.<br>
         It features JavaScript-like syntax, Lua-level simplicity, and Wren-style object orientation.
     </p>
     <p style="margin-top:8px">
         <a href="https://github.com/Vora-lang/Vora" target="_blank" rel="noopener">GitHub</a>
         ·
-        <a href="docs/index.html">文档</a>
+        <a href="docs/index.html" data-i18n="footer.docs">文档</a>
         ·
-        <a href="https://github.com/Vora-lang/Vora-LSP" target="_blank" rel="noopener">LSP 扩展</a>
+        <a href="https://github.com/Vora-lang/Vora-LSP" target="_blank" rel="noopener">LSP</a>
     </p>
-    <p style="margin-top:12px;font-size:0.8rem">
+    <p style="margin-top:12px;font-size:0.8rem" data-i18n="footer.refs">
         参考：
         <a href="https://craftinginterpreters.com/" target="_blank" rel="noopener">Crafting Interpreters</a>
         ·
@@ -499,17 +512,271 @@
 </footer>
 
 <!-- ═══════════════════════════════════════════════════════════════════════════
-     Scroll reveal
+     Scripts
      ═══════════════════════════════════════════════════════════════════════ -->
 <script>
 (function() {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    var observer = new IntersectionObserver(function(entries) {
-        entries.forEach(function(entry) {
-            if (entry.isIntersecting) entry.target.classList.add('visible');
+    /* ── Translations ───────────────────────────────────────────────── */
+    var T = {
+        'zh-CN': {
+            'nav.quickstart':   '快速开始',
+            'nav.syntax':       '语法',
+            'nav.docs':         '文档 →',
+            'hero.tagline':     '一门动态类型的脚本语言——类 JavaScript 语法，Lua 级的简单性，Wren 式的面向对象。',
+            'hero.cta':         '开始使用 ↓',
+            'quickstart.label': '快速开始',
+            'quickstart.heading':'一条命令，即刻运行',
+            'quickstart.desc':  '跨平台构建，零外部依赖。支持 Windows、Linux、macOS 多架构与原生打包。',
+            'shell.build':      '构建（Windows / Linux / macOS）',
+            'shell.cross':      '多架构交叉编译 + 打包',
+            'shell.run':        '运行与调试',
+            'shell.run-file':   '执行脚本',
+            'shell.repl':       '进入 REPL 交互模式',
+            'shell.version':    '查看版本（-v）',
+            'shell.tokens':     '打印 Token 流与字节码',
+            'shell.ast':        '打印 S-expression AST',
+            'shell.fmt':        '格式化源文件（-w 原地写入）',
+            'syntax.label':     '语法概览',
+            'syntax.heading':   '语法',
+            'syntax.desc':      '类 C 语法，大括号定义块，分号可选。运算符沿用 C 惯例（&&、||、!）。标识符支持 Unicode（中文、日文等）。',
+            'syntax.types':     '类型与变量',
+            'syntax.string':    '字符串',
+            'syntax.array':     '动态数组',
+            'syntax.dict':      '字典',
+            'syntax.num-prefix':'数字前缀：0xFF  0o77  0b101',
+            'syntax.func':      '函数与闭包',
+            'syntax.closure':   '闭包直接修改外层变量',
+            'syntax.defaults':  '默认参数 + 命名参数',
+            'syntax.flow':      '控制流',
+            'syntax.oop':       '对象与继承',
+            'syntax.match':     '模式匹配',
+            'syntax.errors':    '异常与模块',
+            'syntax.modules':   '模块系统',
+            'features.label':   '特性',
+            'features.heading': '语言特性',
+            'features.desc':    '纯 C++17 实现，STL 以外无外部依赖。面向嵌入场景设计，可作为 C++ 项目的脚本引擎使用。',
+            'features.deps':    '📦 零依赖',
+            'features.deps-desc':'纯 C++17 + STL。一个 <code>vora.hpp</code> 单头文件即可嵌入任何 C++ 项目。',
+            'features.vm':      '⚡ 字节码 VM',
+            'features.vm-desc': '基于栈的虚拟机，50+ 条指令。支持快速数值操作码、全局变量驻留、常量折叠。',
+            'features.oop':     '🧬 原生 OOP',
+            'features.oop-desc': 'C3 线性化多继承、super 调用、自动 this 绑定。不是 metatable 模拟——是真正的类系统。',
+            'features.stdlib':  '📚 8 个标准库模块',
+            'features.stdlib-desc': 'math、json、fs、os、datetime、array、string、regex——覆盖日常开发核心场景。',
+            'features.cross':   '🌍 跨平台',
+            'features.cross-desc': 'CMake 预设覆盖 Windows (x64/x86/arm64)、Linux (x64/x86/aarch64/armhf)、macOS Universal。',
+            'features.test':    '🛡️ 测试完备',
+            'features.test-desc': '328 个 C++ 单元测试（1019 断言）+ 71 个脚本测试 + 56 个示例，全部通过。',
+            'structure.label':  '项目结构',
+            'structure.heading':'清晰、模块化、~9,400 行',
+            'structure.desc':   '从词法分析到字节码执行，每个模块职责单一。标准库与核心引擎解耦，按需加载。',
+            'tree.lexer':       '词法分析器（~687 行）',
+            'tree.ast':         'AST 节点 + Visitor 接口 + AST Printer（~1,629 行）',
+            'tree.parser':      'Pratt 解析器（~1,200 行）',
+            'tree.vm':          'Compiler + 栈式虚拟机（~3,175 行）',
+            'tree.runtime':     '值系统 / 作用域 / 可调用对象 / 错误',
+            'tree.gc':          '标记-清除垃圾回收器',
+            'tree.lsp':         '语义分析器（符号表、引用、诊断）',
+            'tree.formatter':   'AST 源码格式化器（vora fmt）',
+            'tree.std':         '标准库（8 个模块）',
+            'tree.examples':    '55 个示例 + main.va 全特性演示',
+            'tree.tests':       '71 个脚本测试 + 328 个单元测试',
+            'tree.docs':        '15 篇开发文档（中文）',
+            'tree.cmake':       '6 个交叉编译工具链',
+            'tree.build':       '跨平台构建脚本',
+            'tree.presets':     '20 个预设配置',
+            'footer.desc':      'Vora is a dynamically typed scripting language.<br>It features JavaScript-like syntax, Lua-level simplicity, and Wren-style object orientation.',
+            'footer.docs':      '文档',
+            'footer.refs':      '参考：'
+        },
+        'zh-TW': {
+            'nav.quickstart':   '快速開始',
+            'nav.syntax':       '語法',
+            'nav.docs':         '文件 →',
+            'hero.tagline':     '一門動態型別的腳本語言——類 JavaScript 語法、Lua 級的簡單性、Wren 式的物件導向。',
+            'hero.cta':         '開始使用 ↓',
+            'quickstart.label': '快速開始',
+            'quickstart.heading':'一條命令，即刻執行',
+            'quickstart.desc':  '跨平台建構，零外部依賴。支援 Windows、Linux、macOS 多架構與原生打包。',
+            'shell.build':      '建構（Windows / Linux / macOS）',
+            'shell.cross':      '多架構交叉編譯 + 打包',
+            'shell.run':        '執行與除錯',
+            'shell.run-file':   '執行腳本',
+            'shell.repl':       '進入 REPL 互動模式',
+            'shell.version':    '檢視版本（-v）',
+            'shell.tokens':     '列印 Token 串流與位元組碼',
+            'shell.ast':        '列印 S-expression AST',
+            'shell.fmt':        '格式化原始檔（-w 原地寫入）',
+            'syntax.label':     '語法概覽',
+            'syntax.heading':   '語法',
+            'syntax.desc':      '類 C 語法，大括號定義區塊，分號可選。運算子沿用 C 慣例（&&、||、!）。識別碼支援 Unicode（中文、日文等）。',
+            'syntax.types':     '型別與變數',
+            'syntax.string':    '字串',
+            'syntax.array':     '動態陣列',
+            'syntax.dict':      '字典',
+            'syntax.num-prefix':'數字字首：0xFF  0o77  0b101',
+            'syntax.func':      '函式與閉包',
+            'syntax.closure':   '閉包直接修改外層變數',
+            'syntax.defaults':  '預設參數 + 命名參數',
+            'syntax.flow':      '控制流程',
+            'syntax.oop':       '物件與繼承',
+            'syntax.match':     '模式匹配',
+            'syntax.errors':    '例外與模組',
+            'syntax.modules':   '模組系統',
+            'features.label':   '特性',
+            'features.heading': '語言特性',
+            'features.desc':    '純 C++17 實作，STL 以外無外部依賴。面向嵌入場景設計，可作為 C++ 專案的腳本引擎使用。',
+            'features.deps':    '📦 零依賴',
+            'features.deps-desc':'純 C++17 + STL。一個 <code>vora.hpp</code> 單一標頭檔即可嵌入任何 C++ 專案。',
+            'features.vm':      '⚡ 位元組碼 VM',
+            'features.vm-desc': '基於堆疊的虛擬機器，50+ 條指令。支援快速數值操作碼、全域變數駐留、常數折疊。',
+            'features.oop':     '🧬 原生 OOP',
+            'features.oop-desc': 'C3 線性化多重繼承、super 呼叫、自動 this 綁定。不是 metatable 模擬——是真正的類別系統。',
+            'features.stdlib':  '📚 8 個標準庫模組',
+            'features.stdlib-desc': 'math、json、fs、os、datetime、array、string、regex——涵蓋日常開發核心場景。',
+            'features.cross':   '🌍 跨平台',
+            'features.cross-desc': 'CMake 預設涵蓋 Windows (x64/x86/arm64)、Linux (x64/x86/aarch64/armhf)、macOS Universal。',
+            'features.test':    '🛡️ 測試完備',
+            'features.test-desc': '328 個 C++ 單元測試（1019 斷言）+ 71 個腳本測試 + 56 個範例，全部通過。',
+            'structure.label':  '專案結構',
+            'structure.heading':'清晰、模組化、~9,400 行',
+            'structure.desc':   '從詞法分析到位元組碼執行，每個模組職責單一。標準庫與核心引擎解耦，按需載入。',
+            'tree.lexer':       '詞法分析器（~687 行）',
+            'tree.ast':         'AST 節點 + Visitor 介面 + AST Printer（~1,629 行）',
+            'tree.parser':      'Pratt 解析器（~1,200 行）',
+            'tree.vm':          'Compiler + 堆疊式虛擬機器（~3,175 行）',
+            'tree.runtime':     '值系統 / 作用域 / 可呼叫物件 / 錯誤',
+            'tree.gc':          '標記-清除垃圾回收器',
+            'tree.lsp':         '語意分析器（符號表、引用、診斷）',
+            'tree.formatter':   'AST 原始碼格式化器（vora fmt）',
+            'tree.std':         '標準庫（8 個模組）',
+            'tree.examples':    '55 個範例 + main.va 全特性展示',
+            'tree.tests':       '71 個腳本測試 + 328 個單元測試',
+            'tree.docs':        '15 篇開發文件（中文）',
+            'tree.cmake':       '6 個交叉編譯工具鏈',
+            'tree.build':       '跨平台建構腳本',
+            'tree.presets':     '20 個預設配置',
+            'footer.desc':      'Vora is a dynamically typed scripting language.<br>It features JavaScript-like syntax, Lua-level simplicity, and Wren-style object orientation.',
+            'footer.docs':      '文件',
+            'footer.refs':      '參考：'
+        },
+        'en': {
+            'nav.quickstart':   'Quick Start',
+            'nav.syntax':       'Syntax',
+            'nav.docs':         'Docs →',
+            'hero.tagline':     'A dynamically typed scripting language — JavaScript-like syntax, Lua-level simplicity, Wren-style object orientation.',
+            'hero.cta':         'Get Started ↓',
+            'quickstart.label': 'Quick Start',
+            'quickstart.heading':'One command, up and running',
+            'quickstart.desc':  'Cross-platform build, zero external dependencies. Supports Windows, Linux, macOS with multi-architecture and native packaging.',
+            'shell.build':      'Build (Windows / Linux / macOS)',
+            'shell.cross':      'Cross-compile + package',
+            'shell.run':        'Run & debug',
+            'shell.run-file':   'Execute script',
+            'shell.repl':       'Start REPL',
+            'shell.version':    'Print version (-v)',
+            'shell.tokens':     'Print token stream & bytecode',
+            'shell.ast':        'Print S-expression AST',
+            'shell.fmt':        'Format source file (-w to write in-place)',
+            'syntax.label':     'Syntax Overview',
+            'syntax.heading':   'Syntax',
+            'syntax.desc':      'C-style syntax with braces, optional semicolons. Operators follow C conventions (&&, ||, !). Unicode identifiers supported (Chinese, Japanese, etc.).',
+            'syntax.types':     'Types & Variables',
+            'syntax.string':    'String',
+            'syntax.array':     'Dynamic array',
+            'syntax.dict':      'Dict',
+            'syntax.num-prefix':'Number prefixes: 0xFF  0o77  0b101',
+            'syntax.func':      'Functions & Closures',
+            'syntax.closure':   'Closures mutate outer variables directly',
+            'syntax.defaults':  'Default params + named arguments',
+            'syntax.flow':      'Control Flow',
+            'syntax.oop':       'Objects & Inheritance',
+            'syntax.match':     'Pattern Matching',
+            'syntax.errors':    'Exceptions & Modules',
+            'syntax.modules':   'Module system',
+            'features.label':   'Features',
+            'features.heading': 'Language Features',
+            'features.desc':    'Pure C++17 implementation, no dependencies beyond STL. Designed for embedding as a scripting engine in C++ projects.',
+            'features.deps':    '📦 Zero Dependencies',
+            'features.deps-desc':'Pure C++17 + STL. A single <code>vora.hpp</code> header is all you need to embed Vora in any C++ project.',
+            'features.vm':      '⚡ Bytecode VM',
+            'features.vm-desc': 'Stack-based virtual machine with 50+ instructions. Fast numeric opcodes, global variable interning, constant folding.',
+            'features.oop':     '🧬 Native OOP',
+            'features.oop-desc': 'C3-linearized multiple inheritance, super calls, automatic this binding. Real classes, not metatable simulation.',
+            'features.stdlib':  '📚 8 Standard Library Modules',
+            'features.stdlib-desc': 'math, json, fs, os, datetime, array, string, regex — covering common development needs.',
+            'features.cross':   '🌍 Cross-Platform',
+            'features.cross-desc': 'CMake presets for Windows (x64/x86/arm64), Linux (x64/x86/aarch64/armhf), macOS Universal binary.',
+            'features.test':    '🛡️ Well Tested',
+            'features.test-desc': '328 C++ unit tests (1019 assertions) + 71 script tests + 56 examples, all passing.',
+            'structure.label':  'Project Structure',
+            'structure.heading':'Clean, modular, ~9,400 lines',
+            'structure.desc':   'From lexing to bytecode execution, each module has a single responsibility. Standard library decoupled from the core engine.',
+            'tree.lexer':       'Lexer (~687 lines)',
+            'tree.ast':         'AST nodes + Visitor interface + AST Printer (~1,629 lines)',
+            'tree.parser':      'Pratt parser (~1,200 lines)',
+            'tree.vm':          'Compiler + stack VM (~3,175 lines)',
+            'tree.runtime':     'Value system / environment / callables / errors',
+            'tree.gc':          'Mark-sweep garbage collector',
+            'tree.lsp':         'Semantic analyzer (symbol table, references, diagnostics)',
+            'tree.formatter':   'AST source formatter (vora fmt)',
+            'tree.std':         'Standard library (8 modules)',
+            'tree.examples':    '55 examples + main.va full feature demo',
+            'tree.tests':       '71 script tests + 328 unit tests',
+            'tree.docs':        '15 dev documents (Chinese)',
+            'tree.cmake':       '6 cross-compilation toolchains',
+            'tree.build':       'Cross-platform build scripts',
+            'tree.presets':     '20 preset configurations',
+            'footer.desc':      'Vora is a dynamically typed scripting language.<br>It features JavaScript-like syntax, Lua-level simplicity, and Wren-style object orientation.',
+            'footer.docs':      'Docs',
+            'footer.refs':      'References:'
+        }
+    };
+
+    /* ── Language switching ──────────────────────────────────────────── */
+    var LANG_KEY = 'vora-lang';
+    var current = localStorage.getItem(LANG_KEY) || 'zh-CN';
+    document.documentElement.lang = current;
+
+    function applyLang(lang) {
+        current = lang;
+        localStorage.setItem(LANG_KEY, lang);
+        document.documentElement.lang = lang;
+
+        // Update active button
+        document.querySelectorAll('.lang-select button').forEach(function(btn) {
+            var match = btn.getAttribute('data-lang') === lang;
+            btn.classList.toggle('active', match);
         });
-    }, { threshold: 0.1, rootMargin: '0px 0px -20px 0px' });
-    document.querySelectorAll('.reveal, .stagger').forEach(function(el) { observer.observe(el); });
+
+        // Update all i18n elements
+        var dict = T[lang] || T['zh-CN'];
+        document.querySelectorAll('[data-i18n]').forEach(function(el) {
+            var key = el.getAttribute('data-i18n');
+            if (dict[key] !== undefined) {
+                el.innerHTML = dict[key];
+            }
+        });
+    }
+
+    document.querySelectorAll('.lang-select button').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            applyLang(btn.getAttribute('data-lang'));
+        });
+    });
+
+    // Apply saved language on load
+    if (current !== 'zh-CN') applyLang(current);
+
+    /* ── Scroll reveal ────────────────────────────────────────────────── */
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        var observer = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -20px 0px' });
+        document.querySelectorAll('.reveal, .stagger').forEach(function(el) { observer.observe(el); });
+    }
 })();
 </script>
 
