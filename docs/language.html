@@ -63,6 +63,7 @@
         <a href="../index.html#syntax">语法</a>
         <a href="index.html">文档</a>
         <a href="language.html" class="active">语言参考</a>
+        <a href="user-guide.html">语言差异</a>
     </div>
 </nav>
 
@@ -545,33 +546,37 @@ draw(<span class="num">10</span>, <span class="num">20</span>, size=<span class=
 与剩余参数对称——将数组**展开**为独立的函数实参：
 
 **基本用法：**
-<div class="code"><pre>func add(a, b, c) {
-    return a + b + c
-}
-
-let args = [1, 2, 3]
-print(add(...args))  // 6 —— 等价于 add(1, 2, 3)</pre></div>
-
+</pre></div>
+<p>func add(a, b, c) {</p>
+<div class="code"><pre>return a + b + c</pre></div>
+<p>}</p>
+<br>
+<p>let args = [1, 2, 3]</p>
+<p>print(add(...args))  // 6 —— 等价于 add(1, 2, 3)</p>
+<div class="code"><pre>
 **与固定参数混合：**
-<div class="code"><pre>func greet(title, name, surname) {
-    return title + " " + name + " " + surname
-}
-
-print(greet("Dr.", ...["Jane", "Smith"]))  // "Dr. Jane Smith"</pre></div>
-
+</pre></div>
+<p>func greet(title, name, surname) {</p>
+<div class="code"><pre>return title + &quot; &quot; + name + &quot; &quot; + surname</pre></div>
+<p>}</p>
+<br>
+<p>print(greet("Dr.", ...["Jane", "Smith"]))  // "Dr. Jane Smith"</p>
+<div class="code"><pre>
 **与剩余参数配合使用（参数转发）：**
-<div class="code"><pre>func wrapper(...rest) {
-    // rest 是数组，...rest 将其展开为独立参数
-    return add(...rest)
-}
-
-print(wrapper(1, 2, 3))  // 6</pre></div>
-
+</pre></div>
+<p>func wrapper(...rest) {</p>
+<div class="code"><pre>// rest 是数组，...rest 将其展开为独立参数</pre></div>
+<div class="code"><pre>return add(...rest)</pre></div>
+<p>}</p>
+<br>
+<p>print(wrapper(1, 2, 3))  // 6</p>
+<div class="code"><pre>
 **多个展开：**
-<div class="code"><pre>let a = [1, 2]
-let b = [3, 4, 5]
-print(add(...a, ...b))  // 等价于 add(1, 2, 3, 4, 5)</pre></div>
-
+</pre></div>
+<p>let a = [1, 2]</p>
+<p>let b = [3, 4, 5]</p>
+<p>print(add(...a, ...b))  // 等价于 add(1, 2, 3, 4, 5)</p>
+<div class="code"><pre>
 **规则：**
 - `...expr` 只能出现在**函数调用**的参数列表中
 - 展开的值**必须是数组**，否则运行时错误
