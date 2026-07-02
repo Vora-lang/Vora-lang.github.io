@@ -1,0 +1,1157 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>C++ API 参考 — Vora 文档</title>
+<link rel="icon" href="../vora_logo.svg" type="image/svg+xml" />
+<style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+        --bg: #ffffff; --card: #f5f5f7; --border: #e0e0e0;
+        --text: #1d1d1f; --text2: #6e6e73; --kw: #7c3aed; --str: #059669;
+        --num: #d97706; --fn: #2563eb; --lit: #ea580c; --cmt: #a1a1aa;
+        --radius: 10px;
+        --mono: "Cascadia Code", "Fira Code", "JetBrains Mono", "Consolas", monospace;
+        --sans: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+    }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body { font-family: var(--sans); background: var(--bg); color: var(--text); line-height: 1.7; }
+
+    /* ── Nav ─────────────────────────────────────── */
+    .nav { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0 24px; }
+    .nav-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; gap: 24px; height: 52px; font-size: 0.9rem; font-weight: 500; overflow-x: auto; }
+    .nav a { color: var(--text2); text-decoration: none; transition: color 0.2s; white-space: nowrap; }
+    .nav a:hover { color: var(--kw); }
+    .nav .active { color: var(--kw); }
+
+    /* ── Layout ──────────────────────────────────── */
+    .page { display: flex; max-width: 1100px; margin: 0 auto; }
+    .sidebar { width: 220px; flex-shrink: 0; position: sticky; top: 52px; height: calc(100vh - 52px); overflow-y: auto; padding: 24px 16px; border-right: 1px solid var(--border); }
+    .sidebar h3 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text2); margin-bottom: 12px; }
+    .sidebar a { display: block; font-size: 0.85rem; color: var(--text2); text-decoration: none; padding: 4px 0; transition: color 0.2s; }
+    .sidebar a:hover { color: var(--kw); }
+    .main { flex: 1; padding: 48px 40px; min-width: 0; }
+
+    /* ── Typography ──────────────────────────────── */
+    .main h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 8px; }
+    .main h2 { font-size: 1.4rem; font-weight: 700; margin: 48px 0 16px; padding-top: 24px; border-top: 1px solid var(--border); }
+    .main h3 { font-size: 1.1rem; font-weight: 600; margin: 32px 0 12px; }
+    .main h4 { font-size: 0.95rem; font-weight: 600; margin: 20px 0 8px; color: var(--text2); }
+    .section-desc { color: var(--text2); margin-bottom: 32px; font-size: 1.05rem; }
+
+    /* ── API entries ─────────────────────────────── */
+    .api-entry { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; margin-bottom: 24px; }
+    .entry-name code { font-family: var(--mono); color: var(--kw); font-size: 1.05em; }
+    .entry-kind { font-size: 0.75rem; color: var(--text2); background: #eee; padding: 2px 8px; border-radius: 20px; margin-left: 8px; }
+    .entry-file { font-size: 0.8rem; color: var(--text2); margin-bottom: 12px; }
+    .entry-file code { font-size: 0.85em; }
+    .entry-sig { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 14px 18px; margin-bottom: 16px; overflow-x: auto; }
+    .entry-sig pre { margin: 0; }
+    .entry-sig code { font-family: var(--mono); font-size: 0.82rem; }
+    .entry-brief { font-size: 1.02rem; margin-bottom: 12px; }
+    .entry-details { font-size: 0.92rem; color: var(--text2); margin-bottom: 16px; }
+    .entry-returns { font-size: 0.92rem; margin-bottom: 8px; }
+    .entry-see { font-size: 0.88rem; color: var(--text2); }
+    .entry-see a { color: var(--kw); text-decoration: none; }
+    .entry-see a:hover { text-decoration: underline; }
+
+    /* ── Member list ─────────────────────────────── */
+    .member-list { margin-top: 12px; }
+    .member-item { padding: 8px 0; border-bottom: 1px solid var(--border); display: flex; gap: 16px; align-items: baseline; }
+    .member-item:last-child { border-bottom: none; }
+    .member-sig { font-family: var(--mono); font-size: 0.8rem; color: var(--text); white-space: nowrap; }
+    .member-desc { font-size: 0.85rem; color: var(--text2); }
+
+    /* ── Tables ──────────────────────────────────── */
+    .param-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; margin: 12px 0; }
+    .param-table th { text-align: left; padding: 8px 12px; border-bottom: 2px solid var(--border); font-weight: 600; color: var(--text2); font-size: 0.78rem; text-transform: uppercase; }
+    .param-table td { padding: 8px 12px; border-bottom: 1px solid var(--border); }
+    .param-name code { font-family: var(--mono); color: var(--kw); font-size: 0.85em; }
+
+    /* ── Note ────────────────────────────────────── */
+    .note { background: #fefce8; border: 1px solid #fde68a; border-radius: 8px; padding: 10px 14px; margin: 12px 0; font-size: 0.88rem; color: #92400e; }
+
+    /* ── Module headers ──────────────────────────── */
+    .module-header { margin-top: 48px; }
+    .module-header h2 { border-top: 2px solid var(--kw); padding-top: 20px; }
+
+    code { font-family: var(--mono); font-size: 0.88em; }
+    p code, li code { background: #f3f0ff; color: var(--kw); padding: 2px 6px; border-radius: 4px; }
+
+    /* ── Footer ──────────────────────────────────── */
+    .footer { border-top: 1px solid var(--border); padding: 40px 24px; text-align: center; color: var(--text2); font-size: 0.85rem; }
+    .footer a { color: var(--kw); text-decoration: none; }
+    .footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 768px) {
+        .sidebar { display: none; }
+        .main { padding: 24px 16px; }
+        .main h1 { font-size: 1.6rem; }
+        .member-item { flex-direction: column; gap: 4px; }
+    }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+    <div class="nav-inner">
+        <a href="../index.html" style="font-size:1.2rem;font-weight:800;background:linear-gradient(135deg,#6366f1,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-decoration:none;">Vora</a>
+        <a href="../index.html#quickstart">快速开始</a>
+        <a href="../index.html#syntax">语法</a>
+        <a href="../docs/index.html">文档</a>
+        <a href="../docs/language.html">语言参考</a>
+        <a href="../docs/user-guide.html">语言差异</a>
+        <a href="index.html" class="active">API 参考</a>
+    </div>
+</nav>
+
+<div class="page">
+    <aside class="sidebar">
+        <h3>模块</h3>
+        <a href="#mod-lexer">Lexer 词法分析</a>
+<a href="#mod-ast">AST 抽象语法树</a>
+<a href="#mod-parser">Parser 语法分析</a>
+<a href="#mod-vm">VM 虚拟机</a>
+<a href="#mod-runtime">Runtime 运行时</a>
+<a href="#mod-gc">GC 垃圾回收</a>
+<a href="#mod-common">Common 通用</a>
+<a href="#mod-json_rpc">JSON-RPC 协议</a>
+<a href="#mod-formatter">Formatter 格式化</a>
+<a href="#mod-lsp">LSP 语义分析</a>
+
+    </aside>
+
+    <main class="main">
+        <h1>📐 C++ API 参考</h1>
+        <p class="section-desc">Vora v0.27.0 — 由 Doxygen 注释自动生成的 C++ 源码级 API 文档。<br>涵盖 Lexer、Parser、AST、Compiler、VM、Runtime、GC 等所有核心模块。</p>
+
+        <div class="module-header" id="mod-lexer">
+<h2>Lexer — 词法分析</h2>
+<p style="color:var(--text2);margin-bottom:24px"><code>src/lexer/</code></p>
+<h3>lexer/lexer.h</h3>
+<div class="api-entry" id="vora">
+  <h3 class="entry-name">📁 <code>vora</code> <span class="entry-kind">namespace</span></h3>
+  <div class="entry-file">📁 <code>src/lexer/lexer.h</code></div>
+</div>
+
+<div class="api-entry" id="Lexer">
+  <h3 class="entry-name">🧩 <code>Lexer</code> <span class="entry-kind">class</span></h3>
+  <div class="entry-file">📁 <code>src/lexer/lexer.h</code></div>
+  <div class="entry-sig"><pre><code>class Lexer</code></pre></div>
+  <p class="entry-brief">Hand-written character-at-a-time lexer for Vora source code.</p>
+  <h4>Methods (27)</h4>
+<div class="member-list"><div class="member-item"><code class="member-sig">std::vector&lt;Token&gt; scanTokens();;</code></div><div class="member-item"><code class="member-sig">bool hasError() const { return reporter_.hadError(); };</code></div><div class="member-item"><code class="member-sig">bool isAtEnd() const;;</code></div><div class="member-item"><code class="member-sig">char advance();;</code></div><div class="member-item"><code class="member-sig">void addToken(TokenType type);;</code></div><div class="member-item"><code class="member-sig">* Reports an error for prefixes with no following digits (e.g., &quot;0x&quot;).;</code></div><div class="member-item"><code class="member-sig">void number();;</code></div><div class="member-item"><code class="member-sig">* Unrecognized escape characters are kept literally (both backslash and;</code></div><div class="member-item"><code class="member-sig">* STRING token with the text scanned so far (best-effort recovery).;</code></div><div class="member-item"><code class="member-sig">void string(char delimiter);;</code></div><div class="member-item"><code class="member-sig">* Consumes alphanumeric characters and underscores (and UTF-8 continuation;</code></div><div class="member-item"><code class="member-sig">void identifier();;</code></div><div class="member-item"><code class="member-sig">* Returns true for ASCII letters (a-z, A-Z), underscore (_), and any byte;</code></div><div class="member-item"><code class="member-sig">* with the high bit set (UTF-8 multi-byte lead byte).;</code></div><div class="member-item"><code class="member-sig">bool isAlpha(char c) const;;</code></div><div class="member-item"><code class="member-sig">bool isAlphaNumeric(char c) const;;</code></div><div class="member-item"><code class="member-sig">* Reads one character via advance() and dispatches based on its value:;</code></div><div class="member-item"><code class="member-sig">* handling, string delimiters, or delegation to number()/identifier().;</code></div><div class="member-item"><code class="member-sig">void scanToken();;</code></div><div class="member-item"><code class="member-sig">char peek() const;;</code></div><div class="member-item"><code class="member-sig">char peekNext() const;;</code></div><div class="member-item"><code class="member-sig">bool match(char expected);;</code></div><div class="member-item"><code class="member-sig">void error(const std::string&amp; message);;</code></div><div class="member-item"><code class="member-sig">void lineComment();;</code></div><div class="member-item"><code class="member-sig">* Tracks nesting depth so that nested block comments (/* /* *​/ *​/) are;</code></div><div class="member-item"><code class="member-sig">* error if the comment is unterminated (EOF reached with depth &gt; 0).;</code></div><div class="member-item"><code class="member-sig">void blockComment();;</code></div></div></div>
+
+<h3>lexer/token.h</h3>
+<div class="api-entry" id="tokenTypeToString">
+  <h3 class="entry-name">⚡ <code>tokenTypeToString</code> <span class="entry-kind">function</span></h3>
+  <div class="entry-file">📁 <code>src/lexer/token.h</code></div>
+  <div class="entry-sig"><pre><code>* tokenTypeToString() helper for human-readable token type names.</code></pre></div>
+</div>
+
+<div class="api-entry" id="vora">
+  <h3 class="entry-name">📁 <code>vora</code> <span class="entry-kind">namespace</span></h3>
+  <div class="entry-file">📁 <code>src/lexer/token.h</code></div>
+</div>
+
+<div class="api-entry" id="TokenType">
+  <h3 class="entry-name">🔢 <code>TokenType</code> <span class="entry-kind">enum</span></h3>
+  <div class="entry-file">📁 <code>src/lexer/token.h</code></div>
+  <div class="entry-sig"><pre><code>enum class TokenType {</code></pre></div>
+  <p class="entry-brief">Enumeration of all token types produced by the lexer.</p>
+</div>
+
+<div class="api-entry" id="tokenTypeToString">
+  <h3 class="entry-name">⚡ <code>tokenTypeToString</code> <span class="entry-kind">function</span></h3>
+  <div class="entry-file">📁 <code>src/lexer/token.h</code></div>
+  <div class="entry-sig"><pre><code>std::string tokenTypeToString(TokenType type);</code></pre></div>
+  <p class="entry-brief">Convert a TokenType enum value to its human-readable string form.</p>
+  <h4>Parameters</h4>
+<table class="param-table"><thead><tr><th>Parameter</th><th>Description</th></tr></thead><tbody><tr><td class="param-name"><code>type</code></td><td>The token type to stringify.</td></tr></tbody></table>  <p class="entry-returns"><strong>Returns:</strong> A string like &quot;LEFT_PAREN&quot;, &quot;IF&quot;, &quot;NUMBER&quot;, or &quot;UNKNOWN&quot; for
+        out-of-range values.</p>
+</div>
+
+<div class="api-entry" id="Token">
+  <h3 class="entry-name">📦 <code>Token</code> <span class="entry-kind">struct</span></h3>
+  <div class="entry-file">📁 <code>src/lexer/token.h</code></div>
+  <div class="entry-sig"><pre><code>struct Token</code></pre></div>
+  <p class="entry-brief">Represents a single lexer token with type, source text, and location.</p>
+  <h4>Methods (2)</h4>
+<div class="member-list"><div class="member-item"><code class="member-sig">: type(type),;</code></div><div class="member-item"><code class="member-sig">std::string toString() const;;</code><span class="member-desc">@brief  Format token as &quot;TokenType(lexeme) at line:column&quot;.
+@return Human-readable, one-line representation of the token.</span></div></div></div>
+
+</div>
+<div class="module-header" id="mod-ast">
+<h2>AST — 抽象语法树</h2>
+<p style="color:var(--text2);margin-bottom:24px"><code>src/ast/</code></p>
+<h3>ast/ast_printer.h</h3>
+<div class="api-entry" id="vora">
+  <h3 class="entry-name">📁 <code>vora</code> <span class="entry-kind">namespace</span></h3>
+  <div class="entry-file">📁 <code>src/ast/ast_printer.h</code></div>
+</div>
+
+<div class="api-entry" id="ASTPrinter">
+  <h3 class="entry-name">🧩 <code>ASTPrinter</code> <span class="entry-kind">class</span></h3>
+  <div class="entry-file">📁 <code>src/ast/ast_printer.h</code></div>
+  <div class="entry-sig"><pre><code>class ASTPrinter : public ExprVisitor&lt;std::string&gt;,</code></pre></div>
+  <p class="entry-brief">Pretty-prints AST nodes as Lisp-style S-expressions.</p>
+</div>
+
+<h3>ast/binding_pattern.h</h3>
+<div class="api-entry" id="vora">
+  <h3 class="entry-name">📁 <code>vora</code> <span class="entry-kind">namespace</span></h3>
+  <div class="entry-file">📁 <code>src/ast/binding_pattern.h</code></div>
+</div>
+
+<div class="api-entry" id="Expr">
+  <h3 class="entry-name">📎 <code>Expr</code> <span class="entry-kind">class (前置声明)</span></h3>
+  <div class="entry-file">📁 <code>src/ast/binding_pattern.h</code></div>
+  <div class="entry-sig"><pre><code>class Expr;</code></pre></div>
+</div>
+
+<div class="api-entry" id="BindingKind">
+  <h3 class="entry-name">🔢 <code>BindingKind</code> <span class="entry-kind">enum</span></h3>
+  <div class="entry-file">📁 <code>src/ast/binding_pattern.h</code></div>
+  <div class="entry-sig"><pre><code>enum class BindingKind : uint8_t {</code></pre></div>
+  <p class="entry-brief">Discriminator tag for BindingPattern subtypes.</p>
+</div>
+
+<div class="api-entry" id="BindingPattern">
+  <h3 class="entry-name">🧩 <code>BindingPattern</code> <span class="entry-kind">class</span></h3>
+  <div class="entry-file">📁 <code>src/ast/binding_pattern.h</code></div>
+  <div class="entry-sig"><pre><code>class BindingPattern</code></pre></div>
+  <p class="entry-brief">Abstract base class for destructuring binding patterns.</p>
+  <h4>Methods (3)</h4>
+<div class="member-list"><div class="member-item"><code class="member-sig">virtual BindingKind kind() const = 0;;</code></div><div class="member-item"><code class="member-sig">virtual std::vector&lt;std::string&gt; getBoundNames() const = 0;;</code></div><div class="member-item"><code class="member-sig">virtual std::string getSimpleName() const { return &quot;&quot;; };</code></div></div></div>
+
+<h3>ast/expr.h</h3>
+<div class="api-entry" id="vora">
+  <h3 class="entry-name">📁 <code>vora</code> <span class="entry-kind">namespace</span></h3>
+  <div class="entry-file">📁 <code>src/ast/expr.h</code></div>
+</div>
+
+<div class="api-entry" id="ExprVisitor">
+  <h3 class="entry-name">📎 <code>ExprVisitor</code> <span class="entry-kind">class (前置声明)</span></h3>
+  <div class="entry-file">📁 <code>src/ast/expr.h</code></div>
+  <div class="entry-sig"><pre><code>class ExprVisitor;</code></pre></div>
+</div>
+
+<div class="api-entry" id="BlockStmt">
+  <h3 class="entry-name">📎 <code>BlockStmt</code> <span class="entry-kind">class (前置声明)</span></h3>
+  <div class="entry-file">📁 <code>src/ast/expr.h</code></div>
+  <div class="entry-sig"><pre><code>class BlockStmt;  // forward decl — FuncExpr uses shared_ptr (works with incomplete type)
+
+/**
+ * @brief Abstract base class for all expression AST nodes.
+ *
+ * Every concrete expression type inherits from Expr and implements the visitor
+ * dispatch via three accept() overloads (Value, void, std:...</code></pre></div>
+  <p class="entry-brief">@brief Forward declaration of BlockStmt.
+
+FuncExpr uses shared_ptr&lt;BlockStmt&gt; for its body, which works with
+incomplete types and avoids the circular dependency between expr.h and stmt.h.</p>
+</div>
+
+<h3>ast/expr_visitor.h</h3>
+<div class="api-entry" id="vora">
+  <h3 class="entry-name">📁 <code>vora</code> <span class="entry-kind">namespace</span></h3>
+  <div class="entry-file">📁 <code>src/ast/expr_visitor.h</code></div>
+</div>
+
+<div class="api-entry" id="ExprVisitor">
+  <h3 class="entry-name">🧩 <code>ExprVisitor</code> <span class="entry-kind">class</span></h3>
+  <div class="entry-file">📁 <code>src/ast/expr_visitor.h</code></div>
+  <div class="entry-sig"><pre><code>class ExprVisitor</code></pre></div>
+</div>
+
+<h3>ast/param_decl.h</h3>
+<div class="api-entry" id="vora">
+  <h3 class="entry-name">📁 <code>vora</code> <span class="entry-kind">namespace</span></h3>
+  <div class="entry-file">📁 <code>src/ast/param_decl.h</code></div>
+</div>
+
+<div class="api-entry" id="Expr">
+  <h3 class="entry-name">📎 <code>Expr</code> <span class="entry-kind">class (前置声明)</span></h3>
+  <div class="entry-file">📁 <code>src/ast/param_decl.h</code></div>
+  <div class="entry-sig"><pre><code>class Expr;</code></pre></div>
+</div>
+
+<div class="api-entry" id="BindingPattern">
+  <h3 class="entry-name">📎 <code>BindingPattern</code> <span class="entry-kind">class (前置声明)</span></h3>
+  <div class="entry-file">📁 <code>src/ast/param_decl.h</code></div>
+  <div class="entry-sig"><pre><code>class BindingPattern;</code></pre></div>
+</div>
+
+<div class="api-entry" id="ParamDecl">
+  <h3 class="entry-name">📦 <code>ParamDecl</code> <span class="entry-kind">struct</span></h3>
+  <div class="entry-file">📁 <code>src/ast/param_decl.h</code></div>
+  <div class="entry-sig"><pre><code>struct ParamDecl</code></pre></div>
+  <p class="entry-brief">A single formal parameter declaration.</p>
+</div>
+
+<h3>ast/program.h</h3>
+<div class="api-entry" id="vora">
+  <h3 class="entry-name">📁 <code>vora</code> <span class="entry-kind">namespace</span></h3>
+  <div class="entry-file">📁 <code>src/ast/program.h</code></div>
+</div>
+
+<div class="api-entry" id="ProgramVisitor">
+  <h3 class="entry-name">🧩 <code>ProgramVisitor</code> <span class="entry-kind">class</span></h3>
+  <div class="entry-file">📁 <code>src/ast/program.h</code></div>
+  <div class="entry-sig"><pre><code>class ProgramVisitor</code></pre></div>
+  <h4>Methods (1)</h4>
+<div class="member-list"><div class="member-item"><code class="member-sig">virtual R visitProgram(const class Program&amp; program) = 0;;</code><span class="member-desc">Visit the root Program node.
+@param program  The program to visit (const reference).
+@return  A value of type R produced by the visit.</span></div></div></div>
+
+<h3>ast/stmt.h</h3>
+<div class="api-entry" id="vora">
+  <h3 class="entry-name">📁 <code>vora</code> <span class="entry-kind">namespace</span></h3>
+  <div class="entry-file">📁 <code>src/ast/stmt.h</code></div>
+</div>
+
+<div class="api-entry" id="StmtVisitor">
+  <h3 class="entry-name">📎 <code>StmtVisitor</code> <span class="entry-kind">class (前置声明)</span></h3>
+  <div class="entry-file">📁 <code>src/ast/stmt.h</code></div>
+  <div class="entry-sig"><pre><code>class StmtVisitor;</code></pre></div>
+</div>
+
+<div class="api-entry" id="Stmt">
+  <h3 class="entry-name">🧩 <code>Stmt</code> <span class="entry-kind">class</span></h3>
+  <div class="entry-file">📁 <code>src/ast/stmt.h</code></div>
+  <div class="entry-sig"><pre><code>class Stmt</code></pre></div>
+  <p class="entry-brief">Abstract base class for all statement AST nodes.</p>
+  <h4>Methods (2)</h4>
+<div class="member-list"><div class="member-item"><code class="member-sig">virtual void         accept(StmtVisitor&lt;void&gt;&amp; visitor)         const = 0;;</code></div><div class="member-item"><code class="member-sig">virtual std::string  accept(StmtVisitor&lt;std::string&gt;&amp; visitor)  const = 0;;</code></div></div></div>
+
+<h3>ast/stmt_visitor.h</h3>
+<div class="api-entry" id="vora">
+  <h3 class="entry-name">📁 <code>vora</code> <span class="entry-kind">namespace</span></h3>
+  <div class="entry-file">📁 <code>src/ast/stmt_visitor.h</code></div>
+</div>
+
+<div class="api-entry" id="StmtVisitor">
+  <h3 class="entry-name">🧩 <code>StmtVisitor</code> <span class="entry-kind">class</span></h3>
+  <div class="entry-file">📁 <code>src/ast/stmt_visitor.h</code></div>
+  <div class="entry-sig"><pre><code>class StmtVisitor</code></pre></div>
+</div>
+
+</div>
+<div class="module-header" id="mod-parser">
+<h2>Parser — 语法分析</h2>
+<p style="color:var(--text2);margin-bottom:24px"><code>src/parser/</code></p>
+<h3>parser/parser.h</h3>
+<div class="api-entry" id="vora">
+  <h3 class="entry-name">📁 <code>vora</code> <span class="entry-kind">namespace</span></h3>
+  <div class="entry-file">📁 <code>src/parser/parser.h</code></div>
+</div>
+
+<div class="api-entry" id="Parser">
+  <h3 class="entry-name">🧩 <code>Parser</code> <span class="entry-kind">class</span></h3>
+  <div class="entry-file">📁 <code>src/parser/parser.h</code></div>
+  <div class="entry-sig"><pre><code>class Parser</code></pre></div>
+  <p class="entry-brief">Recursive-descent + Pratt parser that converts tokens into an AST.</p>
+  <div class="entry-details"><p>The parser is the second stage of the Vora compilation pipeline (Lexer → Parser → Compiler → VM). It consumes the token stream produced by the Lexer and emits an AST rooted in a Program node.<br><br>Error-tolerant design --------------------- Unlike a traditional parser that aborts on the first error, this parser always returns a valid Program. On error, placeholder ErrorExpr / ErrorStmt nodes are inserted and the parser resumes at the next statement boundary. This guarantees that downstream tools (formatter, LSP semantic analysis, compiler) always have a complete AST to work with, even for code that is being actively edited.<br><br>Callers check Parser::hasError() to decide whether to proceed with compilation or to skip code generation and report diagnostics only.<br><br>Usage -----</p></div>
+  <h4>Methods (36)</h4>
+<div class="member-list"><div class="member-item"><code class="member-sig">*               transferred into the parser (moved, not copied).;</code></div><div class="member-item"><code class="member-sig">std::unique_ptr&lt;Program&gt; parse();;</code></div><div class="member-item"><code class="member-sig">* Call this after parse() to decide whether the AST is safe to;</code></div><div class="member-item"><code class="member-sig">* structurally valid (it contains ErrorStmt nodes, not nullptr).;</code></div><div class="member-item"><code class="member-sig">bool hasError() const { return reporter_.hadError(); };</code></div><div class="member-item"><code class="member-sig">* snippets (the caret underlining the error location will be;</code></div><div class="member-item"><code class="member-sig">void setSource(const std::string&amp; source) { sourceText = source; };</code></div><div class="member-item"><code class="member-sig">void error(const std::string&amp; message);;</code></div><div class="member-item"><code class="member-sig">* Convenience combining error() + synchronize() + ErrorStmt creation.;</code></div><div class="member-item"><code class="member-sig">std::unique_ptr&lt;Stmt&gt; errorStmt(const std::string&amp; message);;</code></div><div class="member-item"><code class="member-sig">* Convenience combining error() + synchronize() + ErrorExpr creation.;</code></div><div class="member-item"><code class="member-sig">std::unique_ptr&lt;Expr&gt; errorExpr(const std::string&amp; message);;</code></div><div class="member-item"><code class="member-sig">* likely to start a new statement (after a semicolon, newline at;</code></div><div class="member-item"><code class="member-sig">* After calling synchronize(), advance() will return the first;</code></div><div class="member-item"><code class="member-sig">void synchronize();;</code></div><div class="member-item"><code class="member-sig">std::unique_ptr&lt;Expr&gt; expression();;</code></div><div class="member-item"><code class="member-sig">* First, a prefix (nud) parselet is consumed: parsePrecedence();</code></div><div class="member-item"><code class="member-sig">* Then, while the next token is an infix (led) operator with;</code></div><div class="member-item"><code class="member-sig">* Assignment (=) and compound assignment (+=, -=, *=, /=, %=,;</code></div><div class="member-item"><code class="member-sig">std::unique_ptr&lt;Expr&gt; parsePrecedence(int precedence);;</code></div><div class="member-item"><code class="member-sig">* Handles literal tokens (number, string, bool, null, this),;</code></div><div class="member-item"><code class="member-sig">* grouping parentheses (which recurse via expression()), array;</code></div><div class="member-item"><code class="member-sig">* expressions (via funcExpression()), match expressions (via;</code></div><div class="member-item"><code class="member-sig">* matchExpression()), string interpolation parsing, and;</code></div><div class="member-item"><code class="member-sig">std::unique_ptr&lt;Expr&gt; primary();;</code></div><div class="member-item"><code class="member-sig">* identifier or expression, call() repeatedly matches call/index/;</code></div><div class="member-item"><code class="member-sig">std::unique_ptr&lt;Expr&gt; call();;</code></div><div class="member-item"><code class="member-sig">* Parses the form: func(params) { body }.;</code></div><div class="member-item"><code class="member-sig">* Called from primary() when the current token is KW_FUNC and the;</code></div><div class="member-item"><code class="member-sig">std::unique_ptr&lt;Expr&gt; funcExpression();;</code></div><div class="member-item"><code class="member-sig">std::unique_ptr&lt;Expr&gt; yieldExpression();;</code></div><div class="member-item"><code class="member-sig">* or wildcards (_).;</code></div><div class="member-item"><code class="member-sig">std::unique_ptr&lt;Expr&gt; matchExpression();;</code></div><div class="member-item"><code class="member-sig">* Used internally by matchExpression() to parse each case before;</code></div><div class="member-item"><code class="member-sig">MatchPattern parseMatchPattern();;</code></div><div class="member-item"><code class="member-sig">std::unique_ptr&lt;Expr&gt; finishCall(;</code></div></div></div>
+
+</div>
+<div class="module-header" id="mod-vm">
+<h2>VM — 字节码虚拟机</h2>
+<p style="color:var(--text2);margin-bottom:24px"><code>src/vm/</code></p>
+<h3>vm/chunk.h</h3>
+<div class="api-entry" id="vora">
+  <h3 class="entry-name">📁 <code>vora</code> <span class="entry-kind">namespace</span></h3>
+  <div class="entry-file">📁 <code>src/vm/chunk.h</code></div>
+</div>
+
+<div class="api-entry" id="printSourceLine">
+  <h3 class="entry-name">⚡ <code>printSourceLine</code> <span class="entry-kind">function</span></h3>
+  <div class="entry-file">📁 <code>src/vm/chunk.h</code></div>
+  <div class="entry-sig"><pre><code>void printSourceLine(std::ostream&amp; out,</code></pre></div>
+  <p class="entry-brief">Print a source line with a caret marker at the given position.</p>
+  <h4>Parameters</h4>
+<table class="param-table"><thead><tr><th>Parameter</th><th>Description</th></tr></thead><tbody><tr><td class="param-name"><code>out</code></td><td>Output stream (e.g. std::cerr).</td></tr><tr><td class="param-name"><code>source</code></td><td>Full source text (may be empty — function prints nothing).</td></tr><tr><td class="param-name"><code>line</code></td><td>1-indexed line number.</td></tr><tr><td class="param-name"><code>column</code></td><td>1-indexed column within that line.</td></tr><tr><td class="param-name"><code>length</code></td><td>Number of characters to underline (1 = single caret, &gt;1 = tilde span).</td></tr><tr><td class="param-name"><code>label</code></td><td>Message label printed next to the caret line.</td></tr><tr><td class="param-name"><code>prefix</code></td><td>Label for the --&gt; line (default &quot;Error&quot;).</td></tr></tbody></table></div>
+
+<div class="api-entry" id="printSourceError">
+  <h3 class="entry-name">⚡ <code>printSourceError</code> <span class="entry-kind">function</span></h3>
+  <div class="entry-file">📁 <code>src/vm/chunk.h</code></div>
+  <div class="entry-sig"><pre><code>inline void printSourceError(std::ostream&amp; out,</code></pre></div>
+  <p class="entry-brief">Convenience wrapper around printSourceLine() for single-point errors.</p>
+  <h4>Parameters</h4>
+<table class="param-table"><thead><tr><th>Parameter</th><th>Description</th></tr></thead><tbody><tr><td class="param-name"><code>out</code></td><td>Output stream.</td></tr><tr><td class="param-name"><code>source</code></td><td>Full source text.</td></tr><tr><td class="param-name"><code>line</code></td><td>1-indexed line number.</td></tr><tr><td class="param-name"><code>column</code></td><td>1-indexed column number.</td></tr><tr><td class="param-name"><code>message</code></td><td>Error message to display.</td></tr></tbody></table></div>
+
+<div class="api-entry" id="Chunk">
+  <h3 class="entry-name">🧩 <code>Chunk</code> <span class="entry-kind">class</span></h3>
+  <div class="entry-file">📁 <code>src/vm/chunk.h</code></div>
+  <div class="entry-sig"><pre><code>class Chunk</code></pre></div>
+  <p class="entry-brief">Compiled bytecode container with constant pool and debug metadata.</p>
+  <h4>Methods (16)</h4>
+<div class="member-list"><div class="member-item"><code class="member-sig">void write(uint8_t byte, int line, int column);;</code></div><div class="member-item"><code class="member-sig">* Used for instructions like OP_CONSTANT (index operand), OP_JUMP;</code></div><div class="member-item"><code class="member-sig">void write(uint8_t a, uint8_t b, int line, int column);;</code></div><div class="member-item"><code class="member-sig">* append via write().;</code></div><div class="member-item"><code class="member-sig">void writeAt(size_t offset, uint8_t byte);;</code></div><div class="member-item"><code class="member-sig">* String, int64_t, and double constants are deduplicated in O(1) via;</code></div><div class="member-item"><code class="member-sig">size_t addConstant(Value value);;</code></div><div class="member-item"><code class="member-sig">* Equivalent to calling addConstant() followed by write() with OP_CONSTANT;</code></div><div class="member-item"><code class="member-sig">void writeConstant(Value value, int line, int column);;</code></div><div class="member-item"><code class="member-sig">void disassemble(const std::string&amp; name) const;;</code></div><div class="member-item"><code class="member-sig">size_t disassembleInstruction(size_t offset) const;;</code></div><div class="member-item"><code class="member-sig">* Format: interleaved (count, value) pairs. `count` bytes at consecutive;</code></div><div class="member-item"><code class="member-sig">* Same interleaved (count, value) format as `lines`.;</code></div><div class="member-item"><code class="member-sig">void writeLineColumn(int line, int column);;</code></div><div class="member-item"><code class="member-sig">* addConstant() call for a string would require an O(n) linear scan.;</code></div><div class="member-item"><code class="member-sig">* Integer constants are very common (loop bounds, small literals, array;</code></div></div></div>
+
+<h3>vm/compiler.h</h3>
+<div class="api-entry" id="vora">
+  <h3 class="entry-name">📁 <code>vora</code> <span class="entry-kind">namespace</span></h3>
+  <div class="entry-file">📁 <code>src/vm/compiler.h</code></div>
+</div>
+
+<div class="api-entry" id="UpvalueDescriptor">
+  <h3 class="entry-name">📦 <code>UpvalueDescriptor</code> <span class="entry-kind">struct</span></h3>
+  <div class="entry-file">📁 <code>src/vm/compiler.h</code></div>
+  <div class="entry-sig"><pre><code>struct UpvalueDescriptor</code></pre></div>
+  <p class="entry-brief">@brief Describes a captured variable for closure upvalue resolution.
+
+When a nested function references a variable from an enclosing scope,
+the compiler creates an UpvalueDescriptor to track whether the variable
+is a local of the immediate enclosing function or an upvalue further up
+the chain.</p>
+</div>
+
+<h3>vm/opcode.h</h3>
+<div class="api-entry" id="vora">
+  <h3 class="entry-name">📁 <code>vora</code> <span class="entry-kind">namespace</span></h3>
+  <div class="entry-file">📁 <code>src/vm/opcode.h</code></div>
+</div>
+
+<div class="api-entry" id="OpCode">
+  <h3 class="entry-name">🔢 <code>OpCode</code> <span class="entry-kind">enum</span></h3>
+  <div class="entry-file">📁 <code>src/vm/opcode.h</code></div>
+  <div class="entry-sig"><pre><code>enum class OpCode : uint8_t {</code></pre></div>
+  <p class="entry-brief">Bytecode instruction opcodes for the Vora virtual machine.</p>
+</div>
+
+<h3>vm/value_ops.h</h3>
+<div class="api-entry" id="vora">
+  <h3 class="entry-name">📁 <code>vora</code> <span class="entry-kind">namespace</span></h3>
+  <div class="entry-file">📁 <code>src/vm/value_ops.h</code></div>
+</div>
+
+<div class="api-entry" id="isTruthy">
+  <h3 class="entry-name">⚡ <code>isTruthy</code> <span class="entry-kind">function</span></h3>
+  <div class="entry-file">📁 <code>src/vm/value_ops.h</code></div>
+  <div class="entry-sig"><pre><code>bool isTruthy(const Value&amp; value);</code></pre></div>
+  <p class="entry-brief">Determine whether a Value is truthy using Python-style rules.</p>
+  <h4>Parameters</h4>
+<table class="param-table"><thead><tr><th>Parameter</th><th>Description</th></tr></thead><tbody><tr><td class="param-name"><code>value</code></td><td>The Value to evaluate.</td></tr></tbody></table>  <p class="entry-returns"><strong>Returns:</strong> `true` if the value is truthy, `false` otherwise.</p>
+</div>
+
+<div class="api-entry" id="valuesEqual">
+  <h3 class="entry-name">⚡ <code>valuesEqual</code> <span class="entry-kind">function</span></h3>
+  <div class="entry-file">📁 <code>src/vm/value_ops.h</code></div>
+  <div class="entry-sig"><pre><code>bool valuesEqual(const Value&amp; a, const Value&amp; b);</code></pre></div>
+  <p class="entry-brief">Compare two Values for structural equality with cross-type numeric        promotion.</p>
+  <h4>Parameters</h4>
+<table class="param-table"><thead><tr><th>Parameter</th><th>Description</th></tr></thead><tbody><tr><td class="param-name"><code>a</code></td><td>The left-hand Value operand.</td></tr><tr><td class="param-name"><code>b</code></td><td>The right-hand Value operand.</td></tr></tbody></table>  <p class="entry-returns"><strong>Returns:</strong> `true` if the values are structurally equal, `false` otherwise.</p>
+</div>
+
+<div class="api-entry" id="valuesCompare">
+  <h3 class="entry-name">⚡ <code>valuesCompare</code> <span class="entry-kind">function</span></h3>
+  <div class="entry-file">📁 <code>src/vm/value_ops.h</code></div>
+  <div class="entry-sig"><pre><code>int valuesCompare(const Value&amp; a, const Value&amp; b);</code></pre></div>
+  <p class="entry-brief">Perform a three-way numeric comparison of two Values.</p>
+  <h4>Parameters</h4>
+<table class="param-table"><thead><tr><th>Parameter</th><th>Description</th></tr></thead><tbody><tr><td class="param-name"><code>a</code></td><td>The left-hand Value operand.</td></tr><tr><td class="param-name"><code>b</code></td><td>The right-hand Value operand.</td></tr></tbody></table>  <p class="entry-returns"><strong>Returns:</strong> `-1` if @p a is less than @p b, `0` if equal, `1` if greater.</p>
+</div>
+
+<div class="api-entry" id="addValues">
+  <h3 class="entry-name">⚡ <code>addValues</code> <span class="entry-kind">function</span></h3>
+  <div class="entry-file">📁 <code>src/vm/value_ops.h</code></div>
+  <div class="entry-sig"><pre><code>Value addValues(const Value&amp; a, const Value&amp; b, bool&amp; error);</code></pre></div>
+  <p class="entry-brief">Perform addition (or concatenation) with type coercion.</p>
+  <h4>Parameters</h4>
+<table class="param-table"><thead><tr><th>Parameter</th><th>Description</th></tr></thead><tbody><tr><td class="param-name"><code>a</code></td><td>The left-hand Value operand.</td></tr><tr><td class="param-name"><code>b</code></td><td>The right-hand Value operand.</td></tr><tr><td class="param-name"><code>error</code></td><td>[out] Set to `true` when the operand types are incompatible for
+             the requested operation; set to `false` on success.</td></tr></tbody></table>  <p class="entry-returns"><strong>Returns:</strong> The result Value on success, or a null Value when `error` is `true`.</p>
+</div>
+
+<h3>vm/vm.h</h3>
+<div class="api-entry" id="vora">
+  <h3 class="entry-name">📁 <code>vora</code> <span class="entry-kind">namespace</span></h3>
+  <div class="entry-file">📁 <code>src/vm/vm.h</code></div>
+</div>
+
+<div class="api-entry" id="VoraFunction">
+  <h3 class="entry-name">📎 <code>VoraFunction</code> <span class="entry-kind">class (前置声明)</span></h3>
+  <div class="entry-file">📁 <code>src/vm/vm.h</code></div>
+  <div class="entry-sig"><pre><code>class VoraFunction;  // forward declaration
+
+/// @brief Result of a VM interpretation run.
+enum class InterpretResult {
+    OK,              ///&lt; Execution completed successfully.
+    COMPILE_ERROR,   ///&lt; Compilation failed before execution.
+    RUNTIME_ERROR,   ///&lt; A runtime error occurred dur...</code></pre></div>
+</div>
+
+</div>
+<div class="module-header" id="mod-runtime">
+<h2>Runtime — 运行时系统</h2>
+<p style="color:var(--text2);margin-bottom:24px"><code>src/runtime/</code></p>
+<h3>runtime/bound_method.h</h3>
+<div class="api-entry" id="vora">
+  <h3 class="entry-name">📁 <code>vora</code> <span class="entry-kind">namespace</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/bound_method.h</code></div>
+</div>
+
+<div class="api-entry" id="NativeFunction">
+  <h3 class="entry-name">📎 <code>NativeFunction</code> <span class="entry-kind">class (前置声明)</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/bound_method.h</code></div>
+  <div class="entry-sig"><pre><code>class NativeFunction;</code></pre></div>
+</div>
+
+<div class="api-entry" id="ObjectInstance">
+  <h3 class="entry-name">📎 <code>ObjectInstance</code> <span class="entry-kind">class (前置声明)</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/bound_method.h</code></div>
+  <div class="entry-sig"><pre><code>class ObjectInstance;</code></pre></div>
+</div>
+
+<div class="api-entry" id="FunctionPrototype">
+  <h3 class="entry-name">📄 <code>FunctionPrototype</code> <span class="entry-kind">struct (前置声明)</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/bound_method.h</code></div>
+  <div class="entry-sig"><pre><code>struct FunctionPrototype;   // defined in compiler.h
+class VoraFunction;</code></pre></div>
+</div>
+
+<div class="api-entry" id="VoraFunction">
+  <h3 class="entry-name">📎 <code>VoraFunction</code> <span class="entry-kind">class (前置声明)</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/bound_method.h</code></div>
+  <div class="entry-sig"><pre><code>class VoraFunction;</code></pre></div>
+</div>
+
+<div class="api-entry" id="BoundMethod">
+  <h3 class="entry-name">🧩 <code>BoundMethod</code> <span class="entry-kind">class</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/bound_method.h</code></div>
+  <div class="entry-sig"><pre><code>class BoundMethod : public Callable</code></pre></div>
+  <p class="entry-brief">A method bound to a specific object instance.</p>
+  <h4>Methods (6)</h4>
+<div class="member-list"><div class="member-item"><code class="member-sig">Value call(const std::vector&lt;Value&gt;&amp; arguments) override;;</code></div><div class="member-item"><code class="member-sig">GcPtr&lt;ObjectInstance&gt; getInstance() const { return instance_; };</code></div><div class="member-item"><code class="member-sig">const FunctionPrototype* getMethodProto() const { return methodProto_; };</code></div><div class="member-item"><code class="member-sig">GcPtr&lt;VoraFunction&gt; getMethodFunc() const { return methodFunc_; };</code></div><div class="member-item"><code class="member-sig">void trace(std::vector&lt;GcObject*&gt;&amp; wl) override;;</code></div><div class="member-item"><code class="member-sig">size_t gcSize() const override;;</code></div></div></div>
+
+<h3>runtime/builtins.h</h3>
+<div class="api-entry" id="vora">
+  <h3 class="entry-name">📁 <code>vora</code> <span class="entry-kind">namespace</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/builtins.h</code></div>
+</div>
+
+<div class="api-entry" id="VM">
+  <h3 class="entry-name">📎 <code>VM</code> <span class="entry-kind">class (前置声明)</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/builtins.h</code></div>
+  <div class="entry-sig"><pre><code>class VM;</code></pre></div>
+</div>
+
+<div class="api-entry" id="Array">
+  <h3 class="entry-name">📄 <code>Array</code> <span class="entry-kind">struct (前置声明)</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/builtins.h</code></div>
+  <div class="entry-sig"><pre><code>struct Array;</code></pre></div>
+</div>
+
+<div class="api-entry" id="Dict">
+  <h3 class="entry-name">📄 <code>Dict</code> <span class="entry-kind">struct (前置声明)</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/builtins.h</code></div>
+  <div class="entry-sig"><pre><code>struct Dict;</code></pre></div>
+</div>
+
+<div class="api-entry" id="Set">
+  <h3 class="entry-name">📄 <code>Set</code> <span class="entry-kind">struct (前置声明)</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/builtins.h</code></div>
+  <div class="entry-sig"><pre><code>struct Set;</code></pre></div>
+</div>
+
+<div class="api-entry" id="Map">
+  <h3 class="entry-name">📄 <code>Map</code> <span class="entry-kind">struct (前置声明)</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/builtins.h</code></div>
+  <div class="entry-sig"><pre><code>struct Map;</code></pre></div>
+</div>
+
+<div class="api-entry" id="NativeFunction">
+  <h3 class="entry-name">📎 <code>NativeFunction</code> <span class="entry-kind">class (前置声明)</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/builtins.h</code></div>
+  <div class="entry-sig"><pre><code>class NativeFunction;</code></pre></div>
+</div>
+
+<div class="api-entry" id="registerBuiltins">
+  <h3 class="entry-name">⚡ <code>registerBuiltins</code> <span class="entry-kind">function</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/builtins.h</code></div>
+  <div class="entry-sig"><pre><code>void registerBuiltins(VM&amp; vm);</code></pre></div>
+  <p class="entry-brief">Register all core built-in native functions on a VM.</p>
+  <h4>Parameters</h4>
+<table class="param-table"><thead><tr><th>Parameter</th><th>Description</th></tr></thead><tbody><tr><td class="param-name"><code>vm</code></td><td>The VM instance to register functions into.</td></tr></tbody></table></div>
+
+<div class="api-entry" id="registerMathBuiltins">
+  <h3 class="entry-name">⚡ <code>registerMathBuiltins</code> <span class="entry-kind">function</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/builtins.h</code></div>
+  <div class="entry-sig"><pre><code>void registerMathBuiltins(VM&amp; vm);</code></pre></div>
+  <p class="entry-brief">Register math built-in native functions.</p>
+  <h4>Parameters</h4>
+<table class="param-table"><thead><tr><th>Parameter</th><th>Description</th></tr></thead><tbody><tr><td class="param-name"><code>vm</code></td><td>The VM instance to register functions into.</td></tr></tbody></table></div>
+
+<div class="api-entry" id="registerJsonBuiltins">
+  <h3 class="entry-name">⚡ <code>registerJsonBuiltins</code> <span class="entry-kind">function</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/builtins.h</code></div>
+  <div class="entry-sig"><pre><code>void registerJsonBuiltins(VM&amp; vm);</code></pre></div>
+  <p class="entry-brief">Register JSON built-in native functions.</p>
+  <h4>Parameters</h4>
+<table class="param-table"><thead><tr><th>Parameter</th><th>Description</th></tr></thead><tbody><tr><td class="param-name"><code>vm</code></td><td>The VM instance to register functions into.</td></tr></tbody></table></div>
+
+<div class="api-entry" id="registerFsBuiltins">
+  <h3 class="entry-name">⚡ <code>registerFsBuiltins</code> <span class="entry-kind">function</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/builtins.h</code></div>
+  <div class="entry-sig"><pre><code>void registerFsBuiltins(VM&amp; vm);</code></pre></div>
+  <p class="entry-brief">Register filesystem built-in native functions.</p>
+  <h4>Parameters</h4>
+<table class="param-table"><thead><tr><th>Parameter</th><th>Description</th></tr></thead><tbody><tr><td class="param-name"><code>vm</code></td><td>The VM instance to register functions into.</td></tr></tbody></table></div>
+
+<div class="api-entry" id="registerOsBuiltins">
+  <h3 class="entry-name">⚡ <code>registerOsBuiltins</code> <span class="entry-kind">function</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/builtins.h</code></div>
+  <div class="entry-sig"><pre><code>void registerOsBuiltins(VM&amp; vm);</code></pre></div>
+  <p class="entry-brief">Register OS-level built-in native functions.</p>
+  <h4>Parameters</h4>
+<table class="param-table"><thead><tr><th>Parameter</th><th>Description</th></tr></thead><tbody><tr><td class="param-name"><code>vm</code></td><td>The VM instance to register functions into.</td></tr></tbody></table></div>
+
+<div class="api-entry" id="registerDatetimeBuiltins">
+  <h3 class="entry-name">⚡ <code>registerDatetimeBuiltins</code> <span class="entry-kind">function</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/builtins.h</code></div>
+  <div class="entry-sig"><pre><code>void registerDatetimeBuiltins(VM&amp; vm);</code></pre></div>
+  <p class="entry-brief">Register datetime built-in native functions.</p>
+  <h4>Parameters</h4>
+<table class="param-table"><thead><tr><th>Parameter</th><th>Description</th></tr></thead><tbody><tr><td class="param-name"><code>vm</code></td><td>The VM instance to register functions into.</td></tr></tbody></table></div>
+
+<div class="api-entry" id="registerRegexBuiltins">
+  <h3 class="entry-name">⚡ <code>registerRegexBuiltins</code> <span class="entry-kind">function</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/builtins.h</code></div>
+  <div class="entry-sig"><pre><code>void registerRegexBuiltins(VM&amp; vm);</code></pre></div>
+  <p class="entry-brief">Register regex built-in native functions.</p>
+  <h4>Parameters</h4>
+<table class="param-table"><thead><tr><th>Parameter</th><th>Description</th></tr></thead><tbody><tr><td class="param-name"><code>vm</code></td><td>The VM instance to register functions into.</td></tr></tbody></table></div>
+
+<div class="api-entry" id="setProgramArgs">
+  <h3 class="entry-name">⚡ <code>setProgramArgs</code> <span class="entry-kind">function</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/builtins.h</code></div>
+  <div class="entry-sig"><pre><code>void setProgramArgs(int argc, char* argv[]);</code></pre></div>
+  <p class="entry-brief">Set the program argument list for os.args().</p>
+  <h4>Parameters</h4>
+<table class="param-table"><thead><tr><th>Parameter</th><th>Description</th></tr></thead><tbody><tr><td class="param-name"><code>argc</code></td><td>Argument count (including program name).</td></tr><tr><td class="param-name"><code>argv</code></td><td>Argument vector.</td></tr></tbody></table></div>
+
+<div class="api-entry" id="getArrayMethod">
+  <h3 class="entry-name">⚡ <code>getArrayMethod</code> <span class="entry-kind">function</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/builtins.h</code></div>
+  <div class="entry-sig"><pre><code>GcPtr&lt;NativeFunction&gt; getArrayMethod(</code></pre></div>
+  <p class="entry-brief">Array method factory.</p>
+  <h4>Parameters</h4>
+<table class="param-table"><thead><tr><th>Parameter</th><th>Description</th></tr></thead><tbody><tr><td class="param-name"><code>name</code></td><td>Method name.</td></tr><tr><td class="param-name"><code>arr</code></td><td>The target array instance.</td></tr></tbody></table>  <p class="entry-returns"><strong>Returns:</strong> A NativeFunction bound to @p arr, or nullptr if the method name
+        is unknown.</p>
+</div>
+
+<div class="api-entry" id="getStringMethod">
+  <h3 class="entry-name">⚡ <code>getStringMethod</code> <span class="entry-kind">function</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/builtins.h</code></div>
+  <div class="entry-sig"><pre><code>GcPtr&lt;NativeFunction&gt; getStringMethod(</code></pre></div>
+  <p class="entry-brief">String method factory.</p>
+  <h4>Parameters</h4>
+<table class="param-table"><thead><tr><th>Parameter</th><th>Description</th></tr></thead><tbody><tr><td class="param-name"><code>name</code></td><td>Method name.</td></tr><tr><td class="param-name"><code>str</code></td><td>The target string (by value — ownership transferred).</td></tr></tbody></table>  <p class="entry-returns"><strong>Returns:</strong> A NativeFunction bound to @p str, or nullptr if the method name
+        is unknown.</p>
+</div>
+
+<div class="api-entry" id="getDictMethod">
+  <h3 class="entry-name">⚡ <code>getDictMethod</code> <span class="entry-kind">function</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/builtins.h</code></div>
+  <div class="entry-sig"><pre><code>GcPtr&lt;NativeFunction&gt; getDictMethod(</code></pre></div>
+  <p class="entry-brief">Dict method factory.</p>
+  <h4>Parameters</h4>
+<table class="param-table"><thead><tr><th>Parameter</th><th>Description</th></tr></thead><tbody><tr><td class="param-name"><code>name</code></td><td>Method name.</td></tr><tr><td class="param-name"><code>dict</code></td><td>The target dict instance.</td></tr></tbody></table>  <p class="entry-returns"><strong>Returns:</strong> A NativeFunction bound to @p dict, or nullptr if the method name
+        is unknown.</p>
+</div>
+
+<div class="api-entry" id="getSetMethod">
+  <h3 class="entry-name">⚡ <code>getSetMethod</code> <span class="entry-kind">function</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/builtins.h</code></div>
+  <div class="entry-sig"><pre><code>GcPtr&lt;NativeFunction&gt; getSetMethod(</code></pre></div>
+  <p class="entry-brief">Set method factory.</p>
+  <h4>Parameters</h4>
+<table class="param-table"><thead><tr><th>Parameter</th><th>Description</th></tr></thead><tbody><tr><td class="param-name"><code>name</code></td><td>Method name.</td></tr><tr><td class="param-name"><code>set</code></td><td>The target set instance.</td></tr></tbody></table>  <p class="entry-returns"><strong>Returns:</strong> A NativeFunction bound to @p set, or nullptr if the method name
+        is unknown.</p>
+</div>
+
+<div class="api-entry" id="getMapMethod">
+  <h3 class="entry-name">⚡ <code>getMapMethod</code> <span class="entry-kind">function</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/builtins.h</code></div>
+  <div class="entry-sig"><pre><code>GcPtr&lt;NativeFunction&gt; getMapMethod(</code></pre></div>
+  <p class="entry-brief">Map method factory.</p>
+  <h4>Parameters</h4>
+<table class="param-table"><thead><tr><th>Parameter</th><th>Description</th></tr></thead><tbody><tr><td class="param-name"><code>name</code></td><td>Method name.</td></tr><tr><td class="param-name"><code>map</code></td><td>The target map instance.</td></tr></tbody></table>  <p class="entry-returns"><strong>Returns:</strong> A NativeFunction bound to @p map, or nullptr if the method name
+        is unknown.</p>
+</div>
+
+<h3>runtime/callable.h</h3>
+<div class="api-entry" id="vora">
+  <h3 class="entry-name">📁 <code>vora</code> <span class="entry-kind">namespace</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/callable.h</code></div>
+</div>
+
+<div class="api-entry" id="VM">
+  <h3 class="entry-name">📎 <code>VM</code> <span class="entry-kind">class (前置声明)</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/callable.h</code></div>
+  <div class="entry-sig"><pre><code>class VM;</code></pre></div>
+</div>
+
+<div class="api-entry" id="Callable">
+  <h3 class="entry-name">🧩 <code>Callable</code> <span class="entry-kind">class</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/callable.h</code></div>
+  <div class="entry-sig"><pre><code>class Callable : public GcObject</code></pre></div>
+  <p class="entry-brief">Abstract base for every object that can be invoked with        function-call syntax.</p>
+  <h4>Methods (3)</h4>
+<div class="member-list"><div class="member-item"><code class="member-sig">virtual Value call(const std::vector&lt;Value&gt;&amp; arguments) = 0;;</code><span class="member-desc">@brief  Invoke this callable with positional arguments (no VM access).
+@param  arguments  Positional argument list.
+@return The result value produced by the invocation.</span></div><div class="member-item"><code class="member-sig">virtual Value call(VM&amp; vm, const std::vector&lt;Value&gt;&amp; arguments) {;</code><span class="member-desc">@brief  Invoke this callable with VM context.
+@param  vm         The calling Virtual Machine instance.
+@param  arguments  Positional argument list.
+@return The result value produced by the invocation.</span></div><div class="member-item"><code class="member-sig">return call(arguments);;</code></div></div></div>
+
+<h3>runtime/class_constructor.h</h3>
+<div class="api-entry" id="vora">
+  <h3 class="entry-name">📁 <code>vora</code> <span class="entry-kind">namespace</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/class_constructor.h</code></div>
+</div>
+
+<div class="api-entry" id="VoraFunction">
+  <h3 class="entry-name">📎 <code>VoraFunction</code> <span class="entry-kind">class (前置声明)</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/class_constructor.h</code></div>
+  <div class="entry-sig"><pre><code>class VoraFunction;</code></pre></div>
+</div>
+
+<div class="api-entry" id="FunctionPrototype">
+  <h3 class="entry-name">📄 <code>FunctionPrototype</code> <span class="entry-kind">struct (前置声明)</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/class_constructor.h</code></div>
+  <div class="entry-sig"><pre><code>struct FunctionPrototype;</code></pre></div>
+</div>
+
+<div class="api-entry" id="ClassDefinition">
+  <h3 class="entry-name">📄 <code>ClassDefinition</code> <span class="entry-kind">struct (前置声明)</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/class_constructor.h</code></div>
+  <div class="entry-sig"><pre><code>struct ClassDefinition;</code></pre></div>
+</div>
+
+<div class="api-entry" id="VM">
+  <h3 class="entry-name">📎 <code>VM</code> <span class="entry-kind">class (前置声明)</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/class_constructor.h</code></div>
+  <div class="entry-sig"><pre><code>class VM;</code></pre></div>
+</div>
+
+<div class="api-entry" id="ClassConstructor">
+  <h3 class="entry-name">🧩 <code>ClassConstructor</code> <span class="entry-kind">class</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/class_constructor.h</code></div>
+  <div class="entry-sig"><pre><code>class ClassConstructor : public Callable</code></pre></div>
+  <p class="entry-brief">A callable that creates instances of a Vora class.</p>
+  <h4>Methods (7)</h4>
+<div class="member-list"><div class="member-item"><code class="member-sig">* Prefer call(VM&amp;, args) which has access to the real calling VM's;</code></div><div class="member-item"><code class="member-sig">Value call(const std::vector&lt;Value&gt;&amp; arguments) override;;</code></div><div class="member-item"><code class="member-sig">Value call(VM&amp; vm, const std::vector&lt;Value&gt;&amp; args) override;;</code></div><div class="member-item"><code class="member-sig">GcPtr&lt;ClassDefinition&gt; getClassDef() const override { return classDef_; };</code></div><div class="member-item"><code class="member-sig">GcPtr&lt;VoraFunction&gt; getCtorFn() const { return ctorFn_; };</code></div><div class="member-item"><code class="member-sig">void trace(std::vector&lt;GcObject*&gt;&amp; wl) override;;</code></div><div class="member-item"><code class="member-sig">size_t gcSize() const override;;</code></div></div></div>
+
+<h3>runtime/environment.h</h3>
+<div class="api-entry" id="vora">
+  <h3 class="entry-name">📁 <code>vora</code> <span class="entry-kind">namespace</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/environment.h</code></div>
+</div>
+
+<div class="api-entry" id="Environment">
+  <h3 class="entry-name">🧩 <code>Environment</code> <span class="entry-kind">class</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/environment.h</code></div>
+  <div class="entry-sig"><pre><code>class Environment</code></pre></div>
+  <p class="entry-brief">A single frame in the lexical scope chain.</p>
+  <h4>Methods (8)</h4>
+<div class="member-list"><div class="member-item"><code class="member-sig">explicit Environment(;</code></div><div class="member-item"><code class="member-sig">void define(;</code></div><div class="member-item"><code class="member-sig">Value get(;</code></div><div class="member-item"><code class="member-sig">* locally (global-level assignment creates a new global).;</code></div><div class="member-item"><code class="member-sig">void assign(;</code></div><div class="member-item"><code class="member-sig">bool hasLocal(;</code></div><div class="member-item"><code class="member-sig">std::shared_ptr&lt;Environment&gt; enclosingEnvironment() const;;</code></div><div class="member-item"><code class="member-sig">static std::shared_ptr&lt;Environment&gt; snapshot(;</code></div></div></div>
+
+<h3>runtime/native_function.h</h3>
+<div class="api-entry" id="vora">
+  <h3 class="entry-name">📁 <code>vora</code> <span class="entry-kind">namespace</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/native_function.h</code></div>
+</div>
+
+<div class="api-entry" id="NativeFunction">
+  <h3 class="entry-name">🧩 <code>NativeFunction</code> <span class="entry-kind">class</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/native_function.h</code></div>
+  <div class="entry-sig"><pre><code>class NativeFunction : public Callable</code></pre></div>
+  <p class="entry-brief">A pure native (C++) function that Vora code can call.</p>
+  <h4>Methods (6)</h4>
+<div class="member-list"><div class="member-item"><code class="member-sig">* arity() before calling, so the callback need not re-validate.;</code></div><div class="member-item"><code class="member-sig">Value call(const std::vector&lt;Value&gt;&amp; arguments) override;;</code></div><div class="member-item"><code class="member-sig">const std::string&amp; name() const;;</code></div><div class="member-item"><code class="member-sig">int arity() const;;</code></div><div class="member-item"><code class="member-sig">void trace(std::vector&lt;GcObject*&gt;&amp; wl) override;;</code></div><div class="member-item"><code class="member-sig">size_t gcSize() const override;;</code></div></div></div>
+
+<h3>runtime/runtime_error.h</h3>
+<div class="api-entry" id="vora">
+  <h3 class="entry-name">📁 <code>vora</code> <span class="entry-kind">namespace</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/runtime_error.h</code></div>
+</div>
+
+<div class="api-entry" id="RuntimeError">
+  <h3 class="entry-name">🧩 <code>RuntimeError</code> <span class="entry-kind">class</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/runtime_error.h</code></div>
+  <div class="entry-sig"><pre><code>class RuntimeError : public std::runtime_error</code></pre></div>
+  <p class="entry-brief">Exception thrown when a runtime error occurs during VM execution.</p>
+  <h4>Methods (3)</h4>
+<div class="member-list"><div class="member-item"><code class="member-sig">const Token&amp; token() const noexcept;;</code></div><div class="member-item"><code class="member-sig">int line() const noexcept;;</code></div><div class="member-item"><code class="member-sig">int column() const noexcept;;</code></div></div></div>
+
+<h3>runtime/value.h</h3>
+<div class="api-entry" id="vora">
+  <h3 class="entry-name">📁 <code>vora</code> <span class="entry-kind">namespace</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/value.h</code></div>
+</div>
+
+<div class="api-entry" id="Chunk">
+  <h3 class="entry-name">📄 <code>Chunk</code> <span class="entry-kind">struct (前置声明)</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/value.h</code></div>
+  <div class="entry-sig"><pre><code>struct Chunk;        // defined in vm/chunk.h
+class Callable;</code></pre></div>
+  <p class="entry-brief">@brief Forward declarations for types defined in other translation units.
+@{</p>
+</div>
+
+<div class="api-entry" id="Callable">
+  <h3 class="entry-name">📎 <code>Callable</code> <span class="entry-kind">class (前置声明)</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/value.h</code></div>
+  <div class="entry-sig"><pre><code>class Callable;</code></pre></div>
+</div>
+
+<div class="api-entry" id="VoraFunction">
+  <h3 class="entry-name">📎 <code>VoraFunction</code> <span class="entry-kind">class (前置声明)</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/value.h</code></div>
+  <div class="entry-sig"><pre><code>class VoraFunction;</code></pre></div>
+</div>
+
+<div class="api-entry" id="NativeFunction">
+  <h3 class="entry-name">📎 <code>NativeFunction</code> <span class="entry-kind">class (前置声明)</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/value.h</code></div>
+  <div class="entry-sig"><pre><code>class NativeFunction;</code></pre></div>
+</div>
+
+<div class="api-entry" id="BlockStmt">
+  <h3 class="entry-name">📄 <code>BlockStmt</code> <span class="entry-kind">struct (前置声明)</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/value.h</code></div>
+  <div class="entry-sig"><pre><code>struct BlockStmt;</code></pre></div>
+</div>
+
+<div class="api-entry" id="FunctionPrototype">
+  <h3 class="entry-name">📦 <code>FunctionPrototype</code> <span class="entry-kind">struct</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/value.h</code></div>
+  <div class="entry-sig"><pre><code>struct FunctionPrototype;   // defined in compiler.h (needs Chunk)</code></pre></div>
+</div>
+
+<div class="api-entry" id="ClassDefinition">
+  <h3 class="entry-name">📦 <code>ClassDefinition</code> <span class="entry-kind">struct</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/value.h</code></div>
+  <div class="entry-sig"><pre><code>struct ClassDefinition;     // defined in compiler.h</code></pre></div>
+</div>
+
+<div class="api-entry" id="Set">
+  <h3 class="entry-name">📦 <code>Set</code> <span class="entry-kind">struct</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/value.h</code></div>
+  <div class="entry-sig"><pre><code>struct Set;                 // defined below (needs ValueHash/ValueEqual)</code></pre></div>
+</div>
+
+<div class="api-entry" id="Map">
+  <h3 class="entry-name">📦 <code>Map</code> <span class="entry-kind">struct</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/value.h</code></div>
+  <div class="entry-sig"><pre><code>struct Map;                 // defined below (needs ValueHash/ValueEqual)</code></pre></div>
+</div>
+
+<div class="api-entry" id="ValueTag">
+  <h3 class="entry-name">🔢 <code>ValueTag</code> <span class="entry-kind">enum</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/value.h</code></div>
+  <div class="entry-sig"><pre><code>enum class ValueTag : uint8_t {</code></pre></div>
+</div>
+
+<div class="api-entry" id="DispatchTag">
+  <h3 class="entry-name">🔢 <code>DispatchTag</code> <span class="entry-kind">enum</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/value.h</code></div>
+  <div class="entry-sig"><pre><code>enum class DispatchTag : uint8_t {</code></pre></div>
+</div>
+
+<div class="api-entry" id="Value">
+  <h3 class="entry-name">🧩 <code>Value</code> <span class="entry-kind">class</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/value.h</code></div>
+  <div class="entry-sig"><pre><code>class Value</code></pre></div>
+</div>
+
+<h3>runtime/vora_function.h</h3>
+<div class="api-entry" id="vora">
+  <h3 class="entry-name">📁 <code>vora</code> <span class="entry-kind">namespace</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/vora_function.h</code></div>
+</div>
+
+<div class="api-entry" id="FunctionPrototype">
+  <h3 class="entry-name">📄 <code>FunctionPrototype</code> <span class="entry-kind">struct (前置声明)</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/vora_function.h</code></div>
+  <div class="entry-sig"><pre><code>struct FunctionPrototype;</code></pre></div>
+</div>
+
+<div class="api-entry" id="VoraFunction">
+  <h3 class="entry-name">🧩 <code>VoraFunction</code> <span class="entry-kind">class</span></h3>
+  <div class="entry-file">📁 <code>src/runtime/vora_function.h</code></div>
+  <div class="entry-sig"><pre><code>class VoraFunction : public Callable</code></pre></div>
+  <p class="entry-brief">A bytecode-compiled Vora function, potentially a closure.</p>
+  <h4>Methods (10)</h4>
+<div class="member-list"><div class="member-item"><code class="member-sig">* VoraFunction and calls callVoraFunction() instead, which sets up;</code></div><div class="member-item"><code class="member-sig">Value call(const std::vector&lt;Value&gt;&amp; arguments) override;;</code></div><div class="member-item"><code class="member-sig">const std::string&amp; name() const;;</code></div><div class="member-item"><code class="member-sig">int arity() const { return arity_; };</code></div><div class="member-item"><code class="member-sig">int requiredArity() const { return requiredArity_; };</code></div><div class="member-item"><code class="member-sig">bool hasRest() const { return hasRest_; };</code></div><div class="member-item"><code class="member-sig">const FunctionPrototype* getPrototype() const { return prototype_; };</code></div><div class="member-item"><code class="member-sig">bool isCompiled() const { return prototype_ != nullptr; };</code></div><div class="member-item"><code class="member-sig">void trace(std::vector&lt;GcObject*&gt;&amp; wl) override;;</code></div><div class="member-item"><code class="member-sig">size_t gcSize() const override { return sizeof(VoraFunction); };</code></div></div></div>
+
+</div>
+<div class="module-header" id="mod-gc">
+<h2>GC — 垃圾回收</h2>
+<p style="color:var(--text2);margin-bottom:24px"><code>src/gc/</code></p>
+<h3>gc/gc_heap.h</h3>
+<div class="api-entry" id="vora">
+  <h3 class="entry-name">📁 <code>vora</code> <span class="entry-kind">namespace</span></h3>
+  <div class="entry-file">📁 <code>src/gc/gc_heap.h</code></div>
+</div>
+
+<div class="api-entry" id="GcHeap">
+  <h3 class="entry-name">🧩 <code>GcHeap</code> <span class="entry-kind">class</span></h3>
+  <div class="entry-file">📁 <code>src/gc/gc_heap.h</code></div>
+  <div class="entry-sig"><pre><code>class GcHeap</code></pre></div>
+  <h4>Methods (1)</h4>
+<div class="member-list"><div class="member-item"><code class="member-sig">static GcHeap&amp; instance() {;</code><span class="member-desc">@brief Return the global singleton GcHeap instance (Meyers singleton).
+
+The instance is created on first call and destroyed at program exit
+(static storage duration).  Thread-safe in C++11 and later due to
+guaranteed static-local initialization.
+
+@return Reference to the single GcHeap instance.</span></div></div></div>
+
+<h3>gc/gc_object.h</h3>
+<div class="api-entry" id="vora">
+  <h3 class="entry-name">📁 <code>vora</code> <span class="entry-kind">namespace</span></h3>
+  <div class="entry-file">📁 <code>src/gc/gc_object.h</code></div>
+</div>
+
+<div class="api-entry" id="GcObject">
+  <h3 class="entry-name">🧩 <code>GcObject</code> <span class="entry-kind">class</span></h3>
+  <div class="entry-file">📁 <code>src/gc/gc_object.h</code></div>
+  <div class="entry-sig"><pre><code>class GcObject</code></pre></div>
+  <h4>Methods (4)</h4>
+<div class="member-list"><div class="member-item"><code class="member-sig">virtual void trace(std::vector&lt;GcObject*&gt;&amp; worklist) = 0;;</code></div><div class="member-item"><code class="member-sig">virtual size_t gcSize() const { return sizeof(*this); };</code></div><div class="member-item"><code class="member-sig">bool isMarked() const { return marked_; };</code></div><div class="member-item"><code class="member-sig">void setMarked(bool m) { marked_ = m; };</code></div></div></div>
+
+<h3>gc/gc_ptr.h</h3>
+<div class="api-entry" id="vora">
+  <h3 class="entry-name">📁 <code>vora</code> <span class="entry-kind">namespace</span></h3>
+  <div class="entry-file">📁 <code>src/gc/gc_ptr.h</code></div>
+</div>
+
+<div class="api-entry" id="GcPtr">
+  <h3 class="entry-name">🧩 <code>GcPtr</code> <span class="entry-kind">class</span></h3>
+  <div class="entry-file">📁 <code>src/gc/gc_ptr.h</code></div>
+  <div class="entry-sig"><pre><code>class GcPtr</code></pre></div>
+  <h4>Methods (3)</h4>
+<div class="member-list"><div class="member-item"><code class="member-sig">explicit GcPtr(T* p) : ptr_(p) {};</code></div><div class="member-item"><code class="member-sig">T* get() const { return ptr_; };</code></div><div class="member-item"><code class="member-sig">explicit operator bool() const { return ptr_ != nullptr; };</code></div></div></div>
+
+</div>
+<div class="module-header" id="mod-common">
+<h2>Common — 通用工具</h2>
+<p style="color:var(--text2);margin-bottom:24px"><code>src/common/</code></p>
+<h3>common/error_reporter.h</h3>
+<div class="api-entry" id="vora">
+  <h3 class="entry-name">📁 <code>vora</code> <span class="entry-kind">namespace</span></h3>
+  <div class="entry-file">📁 <code>src/common/error_reporter.h</code></div>
+</div>
+
+<div class="api-entry" id="Severity">
+  <h3 class="entry-name">🔢 <code>Severity</code> <span class="entry-kind">enum</span></h3>
+  <div class="entry-file">📁 <code>src/common/error_reporter.h</code></div>
+  <div class="entry-sig"><pre><code>enum class Severity {</code></pre></div>
+  <p class="entry-brief">Severity level of a diagnostic message.</p>
+</div>
+
+<div class="api-entry" id="Diagnostic">
+  <h3 class="entry-name">📦 <code>Diagnostic</code> <span class="entry-kind">struct</span></h3>
+  <div class="entry-file">📁 <code>src/common/error_reporter.h</code></div>
+  <div class="entry-sig"><pre><code>struct Diagnostic</code></pre></div>
+  <p class="entry-brief">A single diagnostic message anchored to a source location.</p>
+</div>
+
+</div>
+<div class="module-header" id="mod-json_rpc">
+<h2>JSON-RPC — 协议层</h2>
+<p style="color:var(--text2);margin-bottom:24px"><code>src/json_rpc/</code></p>
+<h3>json_rpc/json_rpc.h</h3>
+<div class="api-entry" id="vora">
+  <h3 class="entry-name">📁 <code>vora</code> <span class="entry-kind">namespace</span></h3>
+  <div class="entry-file">📁 <code>src/json_rpc/json_rpc.h</code></div>
+</div>
+
+<div class="api-entry" id="JsonRpcErrorCode">
+  <h3 class="entry-name">🔢 <code>JsonRpcErrorCode</code> <span class="entry-kind">enum</span></h3>
+  <div class="entry-file">📁 <code>src/json_rpc/json_rpc.h</code></div>
+  <div class="entry-sig"><pre><code>enum class JsonRpcErrorCode : int {</code></pre></div>
+  <p class="entry-brief">Standard JSON-RPC 2.0 error codes (pre-defined by the protocol).</p>
+</div>
+
+<div class="api-entry" id="LspErrorCode">
+  <h3 class="entry-name">🔢 <code>LspErrorCode</code> <span class="entry-kind">enum</span></h3>
+  <div class="entry-file">📁 <code>src/json_rpc/json_rpc.h</code></div>
+  <div class="entry-sig"><pre><code>enum class LspErrorCode : int {</code></pre></div>
+  <p class="entry-brief">LSP-specific error codes (JSON-RPC reserves -32800 to -32803 for LSP).</p>
+</div>
+
+<div class="api-entry" id="JsonRpcMessage">
+  <h3 class="entry-name">📦 <code>JsonRpcMessage</code> <span class="entry-kind">struct</span></h3>
+  <div class="entry-file">📁 <code>src/json_rpc/json_rpc.h</code></div>
+  <div class="entry-sig"><pre><code>struct JsonRpcMessage</code></pre></div>
+  <p class="entry-brief">A parsed JSON-RPC 2.0 message.
+
+Uses std::optional fields for discrimination:
+- request:      method + id (non-null)    → isRequest()
+- notification: method + id (absent)      → isNotification()
+- response:     result XOR error + id     → isResponse()
+
+The &quot;jsonrpc&quot; field must be &quot;2.0&quot; — the parser rejects anything else.</p>
+  <h4>Methods (1)</h4>
+<div class="member-list"><div class="member-item"><code class="member-sig">bool isRequest() const noexcept {;</code><span class="member-desc">True if this message is a request (method + non-null id).</span></div></div></div>
+
+<h3>json_rpc/message_router.h</h3>
+<div class="api-entry" id="vora">
+  <h3 class="entry-name">📁 <code>vora</code> <span class="entry-kind">namespace</span></h3>
+  <div class="entry-file">📁 <code>src/json_rpc/message_router.h</code></div>
+</div>
+
+<div class="api-entry" id="MessageRouter">
+  <h3 class="entry-name">🧩 <code>MessageRouter</code> <span class="entry-kind">class</span></h3>
+  <div class="entry-file">📁 <code>src/json_rpc/message_router.h</code></div>
+  <div class="entry-sig"><pre><code>class MessageRouter</code></pre></div>
+  <p class="entry-brief">@brief Routes incoming JSON-RPC 2.0 messages to registered handlers.
+
+Maintains separate registries for requests (methods that return a result)
+and notifications (fire-and-forget methods). Parses raw JSON text, validates
+the JSON-RPC structure, dispatches to the appropriate handler, and returns
+the serialized response.
+
+Error handling follows the JSON-RPC 2.0 specification:
+- Parse errors, invalid requests, and unknown methods generate error
+responses with the standard error codes.
+- Handler exceptions are caught: requests get an InternalError response,
+notifications are logged and dropped.
+
+@note Instances are movable but not copyable, allowing composition
+of routers (e.g. merging method sets from separate modules).
+
+Usage:
+@code
+MessageRouter router;
+router.registerRequest(&quot;initialize&quot;, [](auto&amp; p) { return initResult; });
+router.registerNotification(&quot;initialized&quot;, [](auto&amp; p) { /* ... */ });
+auto response = router.handleMessage(jsonText);
+if (response) { transport.sendMessage(*response); }
+@endcode</p>
+  <h4>Methods (3)</h4>
+<div class="member-list"><div class="member-item"><code class="member-sig">void registerRequest(const std::string&amp; method, RequestHandler handler);;</code><span class="member-desc">@brief Register a handler for a named request method.
+
+Requests expect a response containing the handler's return value.
+
+@param method   The JSON-RPC method name to match against (e.g.
+&quot;textDocument/hover&quot;, &quot;initialize&quot;).
+@param handler  The callback invoked when a matching request arrives.
+Receives the &quot;params&quot; field (or `null` if absent) and
+must return a JSON-serializable result value. If the
+handler throws, an InternalError response (-32603) is
+automatically generated.
+
+@note Overwriting a previously registered method is allowed; the last
+registration wins.</span></div><div class="member-item"><code class="member-sig">void registerNotification(const std::string&amp; method, NotificationHandler handler);;</code><span class="member-desc">@brief Register a handler for a named notification method.
+
+Notifications are fire-and-forget — no response is sent to the caller.
+
+@param method   The JSON-RPC method name to match against (e.g.
+&quot;textDocument/didOpen&quot;, &quot;initialized&quot;).
+@param handler  The callback invoked when a matching notification
+arrives. Receives the &quot;params&quot; field (or `null` if
+absent). Notifications cannot return errors — exceptions
+are caught and silently dropped (logged to stderr).
+
+@note Overwriting a previously registered method is allowed; the last
+registration wins.</span></div><div class="member-item"><code class="member-sig">std::optional&lt;std::string&gt; handleMessage(const std::string&amp; json);;</code><span class="member-desc">@brief Handle a raw JSON-RPC 2.0 message string.
+
+Parses the message, validates the JSON-RPC structure, dispatches to the
+appropriate registered handler, and returns the serialized response.
+This is the single entry point for all incoming messages.
+
+@param json  Raw JSON text as received from the transport layer
+(e.g. after Content-Length header processing in stdio mode).
+
+@return The serialized JSON-RPC response string for requests that have
+an &quot;id&quot; field.
+@retval std::nullopt  For notifications (no &quot;id&quot;), batch messages,
+parse errors lacking an id, or invalid messages without an id —
+i.e., whenever the JSON-RPC spec says no response should be sent.
+
+@note This method is not thread-safe. All calls should be serialized
+from a single consumer thread (the LSP message loop).</span></div></div></div>
+
+<h3>json_rpc/transport.h</h3>
+<div class="api-entry" id="vora">
+  <h3 class="entry-name">📁 <code>vora</code> <span class="entry-kind">namespace</span></h3>
+  <div class="entry-file">📁 <code>src/json_rpc/transport.h</code></div>
+</div>
+
+<div class="api-entry" id="StdioTransport">
+  <h3 class="entry-name">🧩 <code>StdioTransport</code> <span class="entry-kind">class</span></h3>
+  <div class="entry-file">📁 <code>src/json_rpc/transport.h</code></div>
+  <div class="entry-sig"><pre><code>class StdioTransport</code></pre></div>
+  <p class="entry-brief">Read/write JSON-RPC messages over stdin/stdout with Content-Length        framing.</p>
+  <div class="entry-details"><p>Implements the LSP base protocol transport as specified in the LSP specification.  Every message (request, response, or notification) is prefixed with a `Content-Length` header followed by a blank line and the JSON body.<br><br>The class is non-copyable and non-movable — it is designed to be instantiated once and held for the lifetime of the server process, as it exclusively owns the stdin/stdout handles.<br><br>Usage:</p></div>
+  <h4>Methods (7)</h4>
+<div class="member-list"><div class="member-item"><code class="member-sig">std::optional&lt;std::string&gt; readMessage();;</code></div><div class="member-item"><code class="member-sig">bool sendMessage(const std::string&amp; json);;</code></div><div class="member-item"><code class="member-sig">void log(const std::string&amp; message);;</code></div><div class="member-item"><code class="member-sig">* or a read returns zero bytes (EOF or error).;</code></div><div class="member-item"><code class="member-sig">bool readExact(char* buf, size_t count);;</code></div><div class="member-item"><code class="member-sig">*         were read (clean EOF at a message boundary).;</code></div><div class="member-item"><code class="member-sig">std::optional&lt;std::string&gt; readLine();;</code></div></div></div>
+
+</div>
+<div class="module-header" id="mod-formatter">
+<h2>Formatter — 代码格式化</h2>
+<p style="color:var(--text2);margin-bottom:24px"><code>src/formatter/</code></p>
+<h3>formatter/formatter.h</h3>
+<div class="api-entry" id="vora">
+  <h3 class="entry-name">📁 <code>vora</code> <span class="entry-kind">namespace</span></h3>
+  <div class="entry-file">📁 <code>src/formatter/formatter.h</code></div>
+</div>
+
+<div class="api-entry" id="SourceFormatter">
+  <h3 class="entry-name">🧩 <code>SourceFormatter</code> <span class="entry-kind">class</span></h3>
+  <div class="entry-file">📁 <code>src/formatter/formatter.h</code></div>
+  <div class="entry-sig"><pre><code>class SourceFormatter : public ExprVisitor&lt;std::string&gt;,</code></pre></div>
+  <p class="entry-brief">AST-based source code formatter (vora fmt command).</p>
+  <div class="entry-details"><p>Implements ExprVisitor&lt;std::string&gt;, StmtVisitor&lt;std::string&gt;, and ProgramVisitor&lt;std::string&gt; to produce consistently formatted Vora source code from any valid AST.  The formatter uses recursive descent through the visitor pattern, building the output string as it traverses the tree.<br><br>**Key design points:**   - **Indentation state** is tracked via an integer counter, not a string     accumulator, so nested formatting calls automatically receive the     correct indent level.   - **Recursion depth guard** (`MAX_FORMAT_DEPTH`) prevents stack overflow     on deeply nested but syntactically valid ASTs (e.g., thousands of     nested binary expressions).   - **Precedence-aware parenthesization**: the formatter removes redundant     parentheses and only adds them when required for correct operator     associativity or precedence.  This is implemented via `formatExpr()`     which compares the sub-expression's effective precedence against a     required minimum.<br><br>**Thread safety:** Each `SourceFormatter` instance is self-contained (only `indent_` and `depth_` integer state).  Create one instance per format operation; the class is not designed for concurrent access to a single instance, but multiple instances can format independently in parallel.<br><br>**Error handling:** The formatter assumes a valid AST.  If the AST contains `ErrorExpr` or `ErrorStmt` nodes (from error-tolerant parsing), those nodes produce empty or placeholder output — the result will be invalid Vora source.  Always check `Parser::hasError()` before formatting.</p></div>
+  <p class="entry-see"><strong>See also:</strong> <a href="#format() for the main entry point"><code>format() for the main entry point</code></a>, <a href="#formatExpr() for precedence-aware expression formatting"><code>formatExpr() for precedence-aware expression formatting</code></a></p>
+  <h4>Methods (17)</h4>
+<div class="member-list"><div class="member-item"><code class="member-sig">std::string visitIfStmt(const IfStmt&amp; stmt) override;;</code></div><div class="member-item"><code class="member-sig">std::string visitWhileStmt(const WhileStmt&amp; stmt) override;;</code></div><div class="member-item"><code class="member-sig">std::string visitDoWhileStmt(const DoWhileStmt&amp; stmt) override;;</code></div><div class="member-item"><code class="member-sig">std::string visitForStmt(const ForStmt&amp; stmt) override;;</code></div><div class="member-item"><code class="member-sig">* Each clause (init, cond, update) may be empty.;</code></div><div class="member-item"><code class="member-sig">std::string visitCForStmt(const CForStmt&amp; stmt) override;;</code></div><div class="member-item"><code class="member-sig">std::string visitFuncStmt(const FuncStmt&amp; stmt) override;;</code></div><div class="member-item"><code class="member-sig">std::string visitObjStmt(const ObjStmt&amp; stmt) override;;</code></div><div class="member-item"><code class="member-sig">std::string visitBreakStmt(const BreakStmt&amp; stmt) override;;</code></div><div class="member-item"><code class="member-sig">std::string visitContinueStmt(const ContinueStmt&amp; stmt) override;;</code></div><div class="member-item"><code class="member-sig">std::string visitTryStmt(const TryStmt&amp; stmt) override;;</code></div><div class="member-item"><code class="member-sig">std::string visitThrowStmt(const ThrowStmt&amp; stmt) override;;</code></div><div class="member-item"><code class="member-sig">std::string visitImportStmt(const ImportStmt&amp; stmt) override;;</code></div><div class="member-item"><code class="member-sig">std::string visitExportStmt(const ExportStmt&amp; stmt) override;;</code></div><div class="member-item"><code class="member-sig">std::string visitDeferStmt(const DeferStmt&amp; stmt) override;;</code></div><div class="member-item"><code class="member-sig">std::string visitErrorStmt(const ErrorStmt&amp; stmt) override;;</code></div><div class="member-item"><code class="member-sig">std::string visitProgram(const Program&amp; program) override;;</code></div></div></div>
+
+</div>
+<div class="module-header" id="mod-lsp">
+<h2>LSP — 语义分析</h2>
+<p style="color:var(--text2);margin-bottom:24px"><code>src/lsp/</code></p>
+<h3>lsp/semantic_analyzer.h</h3>
+<div class="api-entry" id="vora">
+  <h3 class="entry-name">📁 <code>vora</code> <span class="entry-kind">namespace</span></h3>
+  <div class="entry-file">📁 <code>src/lsp/semantic_analyzer.h</code></div>
+</div>
+
+<div class="api-entry" id="SymbolKind">
+  <h3 class="entry-name">🔢 <code>SymbolKind</code> <span class="entry-kind">enum</span></h3>
+  <div class="entry-file">📁 <code>src/lsp/semantic_analyzer.h</code></div>
+  <div class="entry-sig"><pre><code>enum class SymbolKind : uint8_t {</code></pre></div>
+  <p class="entry-brief">Classification of a declared symbol in the Vora language.</p>
+</div>
+
+<div class="api-entry" id="symbolKindToString">
+  <h3 class="entry-name">⚡ <code>symbolKindToString</code> <span class="entry-kind">function</span></h3>
+  <div class="entry-file">📁 <code>src/lsp/semantic_analyzer.h</code></div>
+  <div class="entry-sig"><pre><code>const char* symbolKindToString(SymbolKind kind);</code></pre></div>
+  <p class="entry-brief">Convert a SymbolKind to its human-readable string representation.</p>
+  <h4>Parameters</h4>
+<table class="param-table"><thead><tr><th>Parameter</th><th>Description</th></tr></thead><tbody><tr><td class="param-name"><code>kind</code></td><td>The symbol kind to convert.</td></tr></tbody></table>  <p class="entry-returns"><strong>Returns:</strong> A C-string such as &quot;Variable&quot;, &quot;Function&quot;, &quot;Object&quot;, etc.</p>
+</div>
+
+<div class="api-entry" id="SymbolInfo">
+  <h3 class="entry-name">📦 <code>SymbolInfo</code> <span class="entry-kind">struct</span></h3>
+  <div class="entry-file">📁 <code>src/lsp/semantic_analyzer.h</code></div>
+  <div class="entry-sig"><pre><code>struct SymbolInfo</code></pre></div>
+  <p class="entry-brief">Metadata for a single declared symbol in the symbol table.</p>
+</div>
+
+</div>
+    </main>
+</div>
+
+<footer class="footer">
+    <p>Vora · <a href="https://github.com/Vora-lang/Vora" target="_blank" rel="noopener">github.com/Vora-lang/Vora</a></p>
+    <p style="margin-top:8px">Generated by build-api-docs.py from Doxygen comments in source headers.</p>
+</footer>
+</body>
+</html>

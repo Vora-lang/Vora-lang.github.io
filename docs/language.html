@@ -64,6 +64,7 @@
         <a href="index.html">文档</a>
         <a href="language.html" class="active">语言参考</a>
         <a href="user-guide.html">语言差异</a>
+        <a href="../api/index.html">API 参考</a>
     </div>
 </nav>
 
@@ -242,14 +243,18 @@ vora --repl</pre></div>
 <h3 id="可选链">可选链 <code>?.</code></h3>
 <p><strong>v0.21+</strong></p>
 <br>
-<p>安全地访问可能为 <code>null</code> 的对象。如果接收者为 <code>null</code>，整个表达式短路返回 <code>null</code>：</p>
+<p>安全地访问可能为 <code>null</code> 的对象。如果接收者为 <code>null</code> 或属性不存在，返回 <code>null</code> 而不抛出错误：</p>
 <br>
-<div class="code"><pre>obj?.property        <span class="cmt">// 如果 obj 为 null → null；否则 obj.property</span>
+<div class="code"><pre>obj?.property        <span class="cmt">// obj 为 null → null；obj 无此属性 → null</span>
 obj?.(args)          <span class="cmt">// 可选函数调用</span>
-arr?.[index]         <span class="cmt">// 可选下标访问</span>
+arr?.[index]         <span class="cmt">// 可选下标访问（越界返回 null）</span>
 
 <span class="cmt">// 链式使用</span>
 deep?.a?.b?.c        <span class="cmt">// 任一中间值为 null 则短路</span></pre></div>
+<br>
+<blockquote>
+<p><strong>v0.25+</strong>: <code>?.</code> 对 dict 中不存在的 key 也返回 <code>null</code>（之前会抛出 RuntimeError）。</p>
+</blockquote>
 <br>
 <h3 id="三元运算符">三元运算符 <code>?:</code></h3>
 <br>
@@ -308,7 +313,8 @@ x %= <span class="num">5</span>    <span class="cmt">// x = x % 5</span></pre></
 <span class="cmt">// 无论哪个分支，cleanup 都会执行</span></pre></div>
 <br>
 <blockquote>
-<p><strong>注意</strong>: <code>defer</code> 在异常抛出时不会执行（当前限制）。</p>
+<p><strong>v0.25+</strong>: <code>defer</code> 在同函数内的 <code>throw</code> 前会执行（RAII 语义）。</p>
+<p><strong>v0.26+</strong>: 跨函数异常展开时，每帧的 <code>defer</code> 都会执行（类似 Go 的 defer + panic 机制）。</p>
 </blockquote>
 <br>
 <h3 id="while-循环">while 循环</h3>
@@ -351,7 +357,7 @@ do {
 <h3 id="for-in-循环">for-in 循环</h3>
 <br>
 <blockquote>
-<p class="version-tag">引入版本: v0.5 | 对象遍历: v0.16 | 迭代器协议: v0.21</p>
+<p class="version-tag">引入版本: v0.5 | 对象遍历: v0.16 | 迭代器协议: v0.21 | 生成器支持: v0.25</p>
 </blockquote>
 <br>
 <div class="code"><pre><span class="cmt">// 遍历数组</span>
@@ -365,7 +371,15 @@ do {
 <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">5</span>) { <span class="fn">print</span>(i) } <span class="cmt">// 1, 2, 3, 4</span>
 
 <span class="cmt">// 遍历字典（迭代键）</span>
-<span class="kw">for</span> key <span class="kw">in</span> dict { <span class="fn">print</span>(key) }</pre></div>
+<span class="kw">for</span> key <span class="kw">in</span> dict { <span class="fn">print</span>(key) }
+
+<span class="cmt">// 遍历生成器 (v0.25+)</span>
+<span class="kw">func</span> gen() { <span class="kw">yield</span> <span class="num">1</span>; <span class="kw">yield</span> <span class="num">2</span>; <span class="kw">yield</span> <span class="num">3</span> }
+<span class="kw">for</span> v <span class="kw">in</span> gen() { <span class="fn">print</span>(v) }   <span class="cmt">// 1, 2, 3</span></pre></div>
+<br>
+<blockquote>
+<p><code>for-in</code> 使用 <code>iter()</code>/<code>next()</code> 迭代器协议，统一支持所有可迭代类型。</p>
+</blockquote>
 <br>
 <h3 id="c-风格-for-循环">C 风格 for 循环</h3>
 <br>
@@ -866,6 +880,37 @@ Vora 提供 `Set`（去重集合）和 `Map`（任意类型键的映射）两种
 <br>
 <p>Child().greet()  // "Hello from Parent and Child"</p>
 <div class="code"><pre>
+### 静态方法 (this.func)
+
+&gt; 引入版本: v0.25
+
+使用 `this.func` 在 Obj 体内部声明静态方法——方法挂在类上而非实例上，不接收 `this`：
+</pre></div>
+<p>Obj MathUtil() {</p>
+<div class="code"><pre>this.func square(x) { return x * x }</pre></div>
+<div class="code"><pre>this.func sum(...ns) {</pre></div>
+<div class="code"><pre>    let t = 0</pre></div>
+<div class="code"><pre>    for n in ns { t = t + n }</pre></div>
+<div class="code"><pre>    return t</pre></div>
+<div class="code"><pre>}</pre></div>
+<p>}</p>
+<br>
+<p>MathUtil.square(5)     // 25</p>
+<p>MathUtil.sum(1, 2, 3)  // 6</p>
+<div class="code"><pre>
+静态方法适用于工厂模式：
+</pre></div>
+<p>Obj Point(x, y) {</p>
+<div class="code"><pre>this.x = x; this.y = y</pre></div>
+<div class="code"><pre>this.func origin() { return Point(0, 0) }</pre></div>
+<div class="code"><pre>func len() { return MathUtil.square(this.x) + MathUtil.square(this.y) }</pre></div>
+<p>}</p>
+<br>
+<p>let p = Point.origin()  // 类调用</p>
+<p>p.len()                 // 实例也可调用静态方法</p>
+<div class="code"><pre>
+&gt; `this.func` 不需要新关键字（复用已有的 `this` 和 `func`），语法风格学习 Ruby 的 `def self.method`。
+
 ---
 
 ## 9. 异常处理 / Exception Handling
@@ -890,6 +935,36 @@ Vora 提供 `Set`（去重集合）和 `Map`（任意类型键的映射）两种
 <div class="code"><pre>
 `throw` 可以抛出任何类型的值。
 
+### 结构化错误 + 调用栈追踪
+
+&gt; 引入版本: v0.25 (stack 自动注入)
+
+抛出字典或对象实例时，Vora 自动注入 `.stack` 属性（调用栈追踪）：
+</pre></div>
+<p>func inner() {</p>
+<div class="code"><pre>throw {msg: &quot;文件未找到&quot;, code: 404}</pre></div>
+<p>}</p>
+<br>
+<p>try {</p>
+<div class="code"><pre>inner()</pre></div>
+<p>} catch (e) {</p>
+<div class="code"><pre>print(e.msg)    // &quot;文件未找到&quot;</pre></div>
+<div class="code"><pre>print(e.code)   // 404</pre></div>
+<div class="code"><pre>print(e.stack)  // Stack trace (most recent call last):</pre></div>
+<div class="code"><pre>                //   [4:5] in &lt;script&gt;</pre></div>
+<div class="code"><pre>                //   [1:12] in inner</pre></div>
+<p>}</p>
+<div class="code"><pre>
+抛出字符串或数字时不会注入 `.stack`（因为它们没有属性）。如需栈追踪，使用字典或对象包装：
+</pre></div>
+<p>Obj AppError(msg, code) {</p>
+<div class="code"><pre>this.message = msg</pre></div>
+<div class="code"><pre>this.code = code</pre></div>
+<p>}</p>
+<br>
+<p>throw AppError("超时", 408)</p>
+<p>// catch (e) 后 e.stack 自动可用</p>
+<div class="code"><pre>
 ---
 
 ## 10. 模块系统 / Modules
@@ -1157,6 +1232,105 @@ Vora 提供 `Set`（去重集合）和 `Map`（任意类型键的映射）两种
 - 字典推导是一个表达式，求值为一个新字典
 - 支持嵌套（内层推导可引用外层变量）
 - 重复键以后出现的为准（字典合并规则）
+
+---
+
+## 15. C++ 嵌入 / Embedding Vora in C++
+
+&gt; Vora 是嵌入优先的语言。你只需要一个头文件和一个静态库，就能在自己的 C++ 应用中运行 Vora 代码。
+
+### 快速开始
+</pre></div>
+<h1 id="1-从-vora-安装目录复制-sdk-文件">1. 从 Vora 安装目录复制 SDK 文件</h1>
+<h1 id="include-vora-hpp-合并后的单文件头文件-vora-hpp">include/vora.hpp    — 合并后的单文件头文件（vora.hpp）</h1>
+<h1 id="lib-vora-lib-lib-静态库-windows-libvora-lib-a-linux-macos">lib/vora_lib.lib    — 静态库 (Windows) / libvora_lib.a (Linux/macOS)</h1>
+<br>
+<h1 id="2-在你的-cmakelists-txt-中">2. 在你的 CMakeLists.txt 中:</h1>
+<p>find_library(VORA_LIB vora_lib PATHS <install>/lib)</p>
+<p>target_link_libraries(my_app PRIVATE ${VORA_LIB})</p>
+<p>target_include_directories(my_app PRIVATE <install>/include/vora)</p>
+<br>
+<h1 id="3-最小示例-只需-include-vora-hpp">3. 最小示例 (只需 #include "vora.hpp"):</h1>
+<div class="code"><pre></pre></div>
+<p>#include "vora.hpp"  // 合并后的单文件头文件，包含全部 API</p>
+<p>using namespace vora;</p>
+<br>
+<p>int main() {</p>
+<div class="code"><pre>VM vm;</pre></div>
+<div class="code"><pre>registerBuiltins(vm);  // 注册内建函数 (print, type, len, ...)</pre></div>
+<br>
+<div class="code"><pre>// 编译 + 执行一行代码</pre></div>
+<div class="code"><pre>Lexer lexer(&quot;print(\&quot;Hello from C++!\&quot;)&quot;, StderrErrorReporter(&quot;&quot;));</pre></div>
+<div class="code"><pre>Parser parser(lexer.scanTokens(), StderrErrorReporter(&quot;&quot;));</pre></div>
+<div class="code"><pre>Compiler compiler(StderrErrorReporter(&quot;&quot;));</pre></div>
+<div class="code"><pre>compiler.seedGlobals(vm.getGlobalNames());</pre></div>
+<div class="code"><pre>Chunk chunk = compiler.compile(parser.parse().get());</pre></div>
+<div class="code"><pre>vm.initGlobals(compiler.getGlobalNames());</pre></div>
+<div class="code"><pre>vm.interpret(chunk);</pre></div>
+<p>}</p>
+<div class="code"><pre>
+### 注册原生函数
+</pre></div>
+<p>vm.defineNative("cpp_add", 2,</p>
+<div class="code"><pre>[](const std::vector&lt;Value&gt;&amp; args) -&gt; Value {</pre></div>
+<div class="code"><pre>    return toNumber(args[0]) + toNumber(args[1]);</pre></div>
+<div class="code"><pre>});</pre></div>
+<br>
+<p>// Vora 侧直接调用:</p>
+<p>// print(cpp_add(3.5, 2.5))   → 6.0</p>
+<div class="code"><pre>
+`defineNative` 签名: `(name, arity, callback)`
+- `arity = -1` → 可变参数
+- 回调接收 `const std::vector&lt;Value&gt;&amp;`，返回 `Value`
+
+### 完整嵌入流水线
+</pre></div>
+<p>C++ 字符串/文件</p>
+<div class="code"><pre>↓</pre></div>
+<p>Lexer (词法分析) → Token 流</p>
+<div class="code"><pre>↓</pre></div>
+<p>Parser (语法分析) → AST (Program)</p>
+<div class="code"><pre>↓</pre></div>
+<p>Compiler (字节码编译) → Chunk</p>
+<div class="code"><pre>↓</pre></div>
+<p>VM (虚拟机执行) → 结果</p>
+<div class="code"><pre>
+每一步都可以插入自定义逻辑：自定义 ErrorReporter、预注册全局变量、增量执行（REPL 模式）。
+
+### 错误隔离
+
+Vora 的错误**不会**传播到 C++ 宿主：
+</pre></div>
+<p>InterpretResult result = vm.interpret(chunk);</p>
+<p>if (result != InterpretResult::OK) {</p>
+<div class="code"><pre>// 编译器/VM 错误通过 ErrorReporter 收集，不抛异常</pre></div>
+<p>}</p>
+<div class="code"><pre>
+### 完整示例
+
+参考 `examples/embed/main.cpp`——8 个演示覆盖：
+1. 从字符串执行 Vora
+2. 注册 C++ 原生函数
+3. C++ ↔ Vora 双向数据交换
+4. 从文件加载脚本
+5. 错误隔离
+6. Vora 类和对象
+7. REPL 式增量执行
+8. 自定义 ErrorReporter
+
+### Value 类型速查
+
+| C++ 访问 | Vora 类型 |
+|----------|----------|
+| `std::get&lt;double&gt;(v)` | float |
+| `std::get&lt;int64_t&gt;(v)` | int |
+| `std::get&lt;bool&gt;(v)` | boolean |
+| `std::get&lt;GcPtr&lt;GcString&gt;&gt;(v)-&gt;value` | string |
+| `std::get&lt;GcPtr&lt;Array&gt;&gt;(v)-&gt;elements` | array |
+| `std::get&lt;GcPtr&lt;Dict&gt;&gt;(v)-&gt;pairs` | dict |
+| `std::holds_alternative&lt;std::nullptr_t&gt;(v)` | null |
+
+&gt; **零外部依赖**: `vora_lib.lib` 只需 C++17 标准库，无第三方库依赖。
 </pre></div>
 </main>
 

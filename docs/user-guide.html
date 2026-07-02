@@ -64,6 +64,7 @@
         <a href="index.html">文档</a>
         <a href="language.html">语言参考</a>
         <a href="user-guide.html" class="active">语言差异</a>
+        <a href="../api/index.html">API 参考</a>
     </div>
 </nav>
 
@@ -292,15 +293,15 @@ obj = {}            <span class="cmt">// ❌ 编译错误</span></pre></div>
 0 ?? 100    // 0
 0 || 100    // 100</pre></div>
 <br>
-<h3 id="可选链-v0-21">?. 可选链（v0.21+）</h3>
+<h3 id="可选链-v0-21-v0-25-增强">?. 可选链（v0.21+, v0.25 增强）</h3>
 <br>
 <div class="code"><pre><span class="kw">let</span> street = user?.address?.street   <span class="cmt">// null if any step is null</span>
 <span class="kw">let</span> result = obj?.method?.(arg)      <span class="cmt">// 安全调用方法</span>
-<span class="kw">let</span> item = arr?.[index]              <span class="cmt">// 安全索引访问</span>
+<span class="kw">let</span> item = arr?.[index]              <span class="cmt">// 安全索引访问（越界也返回 null）</span>
 
-<span class="cmt">// ⚠️ 已知限制：?. 对 dict 中不存在的 key 会抛出错误</span>
+<span class="cmt">// v0.25+: dict 不存在的 key 也返回 null</span>
 <span class="kw">let</span> d = {a: <span class="num">1</span>}
-d?.nonexistent  <span class="cmt">// ❌ RuntimeError: Unknown dict key  — 期望返回 null</span></pre></div>
+d?.nonexistent  <span class="cmt">// null（之前会抛 RuntimeError）</span></pre></div>
 <br>
 <h3 id="没有位运算符">没有位运算符</h3>
 <br>
@@ -592,6 +593,32 @@ leaf.chain  <span class="cmt">// [&quot;Base&quot;, &quot;Middle&quot;, &quot;Le
 <br>
 <p><strong>注意</strong>：Vora 的构造器链<strong>自动执行</strong>，不需要手动调用 <code>super(...)</code>。每个父类构造器的参数从子类的参数列表中<strong>按名称/位置匹配</strong>。</p>
 <br>
+<h3 id="静态方法-this-func-v0-25">静态方法：this.func（v0.25+）</h3>
+<br>
+<p>Vora 用 <code>this.func</code> 声明静态方法——<strong>不加新关键字</strong>，复用已有的 <code>this</code> + <code>func</code>（学习 Ruby 的 <code>def self.method</code>）：</p>
+<br>
+<div class="code"><pre><span class="kw">Obj</span> MathUtil() {
+    <span class="kw">this</span>.<span class="kw">func</span> square(x) { <span class="kw">return</span> x * x }
+}
+
+MathUtil.square(<span class="num">5</span>)  <span class="cmt">// 25 — 挂在类上，不需要实例</span>
+
+<span class="kw">Obj</span> Point(x, y) {
+    <span class="kw">this</span>.x = x; <span class="kw">this</span>.y = y
+    <span class="kw">this</span>.<span class="kw">func</span> origin() { <span class="kw">return</span> Point(<span class="num">0</span>, <span class="num">0</span>) }   <span class="cmt">// 静态工厂</span>
+    <span class="kw">func</span> <span class="fn">len</span>() { <span class="kw">return</span> MathUtil.square(<span class="kw">this</span>.x) + MathUtil.square(<span class="kw">this</span>.y) }
+}
+
+Point.origin().<span class="fn">len</span>()  <span class="cmt">// 0 — 类调用静态方法</span></pre></div>
+<br>
+<table>
+<tr><th>特性</th><th>Vora</th><th>JavaScript</th><th>Python</th></tr>
+<tr><td>实例方法</td><td><code>func f()</code> — 隐式 <code>this</code></td><td><code>f() { this.x }</code></td><td><code>def f(self):</code> — 显式 <code>self</code></td></tr>
+<tr><td>静态方法</td><td><code>this.func f()</code> — 无 <code>this</code></td><td><code>static f() {}</code></td><td><code>@staticmethod</code> / <code>@classmethod</code></td></tr>
+<tr><td>类调用</td><td><code>Class.f()</code></td><td><code>Class.f()</code></td><td><code>Class.f()</code></td></tr>
+<tr><td>实例调用</td><td>✅ <code>obj.f()</code></td><td>✅ <code>obj.f()</code></td><td>✅ <code>obj.f()</code></td></tr>
+</table>
+<br>
 <hr>
 <br>
 <h2 id="8-控制流-match-表达式-defer-do-while">8. 控制流：match 表达式、defer、do-while</h2>
@@ -671,7 +698,7 @@ demo()
 <p>对比：</p>
 <ul>
 <li><strong>Go</strong>: <code>defer file.Close()</code> — LIFO，return 和 panic 都会执行</li>
-<li><strong>Vora</strong>: <code>defer func() { ... }()</code> — <strong>仅正常 return 执行</strong>，throw 时<strong>不执行</strong>（已知限制）</li>
+<li><strong>Vora</strong>: <code>defer func() { ... }()</code> — 同函数内 throw 前会执行（v0.25），跨函数异常展开暂不执行</li>
 <li><strong>Python</strong>: 用 <code>with</code> / <code>try-finally</code> 替代</li>
 </ul>
 <br>
@@ -701,16 +728,9 @@ do {
 <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">5</span>) { <span class="fn">print</span>(i) }       <span class="cmt">// 1, 2, 3, 4</span>
 <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">0</span>, <span class="num">9</span>, <span class="num">3</span>) { <span class="fn">print</span>(i) }    <span class="cmt">// 0, 3, 6</span>
 
-<span class="cmt">// ⚠️ for-in 不能消费 generator</span>
+<span class="cmt">// v0.25+: for-in 可以直接消费 generator</span>
 <span class="kw">func</span> gen() { <span class="kw">yield</span> <span class="num">1</span>; <span class="kw">yield</span> <span class="num">2</span> }
-<span class="kw">for</span> v <span class="kw">in</span> gen() { ... }   <span class="cmt">// ❌ 不执行任何迭代</span>
-<span class="cmt">// 解决方案：先收集为数组</span>
-<span class="kw">let</span> arr = []
-<span class="kw">let</span> it = <span class="fn">iter</span>(gen())
-<span class="kw">while</span> (<span class="kw">true</span>) {
-    <span class="kw">try</span> { arr.add(<span class="fn">next</span>(it)) } <span class="kw">catch</span> (e) { <span class="kw">break</span> }
-}
-<span class="kw">for</span> v <span class="kw">in</span> arr { ... }</pre></div>
+<span class="kw">for</span> v <span class="kw">in</span> gen() { <span class="fn">print</span>(v) }   <span class="cmt">// 1, 2</span></pre></div>
 <br>
 <h3 id="c-风格-for-循环-v0-19">C 风格 for 循环（v0.19+）</h3>
 <br>
@@ -957,14 +977,14 @@ lengths = {w: len(w) for w in [&quot;hi&quot;, &quot;hello&quot;, &quot;Vora&quo
     }
 }
 
-<span class="cmt">// ⚠️ for-in 不能直接消费生成器（已知限制）</span>
-<span class="kw">for</span> v <span class="kw">in</span> countTo(<span class="num">5</span>) { <span class="fn">print</span>(v) }  <span class="cmt">// ❌ 什么都不输出</span></pre></div>
+<span class="cmt">// v0.25+: for-in 可直接消费生成器</span>
+<span class="kw">for</span> v <span class="kw">in</span> countTo(<span class="num">5</span>) { <span class="fn">print</span>(v) }  <span class="cmt">// 1, 2, 3, 4, 5</span></pre></div>
 <br>
 <p>对比：</p>
 <ul>
 <li><strong>Python</strong>: <code>yield</code> + <code>for x in gen()</code> — for 循环直接支持</li>
 <li><strong>JavaScript</strong>: <code>function*</code> + <code>yield</code> + <code>for...of</code> — 类似</li>
-<li><strong>Vora</strong>: 支持 <code>yield</code>，但消费方式受限</li>
+<li><strong>Vora</strong>: <code>yield</code> + <code>for v in gen()</code> — 与 Python 行为一致（v0.25）</li>
 </ul>
 <br>
 <hr>
@@ -1106,12 +1126,12 @@ let calc = `${2 + 3}`              // ✅ &quot;5&quot;</pre></div>
 <tr><td>3</td><td><code>if ({}) { ... }</code></td><td>执行（JS 风格）</td><td><strong>不执行</strong> — 空字典是 falsy</td></tr>
 <tr><td>4</td><td><code>[1,2] == [1,2]</code></td><td><code>true</code> (Python 风格)</td><td><code>false</code> — 引用相等</td></tr>
 <tr><td>5</td><td><code>const arr = [1]; arr[0] = 2</code></td><td>报错</td><td>允许 — const 是浅层的</td></tr>
-<tr><td>6</td><td><code>let x:int = "42"</code></td><td><code>42</code></td><td><code>0</code> (bug) — 用 <code>int("42")</code> 代替</td></tr>
+<tr><td>6</td><td><code>let x:int = "42"</code></td><td><code>42</code></td><td>✅ <strong>v0.25 已修复</strong> — 正确解析字符串</td></tr>
 <tr><td>7</td><td><code>len("你好")</code></td><td><code>2</code> (字符数)</td><td><code>6</code> (字节数)</td></tr>
-<tr><td>8</td><td><code>obj?.missing</code></td><td><code>null</code></td><td>RuntimeError — dict 不存在键时抛异常</td></tr>
-<tr><td>9</td><td><code>for x in generator()</code></td><td>循环执行</td><td>什么都不输出 — 用 iter/next</td></tr>
+<tr><td>8</td><td><code>obj?.missing</code></td><td><code>null</code></td><td>✅ <strong>v0.25 已修复</strong> — 返回 null</td></tr>
+<tr><td>9</td><td><code>for x in generator()</code></td><td>循环执行</td><td>✅ <strong>v0.25 已修复</strong> — 正常迭代</td></tr>
 <tr><td>10</td><td><code>d[42] = "val"</code></td><td>键是 int 42</td><td>键是 <code>"42"</code> (string) — dict 键自动转字符串</td></tr>
-<tr><td>11</td><td><code>defer</code> 在 throw 时清理资源</td><td>执行</td><td><strong>不执行</strong> — 仅正常 return 触发</td></tr>
+<tr><td>11</td><td><code>defer</code> 在 throw 时清理资源</td><td>执行</td><td>✅ <strong>v0.25 已修复</strong> — 同函数 throw 前执行</td></tr>
 <tr><td>12</td><td><code>return f(arg)</code> 尾调用</td><td>正常</td><td><strong>TCO</strong> — 不增加栈帧</td></tr>
 <tr><td>13</td><td><code>func f(a, b = a + 1)</code></td><td>定义时求值（Python）</td><td><strong>调用时求值</strong>（与 JS 一致）</td></tr>
 <tr><td>14</td><td>闭包中修改变量</td><td>需要声明</td><td><strong>不需要</strong> — 直接修改外层变量</td></tr>
