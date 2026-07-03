@@ -225,10 +225,12 @@ obj = {}            <span class="cmt">// ❌ 编译错误</span></pre></div>
 <span class="kw">let</span> c:bool = <span class="str">&quot;hello&quot;</span>    <span class="cmt">// → true (bool)  — 非空字符串 → true</span>
 <span class="kw">let</span> d:str = <span class="num">42</span>          <span class="cmt">// → &quot;42&quot; (str)   — int 转为字符串</span>
 
-<span class="cmt">// ⚠️ 已知问题：字符串到数值的转换目前有 bug</span>
-<span class="kw">let</span> e:<span class="fn">int</span> = <span class="str">&quot;42&quot;</span>        <span class="cmt">// → 0 (bug! 应该得到 42)</span>
-<span class="cmt">// 解决方法：使用显式转换</span>
-<span class="kw">let</span> e:<span class="fn">int</span> = <span class="fn">int</span>(<span class="str">&quot;42&quot;</span>)   <span class="cmt">// ✅ 正确：42</span></pre></div>
+<span class="cmt">// 字符串到数值的类型转换已修复 (v0.28):</span>
+<span class="kw">let</span> e:<span class="fn">int</span> = <span class="str">&quot;42&quot;</span>        <span class="cmt">// → 42 (int)     — 字符串自动解析</span>
+<span class="kw">let</span> f:<span class="fn">float</span> = <span class="str">&quot;3.14&quot;</span>    <span class="cmt">// → 3.14 (float) — 字符串自动解析</span>
+<span class="kw">let</span> g:<span class="fn">int</span> = <span class="str">&quot;abc&quot;</span>       <span class="cmt">// → 0 (int)      — 无效字符串回退到 0</span>
+<span class="cmt">// 也可使用显式转换（行为相同）：</span>
+<span class="kw">let</span> h:<span class="fn">int</span> = <span class="fn">int</span>(<span class="str">&quot;42&quot;</span>)   <span class="cmt">// → 42</span></pre></div>
 <br>
 <p>对比：</p>
 <ul>
