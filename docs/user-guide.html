@@ -1064,7 +1064,7 @@ let calc = `${2 + 3}`              // ✅ &quot;5&quot;</pre></div>
 <tr><td><code>switch</code></td><td><code>match</code></td><td>用 match 表达式</td></tr>
 <tr><td><code>for...of</code></td><td><code>for...in</code></td><td>Vora 用 <code>in</code></td></tr>
 <tr><td><code>typeof x</code></td><td><code>type(x)</code></td><td>不同函数名</td></tr>
-<tr><td><code>async/await</code></td><td>无</td><td>Vora 是同步的</td></tr>
+<tr><td><code>async/await</code></td><td><code>async/await</code></td><td>v0.28+ 支持，基于 generator 扩展</td></tr>
 <tr><td><code>console.log()</code></td><td><code>print()</code></td><td>相同效果</td></tr>
 </table>
 <br>
@@ -1088,7 +1088,7 @@ let calc = `${2 + 3}`              // ✅ &quot;5&quot;</pre></div>
 <tr><td><code>@decorator</code></td><td>无</td><td>Vora 不支持装饰器</td></tr>
 <tr><td><code>with</code> 语句</td><td><code>defer</code> / <code>try-finally</code></td><td>不同方式</td></tr>
 <tr><td><code>generator</code></td><td><code>yield</code> + <code>iter()</code>/<code>next()</code></td><td>不支持 for-in</td></tr>
-<tr><td><code>async/await</code></td><td>无</td><td>Vora 是同步的</td></tr>
+<tr><td><code>async/await</code></td><td><code>async/await</code></td><td>v0.28+ 支持，基于 generator 扩展</td></tr>
 </table>
 <br>
 <h3 id="lua-vora-迁移速查">Lua → Vora 迁移速查</h3>

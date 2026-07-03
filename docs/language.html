@@ -814,6 +814,46 @@ Vora 提供 `Set`（去重集合）和 `Map`（任意类型键的映射）两种
 <div class="code"><pre>print(x)   // 1, 2, 3, 4, 5</pre></div>
 <p>}</p>
 <div class="code"><pre>
+### Async/Await **v0.28+**
+
+async/await 构建在生成器之上，为异步编程提供语法糖。`async func` 返回一个 `Task`，`await` 暂停执行直到 Task 完成。
+</pre></div>
+<p>// 基本 async 函数</p>
+<p>async func greet(name) {</p>
+<div class="code"><pre>return &quot;Hello, &quot; + name + &quot;!&quot;</pre></div>
+<p>}</p>
+<br>
+<p>let task = greet("World")   // → Task (不是字符串)</p>
+<p>let result = run(task)      // → "Hello, World!"</p>
+<p>print(result)</p>
+<br>
+<p>// await 立即值（非 Task）</p>
+<p>async func compute() {</p>
+<div class="code"><pre>let x = await 42        // 立即解析</pre></div>
+<div class="code"><pre>return x * 2</pre></div>
+<p>}</p>
+<p>print(run(compute()))       // → 84</p>
+<br>
+<p>// await 另一个 async 函数</p>
+<p>async func fetchData() {</p>
+<div class="code"><pre>return 100</pre></div>
+<p>}</p>
+<br>
+<p>async func process() {</p>
+<div class="code"><pre>let data = await fetchData()  // 等待 Task 完成</pre></div>
+<div class="code"><pre>return data + 1</pre></div>
+<p>}</p>
+<p>print(run(process()))       // → 101</p>
+<div class="code"><pre>
+| 特性 | 说明 |
+|------|------|
+| `async func` | 返回 `Task`（生成器包装），函数体立即执行 |
+| `await expr` | 暂停直到 `expr` 解析。非 Task 值立即解析 |
+| `run(task)` | 驱动 Task 到完成，返回结果 |
+| `type(task)` | 返回 `&quot;task&quot;` |
+
+&gt; **限制 (v0.28):** `await` 不能在 `try` 块内使用。事件循环目前为单步驱动（`run()` 一次完成同步链）。异步任务链通过 `Task` 的回调列表自动解析。
+
 ---
 
 ## 8. 对象与继承 / Objects &amp; Inheritance
